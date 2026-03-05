@@ -92,7 +92,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed bottom-0 left-0 right-0 z-[70] rounded-t-3xl overflow-hidden"
           >
-            <div className="glass-strong p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+            <div className="bg-zinc-900/95 backdrop-blur-xl border-t border-white/10 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
               {/* Handle bar */}
               <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-6" />
 
