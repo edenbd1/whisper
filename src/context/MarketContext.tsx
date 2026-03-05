@@ -119,11 +119,12 @@ export function MarketProvider({ children }: { children: ReactNode }) {
               remaining -= pos.shares;
               return acc; // Remove this position entirely
             } else {
-              const fraction = remaining / pos.shares;
+              const toSell = remaining;
+              const fraction = toSell / pos.shares;
               remaining = 0;
               return [...acc, {
                 ...pos,
-                shares: pos.shares - shares + remaining,
+                shares: pos.shares - toSell,
                 totalCost: pos.totalCost * (1 - fraction),
               }];
             }

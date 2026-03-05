@@ -149,7 +149,7 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
             <motion.div
               className="odds-bar-yes progress-glow"
               initial={{ width: 0 }}
-              animate={isActive ? { width: `${bet.yesPercentage}%` } : { width: 0 }}
+              animate={isActive ? { width: `${yesPrice}%` } : { width: 0 }}
               transition={{ delay: 0.3, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
