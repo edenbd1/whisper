@@ -53,7 +53,7 @@ export default function CreateView() {
           </div>
           <h3 className="text-xl font-bold text-white">Market Created</h3>
           <p className="text-sm text-white/30">{question}</p>
-          <p className="text-xs text-white/15">On-chain transaction would be submitted to WhisperMarket contract</p>
+          <p className="text-xs text-white/15">On-chain transaction would be submitted to WisprMarket contract</p>
           <button
             onClick={() => { setSubmitted(false); setQuestion(""); setEndDate(""); }}
             className="glass px-6 py-2.5 rounded-xl text-xs font-semibold text-white/80 hover:bg-white/[0.06] transition-colors btn-press"

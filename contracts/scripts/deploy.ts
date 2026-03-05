@@ -7,23 +7,23 @@ async function main() {
   const balance = await ethers.provider.getBalance(deployer.address);
   console.log("Account balance:", ethers.formatEther(balance), "COTI");
 
-  // Deploy WhisperToken
-  console.log("\n--- Deploying WhisperToken ---");
-  const WhisperToken = await ethers.getContractFactory("WhisperToken");
-  const token = await WhisperToken.deploy({ gasLimit: 12_000_000 });
+  // Deploy ConfidentialUSDC
+  console.log("\n--- Deploying ConfidentialUSDC ---");
+  const ConfidentialUSDC = await ethers.getContractFactory("ConfidentialUSDC");
+  const token = await ConfidentialUSDC.deploy({ gasLimit: 12_000_000 });
   await token.waitForDeployment();
   const tokenAddress = await token.getAddress();
-  console.log("WhisperToken deployed to:", tokenAddress);
+  console.log("ConfidentialUSDC deployed to:", tokenAddress);
 
-  // Deploy WhisperMarket
-  console.log("\n--- Deploying WhisperMarket ---");
-  const WhisperMarket = await ethers.getContractFactory("WhisperMarket");
-  const market = await WhisperMarket.deploy({ gasLimit: 5_000_000 });
+  // Deploy WisprMarket with token address
+  console.log("\n--- Deploying WisprMarket ---");
+  const WisprMarket = await ethers.getContractFactory("WisprMarket");
+  const market = await WisprMarket.deploy(tokenAddress, { gasLimit: 5_000_000 });
   await market.waitForDeployment();
   const marketAddress = await market.getAddress();
-  console.log("WhisperMarket deployed to:", marketAddress);
+  console.log("WisprMarket deployed to:", marketAddress);
 
-  // Create some initial markets
+  // Create initial markets
   console.log("\n--- Creating initial markets ---");
 
   const markets = [
@@ -91,8 +91,8 @@ async function main() {
   }
 
   console.log("\n=== DEPLOYMENT COMPLETE ===");
-  console.log("WhisperToken:", tokenAddress);
-  console.log("WhisperMarket:", marketAddress);
+  console.log("ConfidentialUSDC:", tokenAddress);
+  console.log("WisprMarket:", marketAddress);
   console.log("\nAdd to your .env.local:");
   console.log(`NEXT_PUBLIC_TOKEN_ADDRESS=${tokenAddress}`);
   console.log(`NEXT_PUBLIC_MARKET_ADDRESS=${marketAddress}`);

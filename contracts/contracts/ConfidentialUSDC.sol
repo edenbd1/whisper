@@ -5,16 +5,15 @@ import {PrivateERC20} from "@coti-io/coti-contracts/contracts/token/PrivateERC20
 import "@coti-io/coti-contracts/contracts/utils/mpc/MpcCore.sol";
 
 /**
- * @title WhisperToken (WHISP)
- * @notice Confidential ERC20 token for the Whisper prediction market platform
- * @dev Balances are encrypted on-chain using COTI's garbled circuits
+ * @title ConfidentialUSDC (cUSDC)
+ * @notice Confidential ERC20 pegged to USDC for the Wispr prediction market
+ * @dev Balances are encrypted on-chain using COTI's garbled circuits. 6 decimals.
  */
-contract WhisperToken is PrivateERC20 {
+contract ConfidentialUSDC is PrivateERC20 {
     address public owner;
     uint64 private _totalSupplyValue;
 
-    // Faucet: max 1000 WHISP per claim, once per address
-    uint64 public constant FAUCET_AMOUNT = 1000 * 1e6; // 6 decimals
+    uint64 public constant FAUCET_AMOUNT = 1000 * 1e6; // 1000 cUSDC (6 decimals)
     mapping(address => bool) public hasClaimed;
 
     event Mint(address indexed to, uint64 amount);
@@ -25,7 +24,7 @@ contract WhisperToken is PrivateERC20 {
         _;
     }
 
-    constructor() PrivateERC20("Whisper", "WHISP") {
+    constructor() PrivateERC20("Confidential USDC", "cUSDC") {
         owner = msg.sender;
     }
 
@@ -33,7 +32,6 @@ contract WhisperToken is PrivateERC20 {
         return _totalSupplyValue;
     }
 
-    /// @notice Owner can mint tokens to any address
     function mint(address to, uint64 amount) external onlyOwner {
         gtBool success = _mint(to, MpcCore.setPublic64(amount));
         if (MpcCore.decrypt(success)) {
@@ -42,7 +40,6 @@ contract WhisperToken is PrivateERC20 {
         }
     }
 
-    /// @notice Anyone can claim testnet tokens once (faucet)
     function faucet() external {
         require(!hasClaimed[msg.sender], "Already claimed");
         hasClaimed[msg.sender] = true;

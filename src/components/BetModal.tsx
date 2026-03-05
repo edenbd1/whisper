@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BetSide } from "@/types";
 import { useWallet } from "@/context/WalletContext";
 import { useMarket } from "@/context/MarketContext";
-import { CONTRACT_ADDRESSES, WHISPER_MARKET_ABI } from "@/lib/contracts";
+import { CONTRACT_ADDRESSES, CUSDC_ABI, WISPR_MARKET_ABI } from "@/lib/contracts";
 import { getExplorerTxUrl } from "@/lib/coti";
 
 interface BetModalProps {
@@ -17,12 +17,12 @@ interface BetModalProps {
   onConfirm: () => void;
 }
 
-const presetAmounts = [0.1, 0.5, 1, 5];
+const presetAmounts = [10, 50, 100, 500];
 
 type TxState = "idle" | "pending" | "success" | "error";
 
 export default function BetModal({ isOpen, onClose, side, question, marketId, onConfirm }: BetModalProps) {
-  const [amount, setAmount] = useState<string>("0.5");
+  const [amount, setAmount] = useState<string>("50");
   const [txState, setTxState] = useState<TxState>("idle");
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
@@ -43,8 +43,8 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
     if (!isConnected || !signer) { await connect(); return; }
     if (numAmount <= 0) return;
 
-    if (!CONTRACT_ADDRESSES.market) {
-      // No contract - just simulate
+    if (!CONTRACT_ADDRESSES.market || !CONTRACT_ADDRESSES.token) {
+      // No contract deployed - simulate locally
       executeTrade(betId, side, numAmount);
       onConfirm();
       setTxState("success");
@@ -54,12 +54,17 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
     setTxState("pending");
     setError("");
     try {
-      const { Contract, parseEther } = await import("@coti-io/coti-ethers");
-      const contract = new Contract(CONTRACT_ADDRESSES.market, WHISPER_MARKET_ABI, signer);
-      const tx = await contract.bet(marketId ?? 0, isYes, {
-        value: parseEther(amount),
-        gasLimit: 500_000,
-      });
+      const { Contract } = await import("@coti-io/coti-ethers");
+      const amountRaw = BigInt(Math.round(numAmount * 1e6)); // 6 decimals
+
+      // 1. Approve market to spend cUSDC
+      const tokenContract = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
+      const approveTx = await tokenContract.approve(CONTRACT_ADDRESSES.market, amountRaw, { gasLimit: 500_000 });
+      await approveTx.wait();
+
+      // 2. Place bet
+      const marketContract = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);
+      const tx = await marketContract.bet(marketId ?? 0, isYes, amountRaw, { gasLimit: 1_000_000 });
       setTxHash(tx.hash);
       await tx.wait();
       executeTrade(betId, side, numAmount, tx.hash);
@@ -112,7 +117,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   </div>
                   <h3 className="text-xl font-bold text-white mb-1.5">Position Opened</h3>
                   <p className="text-sm text-white/30 mb-1">
-                    {preview ? `${preview.sharesReceived.toFixed(1)} shares` : `${numAmount} COTI`} on <span className={isYes ? "text-green-400" : "text-red-400"}>{isYes ? "YES" : "NO"}</span>
+                    {preview ? `${preview.sharesReceived.toFixed(1)} shares` : `${numAmount} cUSDC`} on <span className={isYes ? "text-green-400" : "text-red-400"}>{isYes ? "YES" : "NO"}</span>
                   </p>
                   <p className="text-xs text-white/20 mb-5">
                     Avg price: {preview ? `${(preview.avgPrice * 100).toFixed(1)}¢` : `${Math.round(sidePrice * 100)}¢`}
@@ -156,7 +161,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                       placeholder="0"
                       className="w-full glass rounded-xl px-4 py-4 text-2xl font-bold text-white text-center focus:outline-none focus:ring-1 focus:ring-white/10 transition-all"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 text-sm font-semibold">COTI</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 text-sm font-semibold">cUSDC</span>
                   </div>
 
                   {/* Presets */}

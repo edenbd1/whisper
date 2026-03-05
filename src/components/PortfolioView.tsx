@@ -85,11 +85,11 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
           <p className="text-[11px] text-white/30 uppercase tracking-wider font-semibold mb-1">Portfolio Value</p>
           <div className="flex items-baseline gap-3">
             <span className="text-3xl font-black text-white">{summary.totalValue.toFixed(2)}</span>
-            <span className="text-sm text-white/30 font-medium">COTI</span>
+            <span className="text-sm text-white/30 font-medium">cUSDC</span>
           </div>
           {summary.count > 0 && (
             <div className={`flex items-center gap-1.5 mt-2 text-sm font-semibold ${summary.totalPnL >= 0 ? "text-green-400" : "text-red-400"}`}>
-              <span>{summary.totalPnL >= 0 ? "+" : ""}{summary.totalPnL.toFixed(2)} COTI</span>
+              <span>{summary.totalPnL >= 0 ? "+" : ""}{summary.totalPnL.toFixed(2)} cUSDC</span>
               <span className="text-white/20">·</span>
               <span>{summary.totalPnL >= 0 ? "+" : ""}{summary.totalPnLPercent.toFixed(1)}%</span>
             </div>

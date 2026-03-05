@@ -69,7 +69,7 @@ export default function SellModal({ isOpen, onClose, position }: SellModalProps)
                   </div>
                   <h3 className="text-xl font-bold text-white mb-1.5">Position Sold</h3>
                   <p className="text-sm text-white/30">
-                    {numShares.toFixed(1)} shares for {preview?.cotiReceived.toFixed(2)} COTI
+                    {numShares.toFixed(1)} shares for {preview?.cotiReceived.toFixed(2)} cUSDC
                   </p>
                   <button onClick={resetAndClose} className="w-full mt-8 py-3.5 rounded-xl glass text-white/80 text-sm font-semibold hover:bg-white/[0.08] transition-colors btn-press">
                     Done
@@ -109,7 +109,7 @@ export default function SellModal({ isOpen, onClose, position }: SellModalProps)
                     <div className="mb-5 px-3 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] space-y-2">
                       <div className="flex justify-between text-[12px]">
                         <span className="text-white/30">You receive</span>
-                        <span className="text-white/70 font-semibold">{preview.cotiReceived.toFixed(3)} COTI</span>
+                        <span className="text-white/70 font-semibold">{preview.cotiReceived.toFixed(3)} cUSDC</span>
                       </div>
                       <div className="flex justify-between text-[12px]">
                         <span className="text-white/30">Avg sell price</span>

@@ -6,7 +6,7 @@ export const CONTRACT_ADDRESSES = {
   market: process.env.NEXT_PUBLIC_MARKET_ADDRESS || "",
 };
 
-export const WHISPER_TOKEN_ABI = [
+export const CUSDC_ABI = [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -33,6 +33,16 @@ export const WHISPER_TOKEN_ABI = [
     ],
     name: "mint",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "spender", type: "address" },
+      { name: "value", type: "uint64" },
+    ],
+    name: "approve",
+    outputs: [{ name: "", type: "bool" }],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -73,9 +83,9 @@ export const WHISPER_TOKEN_ABI = [
   },
 ] as const;
 
-export const WHISPER_MARKET_ABI = [
+export const WISPR_MARKET_ABI = [
   {
-    inputs: [],
+    inputs: [{ name: "_token", type: "address" }],
     stateMutability: "nonpayable",
     type: "constructor",
   },
@@ -94,8 +104,8 @@ export const WHISPER_MARKET_ABI = [
       { name: "category", type: "string" },
       { name: "imageUrl", type: "string" },
       { name: "endTime", type: "uint256" },
-      { name: "totalYes", type: "uint256" },
-      { name: "totalNo", type: "uint256" },
+      { name: "totalYes", type: "uint64" },
+      { name: "totalNo", type: "uint64" },
       { name: "totalParticipants", type: "uint256" },
       { name: "resolved", type: "bool" },
       { name: "outcome", type: "bool" },
@@ -107,10 +117,11 @@ export const WHISPER_MARKET_ABI = [
     inputs: [
       { name: "marketId", type: "uint256" },
       { name: "isYes", type: "bool" },
+      { name: "amount", type: "uint64" },
     ],
     name: "bet",
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -126,7 +137,7 @@ export const WHISPER_MARKET_ABI = [
       { name: "", type: "address" },
     ],
     name: "yesBets",
-    outputs: [{ name: "", type: "uint256" }],
+    outputs: [{ name: "", type: "uint64" }],
     stateMutability: "view",
     type: "function",
   },
@@ -136,7 +147,7 @@ export const WHISPER_MARKET_ABI = [
       { name: "", type: "address" },
     ],
     name: "noBets",
-    outputs: [{ name: "", type: "uint256" }],
+    outputs: [{ name: "", type: "uint64" }],
     stateMutability: "view",
     type: "function",
   },
@@ -146,7 +157,7 @@ export const WHISPER_MARKET_ABI = [
       { indexed: true, name: "id", type: "uint256" },
       { indexed: true, name: "bettor", type: "address" },
       { indexed: false, name: "isYes", type: "bool" },
-      { indexed: false, name: "amount", type: "uint256" },
+      { indexed: false, name: "amount", type: "uint64" },
     ],
     name: "BetPlaced",
     type: "event",

@@ -1,45 +1,50 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import {IPrivateERC20} from "@coti-io/coti-contracts/contracts/token/PrivateERC20/IPrivateERC20.sol";
+import "@coti-io/coti-contracts/contracts/utils/mpc/MpcCore.sol";
+
 /**
- * @title WhisperMarket
- * @notice Prediction market contract for Whisper platform
- * @dev Uses native COTI for betting. Simple yes/no markets.
+ * @title WisprMarket
+ * @notice Prediction market using Confidential USDC (cUSDC) for betting
+ * @dev Users approve cUSDC, then bet with cleartext amounts. Payouts use encrypted transfers.
  */
-contract WhisperMarket {
+contract WisprMarket {
     address public owner;
+    IPrivateERC20 public token;
 
     struct Market {
         string question;
         string category;
         string imageUrl;
         uint256 endTime;
-        uint256 totalYes;
-        uint256 totalNo;
+        uint64 totalYes;
+        uint64 totalNo;
         uint256 totalParticipants;
         bool resolved;
-        bool outcome; // true = yes won
+        bool outcome;
         bool exists;
     }
 
     uint256 public marketCount;
     mapping(uint256 => Market) public markets;
-    mapping(uint256 => mapping(address => uint256)) public yesBets;
-    mapping(uint256 => mapping(address => uint256)) public noBets;
+    mapping(uint256 => mapping(address => uint64)) public yesBets;
+    mapping(uint256 => mapping(address => uint64)) public noBets;
     mapping(uint256 => mapping(address => bool)) public hasClaimed;
 
     event MarketCreated(uint256 indexed id, string question, uint256 endTime);
-    event BetPlaced(uint256 indexed id, address indexed bettor, bool isYes, uint256 amount);
+    event BetPlaced(uint256 indexed id, address indexed bettor, bool isYes, uint64 amount);
     event MarketResolved(uint256 indexed id, bool outcome);
-    event WinningsClaimed(uint256 indexed id, address indexed claimer, uint256 amount);
+    event WinningsClaimed(uint256 indexed id, address indexed claimer, uint64 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
         _;
     }
 
-    constructor() {
+    constructor(address _token) {
         owner = msg.sender;
+        token = IPrivateERC20(_token);
     }
 
     function createMarket(
@@ -68,26 +73,37 @@ contract WhisperMarket {
         return id;
     }
 
-    function bet(uint256 marketId, bool isYes) external payable {
+    /**
+     * @notice Place a bet on a market using cUSDC
+     * @param marketId The market to bet on
+     * @param isYes True for YES, false for NO
+     * @param amount Amount in cUSDC (6 decimals). Caller must approve this contract first.
+     */
+    function bet(uint256 marketId, bool isYes, uint64 amount) external {
         Market storage m = markets[marketId];
         require(m.exists, "Market does not exist");
         require(!m.resolved, "Market already resolved");
         require(block.timestamp < m.endTime, "Market has ended");
-        require(msg.value > 0, "Must bet something");
+        require(amount > 0, "Must bet something");
+
+        // Transfer cUSDC from user to this contract
+        gtUint64 gtAmount = MpcCore.setPublic64(amount);
+        gtBool success = token.transferFrom(msg.sender, address(this), gtAmount);
+        require(MpcCore.decrypt(success), "Transfer failed");
 
         if (yesBets[marketId][msg.sender] == 0 && noBets[marketId][msg.sender] == 0) {
             m.totalParticipants++;
         }
 
         if (isYes) {
-            yesBets[marketId][msg.sender] += msg.value;
-            m.totalYes += msg.value;
+            yesBets[marketId][msg.sender] += amount;
+            m.totalYes += amount;
         } else {
-            noBets[marketId][msg.sender] += msg.value;
-            m.totalNo += msg.value;
+            noBets[marketId][msg.sender] += amount;
+            m.totalNo += amount;
         }
 
-        emit BetPlaced(marketId, msg.sender, isYes, msg.value);
+        emit BetPlaced(marketId, msg.sender, isYes, amount);
     }
 
     function resolveMarket(uint256 marketId, bool outcome) external onlyOwner {
@@ -107,9 +123,9 @@ contract WhisperMarket {
         require(m.resolved, "Market not resolved yet");
         require(!hasClaimed[marketId][msg.sender], "Already claimed");
 
-        uint256 userBet;
-        uint256 winningSide;
-        uint256 totalPool = m.totalYes + m.totalNo;
+        uint64 userBet;
+        uint64 winningSide;
+        uint64 totalPool = m.totalYes + m.totalNo;
 
         if (m.outcome) {
             userBet = yesBets[marketId][msg.sender];
@@ -125,10 +141,12 @@ contract WhisperMarket {
         hasClaimed[marketId][msg.sender] = true;
 
         // Proportional payout: (userBet / winningSide) * totalPool
-        uint256 payout = (userBet * totalPool) / winningSide;
+        uint64 payout = uint64((uint128(userBet) * uint128(totalPool)) / uint128(winningSide));
 
-        (bool sent, ) = payable(msg.sender).call{value: payout}("");
-        require(sent, "Transfer failed");
+        // Transfer cUSDC payout from contract to winner
+        gtUint64 gtPayout = MpcCore.setPublic64(payout);
+        gtBool success = token.transfer(msg.sender, gtPayout);
+        require(MpcCore.decrypt(success), "Payout transfer failed");
 
         emit WinningsClaimed(marketId, msg.sender, payout);
     }
@@ -138,8 +156,8 @@ contract WhisperMarket {
         string memory category,
         string memory imageUrl,
         uint256 endTime,
-        uint256 totalYes,
-        uint256 totalNo,
+        uint64 totalYes,
+        uint64 totalNo,
         uint256 totalParticipants,
         bool resolved,
         bool outcome
@@ -158,7 +176,4 @@ contract WhisperMarket {
             m.outcome
         );
     }
-
-    // Allow contract to receive COTI
-    receive() external payable {}
 }
