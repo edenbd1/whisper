@@ -3,13 +3,17 @@ export function WisprIcon({ size = 24, className }: { size?: number; className?:
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
+      viewBox="-2 -2 104 84"
       fill="currentColor"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinejoin="round"
+      style={{ paintOrder: "stroke" }}
       className={className}
     >
-      <polygon points="1,0 20,22 0,40" />
-      <polygon points="50,13 50,56 0,100 0,57" />
-      <polygon points="100,13 100,56 50,100 50,57" />
+      <polygon points="1,0 20,18 0,30" />
+      <polygon points="50,10 50,46 0,80 0,46" />
+      <polygon points="100,10 100,46 50,80 50,46" />
     </svg>
   );
 }
