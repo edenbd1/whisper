@@ -70,38 +70,38 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-[60]"
+            className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[60]"
             onClick={resetAndClose}
           />
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 28, stiffness: 350 }}
+            transition={{ type: "spring", damping: 30, stiffness: 350 }}
             className="fixed bottom-0 left-0 right-0 z-[70] max-w-lg mx-auto"
           >
-            <div className="bg-zinc-950 border-t border-white/[0.06] rounded-t-2xl p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+            <div className="bg-[#0a0a0a] border-t border-white/[0.06] rounded-t-3xl p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
               {/* Handle */}
-              <div className="w-9 h-1 bg-white/10 rounded-full mx-auto mb-6" />
+              <div className="w-10 h-1 bg-white/[0.08] rounded-full mx-auto mb-6" />
 
               {txState === "success" ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-6"
+                  className="text-center py-8"
                 >
-                  <div className="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-5 ring-1 ring-green-500/20">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-1">Bet Placed</h3>
-                  <p className="text-sm text-white/40 mb-4">{numAmount} COTI on {isYes ? "YES" : "NO"}</p>
+                  <h3 className="text-xl font-bold text-white mb-1.5">Bet Placed</h3>
+                  <p className="text-sm text-white/30 mb-5">{numAmount} COTI on <span className={isYes ? "text-green-400" : "text-red-400"}>{isYes ? "YES" : "NO"}</span></p>
                   {txHash && (
                     <a href={getExplorerTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
-                      className="text-green-400/70 text-xs hover:text-green-400 transition-colors underline decoration-green-400/20">
+                      className="text-green-400/60 text-xs hover:text-green-400 transition-colors underline decoration-green-400/20 underline-offset-2">
                       View on CotiScan
                     </a>
                   )}
-                  <button onClick={resetAndClose} className="w-full mt-6 py-3 rounded-xl bg-white/[0.06] text-white/80 text-sm font-semibold hover:bg-white/[0.1] transition-colors">
+                  <button onClick={resetAndClose} className="w-full mt-8 py-3.5 rounded-xl glass text-white/80 text-sm font-semibold hover:bg-white/[0.08] transition-colors btn-press">
                     Done
                   </button>
                 </motion.div>
@@ -109,38 +109,44 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                 <>
                   {/* Side indicator */}
                   <div className="flex items-center gap-3 mb-5">
-                    <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
-                      isYes ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
+                    <span className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                      isYes ? "bg-green-500/10 text-green-400 ring-1 ring-green-500/10" : "bg-red-500/10 text-red-400 ring-1 ring-red-500/10"
                     }`}>
                       {isYes ? "YES" : "NO"}
                     </span>
-                    <span className="text-white/30 text-xs">Confidential Bet</span>
+                    <div className="flex items-center gap-1.5 text-white/20">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                      <span className="text-[11px] font-medium">Confidential</span>
+                    </div>
                   </div>
 
-                  <p className="text-white font-semibold text-base mb-5 leading-snug">{question}</p>
+                  <p className="text-white font-bold text-[16px] mb-6 leading-snug tracking-[-0.01em]">{question}</p>
 
-                  {/* Amount */}
+                  {/* Amount input */}
                   <div className="relative mb-3">
                     <input
                       type="number"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="0"
-                      className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3.5 text-xl font-bold text-white text-center focus:outline-none focus:border-white/[0.12] transition-colors"
+                      className="w-full glass rounded-xl px-4 py-4 text-2xl font-bold text-white text-center focus:outline-none focus:ring-1 focus:ring-white/10 transition-all"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 text-sm font-semibold">COTI</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 text-sm font-semibold">COTI</span>
                   </div>
 
                   {/* Presets */}
-                  <div className="flex gap-2 mb-5">
+                  <div className="flex gap-2 mb-6">
                     {presetAmounts.map((p) => (
                       <button
                         key={p}
                         onClick={() => setAmount(p.toString())}
-                        className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${
+                        className={`flex-1 py-2.5 rounded-xl text-xs font-semibold transition-all btn-press ${
                           amount === p.toString()
-                            ? "bg-white/[0.1] text-white border border-white/[0.1]"
-                            : "bg-white/[0.03] text-white/30 border border-transparent hover:bg-white/[0.06] hover:text-white/50"
+                            ? "glass text-white ring-1 ring-white/10"
+                            : "bg-white/[0.02] text-white/25 hover:bg-white/[0.04] hover:text-white/40"
                         }`}
                       >
                         {p}
@@ -149,14 +155,16 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   </div>
 
                   {/* Privacy note */}
-                  <div className="flex items-center gap-2 mb-5 px-3 py-2 rounded-lg bg-green-500/[0.04] border border-green-500/[0.06]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                    <span className="text-[11px] text-white/25">Encrypted and confidential on COTI network</span>
+                  <div className="flex items-center gap-2.5 mb-6 px-3 py-2.5 rounded-xl bg-green-500/[0.03] border border-green-500/[0.06]">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 opacity-60">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span className="text-[11px] text-white/20 leading-relaxed">Encrypted on COTI network. Your bet amount stays confidential.</span>
                   </div>
 
                   {/* Error */}
                   {txState === "error" && error && (
-                    <div className="mb-4 px-3 py-2 rounded-lg bg-red-500/[0.06] border border-red-500/[0.08]">
+                    <div className="mb-4 px-3 py-2.5 rounded-xl bg-red-500/[0.04] border border-red-500/[0.08]">
                       <p className="text-red-400 text-xs">{error}</p>
                     </div>
                   )}
@@ -165,19 +173,34 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   <button
                     onClick={handleBet}
                     disabled={numAmount <= 0 || txState === "pending"}
-                    className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-[0.98] ${
+                    className={`w-full py-4 rounded-xl text-sm font-bold transition-all duration-300 btn-press ${
                       txState === "pending"
-                        ? "bg-white/[0.06] text-white/30 cursor-wait"
+                        ? "glass text-white/30 cursor-wait"
                         : numAmount <= 0
-                        ? "bg-white/[0.04] text-white/15 cursor-not-allowed"
+                        ? "bg-white/[0.02] text-white/10 cursor-not-allowed"
                         : !isConnected
-                        ? "bg-white/[0.08] text-white hover:bg-white/[0.12]"
+                        ? "glass text-white hover:bg-white/[0.08]"
                         : isYes
                         ? "bg-green-500 text-black glow-green hover:bg-green-400"
                         : "bg-red-500 text-white glow-red hover:bg-red-400"
                     }`}
                   >
-                    {txState === "pending" ? "Confirming..." : !isConnected ? "Connect Wallet" : numAmount <= 0 ? "Enter amount" : `Bet ${numAmount} COTI on ${isYes ? "YES" : "NO"}`}
+                    {txState === "pending" ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <motion.span
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="w-4 h-4 border-2 border-white/20 border-t-white/60 rounded-full inline-block"
+                        />
+                        Confirming...
+                      </span>
+                    ) : !isConnected ? (
+                      "Connect Wallet"
+                    ) : numAmount <= 0 ? (
+                      "Enter amount"
+                    ) : (
+                      `Bet ${numAmount} COTI on ${isYes ? "YES" : "NO"}`
+                    )}
                   </button>
                 </>
               )}

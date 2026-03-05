@@ -7,7 +7,7 @@ import Sidebar from "@/components/Sidebar";
 
 export default function Home() {
   return (
-    <main className="h-[100dvh] w-full bg-black overflow-hidden">
+    <main className="h-[100dvh] w-full bg-[#050505] overflow-hidden">
       <Sidebar />
       <Header />
       <BottomNav />

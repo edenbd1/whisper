@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Bet, BetSide } from "@/types";
 import { formatNumber, daysUntil } from "@/lib/mockData";
@@ -16,16 +16,28 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
   const [selectedSide, setSelectedSide] = useState<BetSide>("yes");
   const [hasVoted, setHasVoted] = useState(false);
   const [votedSide, setVotedSide] = useState<BetSide | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const noPercentage = 100 - bet.yesPercentage;
   const days = daysUntil(bet.endsAt);
+  const yesPrice = bet.yesPercentage;
+  const noPrice = noPercentage;
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    cardRef.current.style.setProperty("--mouse-x", `${x}%`);
+    cardRef.current.style.setProperty("--mouse-y", `${y}%`);
+  };
 
   const handleBet = (side: BetSide) => {
     setSelectedSide(side);
     setModalOpen(true);
   };
 
-  const handleConfirm = (amount: number) => {
+  const handleConfirm = () => {
     setHasVoted(true);
     setVotedSide(selectedSide);
     setModalOpen(false);
@@ -33,133 +45,152 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
 
   return (
     <>
-      <div className="relative w-full h-full overflow-hidden bg-black">
-        {/* Background image - full bleed */}
-        <img
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        className="relative w-full h-full overflow-hidden bg-[#050505]"
+      >
+        {/* Background image */}
+        <motion.img
           src={bet.image}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover scale-105"
+          className="absolute inset-0 w-full h-full object-cover"
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={isActive ? { scale: 1.02, opacity: 1 } : { scale: 1.1, opacity: 0.6 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           loading="lazy"
         />
 
-        {/* Overlay layers */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/50" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent h-[200px]" />
-
-        {/* Noise texture */}
+        {/* Overlays */}
+        <div className="card-overlay absolute inset-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
+        <div className="vignette absolute inset-0" />
         <div className="absolute inset-0 noise" />
+        <div className="spotlight absolute inset-0 pointer-events-none hidden lg:block" />
 
-        {/* ---- Content ---- */}
-        <div className="relative h-full flex flex-col justify-between p-5 pb-6 z-10">
-
-          {/* Top: Badges */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0 }}
-            transition={{ delay: 0.15, duration: 0.3 }}
-            className="flex items-center gap-2 flex-wrap"
-          >
-            {bet.trending && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.08] backdrop-blur-xl text-[11px] font-semibold text-white border border-white/[0.06]">
-                <span className="text-[10px] text-green-400">&#9650;</span>
-                #{bet.trending} Trending
-              </span>
-            )}
-            <span className="px-3 py-1 rounded-full bg-white/[0.08] backdrop-blur-xl text-[11px] font-medium text-white/60 border border-white/[0.06]">
-              {bet.category}
+        {/* Top badges */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: -16 }}
+          transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute top-16 lg:top-5 left-5 right-5 flex items-center gap-2 flex-wrap z-20"
+        >
+          <span className="glass px-3 py-1.5 rounded-full text-[11px] font-semibold text-white/70">
+            {bet.category}
+          </span>
+          {bet.trending && (
+            <span className="glass px-3 py-1.5 rounded-full text-[11px] font-bold text-white/80">
+              <span className="text-green-400 mr-1">#{bet.trending}</span>
+              Trending
             </span>
-            {bet.isLive && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 backdrop-blur-xl text-[11px] font-bold text-red-400 border border-red-500/10">
-                <span className="w-1.5 h-1.5 bg-red-400 rounded-full pulse-live" />
-                LIVE
+          )}
+          {bet.isLive && (
+            <span className="glass px-3 py-1.5 rounded-full text-[11px] font-bold text-red-400 flex items-center gap-1.5">
+              <span className="relative flex h-2 w-2">
+                <span className="pulse-live absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400" />
               </span>
-            )}
-          </motion.div>
+              LIVE
+            </span>
+          )}
+        </motion.div>
 
-          {/* Spacer */}
-          <div className="flex-1" />
+        {/* Bottom content - absolute positioned above bottom nav */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ delay: 0.05, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute bottom-[100px] lg:bottom-6 left-5 right-5 lg:right-5 z-10 space-y-3"
+        >
+          {/* Privacy badge */}
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-green-500/[0.08] border border-green-500/[0.1]">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <span className="text-[10px] font-bold text-green-400/80 tracking-[0.08em] uppercase">
+              Confidential
+            </span>
+          </div>
 
-          {/* Bottom: Question + stats + buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ delay: 0.05, duration: 0.4 }}
-            className="space-y-4 max-w-[380px]"
-          >
-            {/* Confidential badge */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-500/10 border border-green-500/10">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-              <span className="text-[10px] font-semibold text-green-400 tracking-wider uppercase">
-                Confidential Market
-              </span>
-            </div>
+          {/* Question */}
+          <h2 className="text-[22px] sm:text-[26px] font-black text-white leading-[1.15] tracking-[-0.03em] max-w-[380px]">
+            {bet.question}
+          </h2>
 
-            {/* Question */}
-            <h2 className="text-[22px] sm:text-[26px] font-extrabold text-white leading-[1.2] tracking-[-0.02em]">
-              {bet.question}
-            </h2>
-
-            {/* Stats */}
-            <div className="flex items-center gap-4 text-[12px] text-white/40 font-medium">
-              <span className="flex items-center gap-1">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                {days}d left
-              </span>
-              <span className="flex items-center gap-1">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
-                {formatNumber(bet.participants)}
-              </span>
-              <span className="flex items-center gap-1 text-green-400/70">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
-                {formatNumber(bet.poolSize)} COTI
-              </span>
-            </div>
-
-            {/* Progress bar with glow */}
-            <div className="relative">
-              <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full progress-glow"
-                  initial={{ width: 0 }}
-                  animate={isActive ? { width: `${bet.yesPercentage}%` } : { width: 0 }}
-                  transition={{ delay: 0.3, duration: 1, ease: "easeOut" }}
-                />
+          {/* Odds + Stats row */}
+          <div className="flex items-end justify-between">
+            <div className="flex items-end gap-5">
+              <div>
+                <span className="text-[10px] font-semibold text-green-400/50 uppercase tracking-wider">Yes</span>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-[28px] font-black text-green-400 leading-none">{yesPrice}</span>
+                  <span className="text-[12px] font-bold text-green-400/40">¢</span>
+                </div>
               </div>
-              {/* Percentage labels */}
-              <div className="flex justify-between mt-1.5 text-[11px] font-semibold">
-                <span className="text-green-400">{bet.yesPercentage}% Yes</span>
-                <span className="text-red-400">{noPercentage}% No</span>
+              <div>
+                <span className="text-[10px] font-semibold text-red-400/50 uppercase tracking-wider">No</span>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-[28px] font-black text-red-400 leading-none">{noPrice}</span>
+                  <span className="text-[12px] font-bold text-red-400/40">¢</span>
+                </div>
               </div>
             </div>
-
-            {/* YES / NO buttons */}
-            <div className="flex gap-3 pt-1">
-              <button
-                onClick={() => handleBet("yes")}
-                className={`flex-1 relative py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 active:scale-[0.97] ${
-                  hasVoted && votedSide === "yes"
-                    ? "bg-green-500 text-black glow-green ring-2 ring-green-400/30"
-                    : "bg-green-500 text-black glow-green hover:bg-green-400"
-                }`}
-              >
-                <span className="relative z-10">YES &middot; {bet.yesPercentage}%</span>
-              </button>
-              <button
-                onClick={() => handleBet("no")}
-                className={`flex-1 relative py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 active:scale-[0.97] ${
-                  hasVoted && votedSide === "no"
-                    ? "bg-red-500 text-white glow-red ring-2 ring-red-400/30"
-                    : "bg-red-500 text-white glow-red hover:bg-red-400"
-                }`}
-              >
-                <span className="relative z-10">NO &middot; {noPercentage}%</span>
-              </button>
+            <div className="text-right text-[11px] text-white/30 font-medium space-y-0.5 pb-1">
+              <div>{formatNumber(bet.poolSize)} vol</div>
+              <div>{formatNumber(bet.participants)} traders · {days}d</div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+
+          {/* Odds bar */}
+          <div className="odds-bar">
+            <motion.div
+              className="odds-bar-yes progress-glow"
+              initial={{ width: 0 }}
+              animate={isActive ? { width: `${bet.yesPercentage}%` } : { width: 0 }}
+              transition={{ delay: 0.3, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => handleBet("yes")}
+              className={`btn-press flex-1 py-3 rounded-xl font-bold text-[14px] transition-all duration-300 ${
+                hasVoted && votedSide === "yes"
+                  ? "bg-green-500 text-black glow-green ring-2 ring-green-400/30"
+                  : "bg-green-500/90 text-black hover:bg-green-400 glow-green"
+              }`}
+            >
+              <span className="flex items-center justify-center gap-2">
+                Yes
+                <span className="text-black/50 text-[12px] font-semibold">{yesPrice}¢</span>
+              </span>
+            </button>
+            <button
+              onClick={() => handleBet("no")}
+              className={`btn-press flex-1 py-3 rounded-xl font-bold text-[14px] transition-all duration-300 ${
+                hasVoted && votedSide === "no"
+                  ? "bg-red-500 text-white glow-red ring-2 ring-red-400/30"
+                  : "bg-red-500/90 text-white hover:bg-red-400 glow-red"
+              }`}
+            >
+              <span className="flex items-center justify-center gap-2">
+                No
+                <span className="text-white/50 text-[12px] font-semibold">{noPrice}¢</span>
+              </span>
+            </button>
+          </div>
+
+          {/* Powered by COTI */}
+          <div className="flex items-center justify-center gap-1.5 pt-1">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="2" strokeLinecap="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <span className="text-[9px] text-white/15 font-medium tracking-wider uppercase">Powered by COTI</span>
+          </div>
+        </motion.div>
       </div>
 
       <BetModal

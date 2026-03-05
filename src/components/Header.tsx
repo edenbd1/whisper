@@ -9,19 +9,18 @@ export default function Header() {
 
   return (
     <div className="lg:hidden fixed top-0 left-0 right-0 z-50">
-      <div className="bg-gradient-to-b from-black/80 to-transparent">
-        <div className="flex items-center justify-between px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-6">
+      <div className="bg-gradient-to-b from-black/90 via-black/50 to-transparent">
+        <div className="flex items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-8">
           {/* Logo */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
-              <path d="M8 12l2 2 4-4" stroke="#00e676" />
-            </svg>
-            <span className="text-base font-bold tracking-tight text-white">whisper</span>
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
+              <span className="text-black font-black text-[10px]">W</span>
+            </div>
+            <span className="text-[15px] font-bold tracking-[-0.02em] text-white">whisper</span>
           </motion.div>
 
           {/* Wallet */}
@@ -31,14 +30,14 @@ export default function Header() {
                 <button
                   onClick={onboard}
                   disabled={isLoading}
-                  className="px-3 py-1.5 rounded-full bg-white/10 text-[11px] font-semibold text-green-400"
+                  className="glass px-3 py-1.5 rounded-full text-[11px] font-semibold text-green-400"
                 >
                   {isLoading ? "..." : "Onboard"}
                 </button>
               )}
               <button
                 onClick={disconnect}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-[11px] font-medium text-white/80"
+                className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-white/80"
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${isOnboarded ? "bg-green-400" : "bg-yellow-400"}`} />
                 {shortenAddress(address)}
@@ -48,9 +47,9 @@ export default function Header() {
             <button
               onClick={connect}
               disabled={isLoading}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-[11px] font-semibold text-white/80"
+              className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-white/80"
             >
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
+              <span className="w-1.5 h-1.5 bg-green-400 rounded-full pulse-soft" />
               {isLoading ? "..." : "Connect"}
             </button>
           )}
