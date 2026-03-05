@@ -6,16 +6,11 @@ import { mockBets } from "@/lib/mockData";
 import BetCard from "./BetCard";
 import SideActions from "./SideActions";
 
-function NavArrow({ direction, onClick, disabled }: { direction: "up" | "down"; onClick: () => void; disabled?: boolean }) {
+function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      disabled={disabled}
-      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 btn-press ${
-        disabled
-          ? "bg-white/[0.02] text-white/10 cursor-default"
-          : "glass text-white/50 hover:text-white hover:bg-white/[0.08]"
-      }`}
+      className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 btn-press glass text-white/50 hover:text-white hover:bg-white/[0.08]"
     >
       <svg
         width="16"
@@ -37,12 +32,19 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
   const [activeIndex, setActiveIndex] = useState(startIndex);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const activeIndexRef = useRef(activeIndex);
+
+  // Keep ref in sync
+  useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   const setCardRef = useCallback((id: string, node: HTMLDivElement | null) => {
     if (node) cardRefs.current.set(id, node);
     else cardRefs.current.delete(id);
   }, []);
 
+  // Intersection observer to track current card
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -59,20 +61,82 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     return () => observer.disconnect();
   }, []);
 
+  // Scroll to a specific index with wrap-around support
   const scrollTo = useCallback((index: number) => {
-    const clamped = Math.max(0, Math.min(index, mockBets.length - 1));
-    const node = cardRefs.current.get(mockBets[clamped].id);
-    node?.scrollIntoView({ behavior: "smooth" });
+    const len = mockBets.length;
+    const isWrap = index < 0 || index >= len;
+    const target = ((index % len) + len) % len;
+    const node = cardRefs.current.get(mockBets[target].id);
+    node?.scrollIntoView({ behavior: isWrap ? "instant" : "smooth" });
   }, []);
 
+  // Keyboard navigation with wrap-around
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); scrollTo(activeIndex + 1); }
-      else if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); scrollTo(activeIndex - 1); }
+      if (e.key === "ArrowDown" || e.key === "j") {
+        e.preventDefault();
+        scrollTo(activeIndexRef.current + 1);
+      } else if (e.key === "ArrowUp" || e.key === "k") {
+        e.preventDefault();
+        scrollTo(activeIndexRef.current - 1);
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeIndex, scrollTo]);
+  }, [scrollTo]);
+
+  // Mouse wheel wrap-around at boundaries
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      if (e.deltaY > 0 && container.scrollTop >= maxScroll - 5) {
+        // At bottom, scrolling down → wrap to first
+        const node = cardRefs.current.get(mockBets[0].id);
+        node?.scrollIntoView({ behavior: "instant" });
+      } else if (e.deltaY < 0 && container.scrollTop <= 5) {
+        // At top, scrolling up → wrap to last
+        const node = cardRefs.current.get(mockBets[mockBets.length - 1].id);
+        node?.scrollIntoView({ behavior: "instant" });
+      }
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: true });
+    return () => container.removeEventListener("wheel", handleWheel);
+  }, []);
+
+  // Touch swipe wrap-around at boundaries
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let startY = 0;
+    const onStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+    };
+    const onEnd = (e: TouchEvent) => {
+      const diff = startY - e.changedTouches[0].clientY;
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      if (diff > 50 && container.scrollTop >= maxScroll - 5) {
+        // Swiped up at bottom → wrap to first
+        const node = cardRefs.current.get(mockBets[0].id);
+        node?.scrollIntoView({ behavior: "instant" });
+      } else if (diff < -50 && container.scrollTop <= 5) {
+        // Swiped down at top → wrap to last
+        const node = cardRefs.current.get(mockBets[mockBets.length - 1].id);
+        node?.scrollIntoView({ behavior: "instant" });
+      }
+    };
+
+    container.addEventListener("touchstart", onStart, { passive: true });
+    container.addEventListener("touchend", onEnd, { passive: true });
+    return () => {
+      container.removeEventListener("touchstart", onStart);
+      container.removeEventListener("touchend", onEnd);
+    };
+  }, []);
 
   const activeBet = mockBets[activeIndex];
 
@@ -139,8 +203,8 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         </AnimatePresence>
 
         <div className="flex flex-col gap-1.5 mt-4">
-          <NavArrow direction="up" onClick={() => scrollTo(activeIndex - 1)} disabled={activeIndex === 0} />
-          <NavArrow direction="down" onClick={() => scrollTo(activeIndex + 1)} disabled={activeIndex === mockBets.length - 1} />
+          <NavArrow direction="up" onClick={() => scrollTo(activeIndex - 1)} />
+          <NavArrow direction="down" onClick={() => scrollTo(activeIndex + 1)} />
         </div>
       </div>
     </div>
