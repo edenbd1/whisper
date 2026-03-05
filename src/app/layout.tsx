@@ -11,10 +11,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Whisper - Confidential Prediction Markets",
+  title: "Wispr - Confidential Prediction Markets",
   description: "Bet on real-world events with full privacy. Powered by COTI confidential tokens.",
   openGraph: {
-    title: "Whisper - Confidential Prediction Markets",
+    title: "Wispr - Confidential Prediction Markets",
     description: "Bet on real-world events with full privacy. Powered by COTI.",
     type: "website",
   },
@@ -25,7 +25,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#050505",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -35,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-[#050505] text-white`}>
+      <body className={`${inter.variable} font-sans antialiased bg-black text-white`}>
         <WalletProvider>
           <MarketProvider>
             {children}

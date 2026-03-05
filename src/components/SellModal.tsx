@@ -64,8 +64,8 @@ export default function SellModal({ isOpen, onClose, position }: SellModalProps)
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center py-8"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-5 ring-1 ring-green-500/20">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <div className="w-16 h-16 rounded-2xl bg-[#005EF8]/10 flex items-center justify-center mx-auto mb-5 ring-1 ring-[#005EF8]/20">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </div>
                   <h3 className="text-xl font-bold text-white mb-1.5">Position Sold</h3>
                   <p className="text-sm text-white/30">
@@ -99,7 +99,7 @@ export default function SellModal({ isOpen, onClose, position }: SellModalProps)
                     />
                     <button
                       onClick={() => setSharesToSell(position.shares.toFixed(1))}
-                      className="text-[11px] text-green-400/60 hover:text-green-400 font-semibold mt-1.5 transition-colors"
+                      className="text-[11px] text-[#005EF8]/60 hover:text-[#005EF8] font-semibold mt-1.5 transition-colors"
                     >
                       Max: {position.shares.toFixed(1)} shares
                     </button>

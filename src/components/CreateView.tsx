@@ -23,8 +23,8 @@ export default function CreateView() {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center space-y-4 max-w-xs">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400/10 to-emerald-600/10 flex items-center justify-center mx-auto ring-1 ring-green-500/10">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="1.5" strokeLinecap="round" className="opacity-60">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#005EF8]/10 to-[#005EF8]/10 flex items-center justify-center mx-auto ring-1 ring-[#005EF8]/10">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="1.5" strokeLinecap="round" className="opacity-60">
               <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
             </svg>
           </div>
@@ -48,8 +48,8 @@ export default function CreateView() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center space-y-4 max-w-xs"
         >
-          <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto ring-1 ring-green-500/20">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+          <div className="w-16 h-16 rounded-2xl bg-[#005EF8]/10 flex items-center justify-center mx-auto ring-1 ring-[#005EF8]/20">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
           </div>
           <h3 className="text-xl font-bold text-white">Market Created</h3>
           <p className="text-sm text-white/30">{question}</p>
@@ -82,7 +82,7 @@ export default function CreateView() {
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Will Bitcoin hit $200K before July 2026?"
               rows={3}
-              className="w-full glass rounded-xl px-4 py-3 text-sm font-medium text-white placeholder:text-white/15 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-all resize-none"
+              className="w-full glass rounded-xl px-4 py-3 text-sm font-medium text-white placeholder:text-white/15 focus:outline-none focus:ring-1 focus:ring-[#005EF8]/20 transition-all resize-none"
             />
             <p className="text-[10px] text-white/15 mt-1">{question.length}/200 characters</p>
           </div>
@@ -99,7 +99,7 @@ export default function CreateView() {
                   onClick={() => setCategory(cat)}
                   className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all btn-press ${
                     category === cat
-                      ? "bg-green-500/10 text-green-400 ring-1 ring-green-500/10"
+                      ? "bg-[#005EF8]/10 text-[#005EF8] ring-1 ring-[#005EF8]/10"
                       : "glass text-white/40 hover:text-white/60"
                   }`}
                 >
@@ -119,7 +119,7 @@ export default function CreateView() {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               min={new Date().toISOString().split("T")[0]}
-              className="w-full glass rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-all [color-scheme:dark]"
+              className="w-full glass rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:ring-1 focus:ring-[#005EF8]/20 transition-all [color-scheme:dark]"
             />
           </div>
 
@@ -140,8 +140,8 @@ export default function CreateView() {
           </div>
 
           {/* Privacy badge */}
-          <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-green-500/[0.03] border border-green-500/[0.06]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 opacity-60">
+          <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#005EF8]/[0.03] border border-[#005EF8]/[0.06]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 opacity-60">
               <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
             <span className="text-[11px] text-white/20 leading-relaxed">Markets are deployed on COTI with confidential betting.</span>
@@ -153,7 +153,7 @@ export default function CreateView() {
             disabled={!isValid}
             className={`w-full py-4 rounded-xl text-sm font-bold transition-all duration-300 btn-press ${
               isValid
-                ? "bg-green-500 text-black glow-green hover:bg-green-400"
+                ? "bg-[#005EF8] text-white glow-accent hover:bg-[#3B82F6]"
                 : "bg-white/[0.03] text-white/10 cursor-not-allowed"
             }`}
           >

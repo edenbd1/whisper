@@ -144,15 +144,9 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     <div className="flex items-center justify-center h-full gap-6">
       {/* Card column */}
       <div className="relative h-full w-full lg:w-[min(420px,calc(100vh*9/16))] lg:h-[calc(100vh-48px)] lg:my-6">
-        {/* Desktop: animated gradient border */}
-        <div className="hidden lg:block absolute -inset-[1px] rounded-2xl gradient-border z-0" />
-
-        {/* Desktop: outer glow */}
-        <div className="hidden lg:block absolute -inset-2 rounded-3xl bg-green-500/[0.02] blur-xl z-0" />
-
         <div
           ref={containerRef}
-          className="feed-container relative h-full lg:rounded-2xl lg:overflow-hidden z-10 bg-[#050505]"
+          className="feed-container relative h-full lg:rounded-2xl lg:overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]"
         >
           {mockBets.map((bet, index) => (
             <div key={bet.id} ref={(node) => setCardRef(bet.id, node)} className="bet-card">

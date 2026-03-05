@@ -50,7 +50,7 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
-        className="relative w-full h-full overflow-hidden bg-[#050505]"
+        className="relative w-full h-full overflow-hidden bg-black"
       >
         {/* Background image */}
         <motion.img
@@ -82,7 +82,7 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
           </span>
           {bet.trending && (
             <span className="glass px-3 py-1.5 rounded-full text-[11px] font-bold text-white/80">
-              <span className="text-green-400 mr-1">#{bet.trending}</span>
+              <span className="text-[#005EF8] mr-1">#{bet.trending}</span>
               Trending
             </span>
           )}
@@ -105,12 +105,12 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
           className="absolute bottom-[100px] lg:bottom-6 left-5 right-5 lg:right-5 z-10 space-y-3"
         >
           {/* Privacy badge */}
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-green-500/[0.08] border border-green-500/[0.1]">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#005EF8]/[0.08] border border-[#005EF8]/[0.1]">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-            <span className="text-[10px] font-bold text-green-400/80 tracking-[0.08em] uppercase">
+            <span className="text-[10px] font-bold text-[#005EF8]/80 tracking-[0.08em] uppercase">
               Confidential
             </span>
           </div>

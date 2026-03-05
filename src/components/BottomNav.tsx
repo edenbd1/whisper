@@ -27,8 +27,8 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
       appTab: "create",
       label: "",
       icon: () => (
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/20">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round">
+        <div className="w-9 h-9 rounded-xl bg-[#005EF8] flex items-center justify-center shadow-lg shadow-[#005EF8]/20">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         </div>

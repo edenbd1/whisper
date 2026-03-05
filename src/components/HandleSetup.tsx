@@ -35,7 +35,7 @@ export default function HandleSetup({ isOpen, onSubmit, onSkip }: HandleSetupPro
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-[#050505]/95 backdrop-blur-2xl z-[80]"
+            className="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[80]"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -55,27 +55,27 @@ export default function HandleSetup({ isOpen, onSubmit, onSkip }: HandleSetupPro
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                    className="w-20 h-20 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-6 ring-1 ring-green-500/20"
+                    className="w-20 h-20 rounded-2xl bg-[#005EF8]/10 flex items-center justify-center mx-auto mb-6 ring-1 ring-[#005EF8]/20"
                   >
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </motion.div>
                   <h2 className="text-2xl font-black text-white mb-2">Welcome!</h2>
                   <p className="text-lg text-white/40">
-                    <span className="text-white font-bold">{handle}</span><span className="text-white/20">.whisper</span>
+                    <span className="text-white font-bold">{handle}</span><span className="text-white/20">.wispr</span>
                   </p>
                 </motion.div>
               ) : (
                 <>
                   {/* Logo */}
                   <div className="flex items-center justify-center gap-2 mb-10">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-                      <span className="text-black font-black text-sm">W</span>
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#005EF8] to-[#3B82F6] flex items-center justify-center">
+                      <span className="text-white font-black text-sm">W</span>
                     </div>
-                    <span className="text-lg font-bold text-gradient">whisper</span>
+                    <span className="text-lg font-bold text-gradient">Wispr</span>
                   </div>
 
                   <h2 className="text-2xl font-black text-white text-center mb-2">Choose your handle</h2>
-                  <p className="text-sm text-white/30 text-center mb-8">This is your identity on Whisper</p>
+                  <p className="text-sm text-white/30 text-center mb-8">This is your identity on Wispr</p>
 
                   {/* Input */}
                   <div className="relative mb-4">
@@ -89,9 +89,9 @@ export default function HandleSetup({ isOpen, onSubmit, onSkip }: HandleSetupPro
                       placeholder="username"
                       maxLength={20}
                       autoFocus
-                      className="w-full glass rounded-xl px-4 py-4 text-lg font-bold text-white focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-all pr-24"
+                      className="w-full glass rounded-xl px-4 py-4 text-lg font-bold text-white focus:outline-none focus:ring-1 focus:ring-[#005EF8]/20 transition-all pr-24"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 text-sm font-semibold">.whisper</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 text-sm font-semibold">.wispr</span>
                   </div>
 
                   {error && (
@@ -99,7 +99,7 @@ export default function HandleSetup({ isOpen, onSubmit, onSkip }: HandleSetupPro
                   )}
 
                   {handle && (
-                    <div className={`flex items-center gap-2 mb-6 text-[12px] ${isValid ? "text-green-400/60" : "text-white/20"}`}>
+                    <div className={`flex items-center gap-2 mb-6 text-[12px] ${isValid ? "text-[#005EF8]/60" : "text-white/20"}`}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                         {isValid ? (
                           <polyline points="20 6 9 17 4 12" />
@@ -107,7 +107,7 @@ export default function HandleSetup({ isOpen, onSubmit, onSkip }: HandleSetupPro
                           <><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></>
                         )}
                       </svg>
-                      <span>{isValid ? `${handle}.whisper is available` : "3-20 chars, lowercase, numbers, underscores"}</span>
+                      <span>{isValid ? `${handle}.wispr is available` : "3-20 chars, lowercase, numbers, underscores"}</span>
                     </div>
                   )}
 
@@ -116,7 +116,7 @@ export default function HandleSetup({ isOpen, onSubmit, onSkip }: HandleSetupPro
                     disabled={!isValid}
                     className={`w-full py-4 rounded-xl text-sm font-bold transition-all duration-300 btn-press mb-3 ${
                       isValid
-                        ? "bg-green-500 text-black glow-green hover:bg-green-400"
+                        ? "bg-[#005EF8] text-white glow-accent hover:bg-[#3B82F6]"
                         : "bg-white/[0.03] text-white/10 cursor-not-allowed"
                     }`}
                   >

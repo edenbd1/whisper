@@ -65,7 +65,7 @@ export default function Home() {
   };
 
   return (
-    <main className="h-[100dvh] w-full bg-[#050505] overflow-hidden flex">
+    <main className="h-[100dvh] w-full bg-black overflow-hidden flex">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} handle={handle} />
       <Header handle={handle} />
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

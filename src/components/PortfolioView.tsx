@@ -71,7 +71,7 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
           <div>
             {handle ? (
               <>
-                <h2 className="text-lg font-bold text-white">{handle}<span className="text-white/20">.whisper</span></h2>
+                <h2 className="text-lg font-bold text-white">{handle}<span className="text-white/20">.wispr</span></h2>
                 <p className="text-xs text-white/30">{address ? shortenAddress(address) : ""}</p>
               </>
             ) : (

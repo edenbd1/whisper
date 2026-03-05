@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
+import { WisprIcon, WisprWordmark } from "./WisprLogo";
 import type { AppTab } from "@/app/page";
 
 type NavItem = { id: AppTab; label: string; icon: string };
@@ -56,43 +57,30 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
       className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[68px] xl:w-[220px] flex-col z-50 overflow-visible"
     >
       {/* Base */}
-      <div className="absolute inset-0 bg-[#080808]" />
-
-      {/* Ambient green wash at top */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-green-500/[0.02] to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-black" />
 
       {/* Cursor spotlight */}
       <div
         className="absolute inset-0 pointer-events-none transition-opacity duration-500"
         style={{
           opacity: isHovering ? 1 : 0,
-          background: `radial-gradient(250px circle at 50% ${mouseY}px, rgba(0,230,118,0.04), transparent 70%)`,
+          background: `radial-gradient(250px circle at 50% ${mouseY}px, rgba(0,94,248,0.04), transparent 70%)`,
         }}
       />
 
-      {/* Right edge glow line */}
+      {/* Right edge glow */}
       <div className="absolute right-0 top-0 bottom-0 w-px overflow-hidden">
         <div className="sidebar-edge-line absolute inset-0" />
       </div>
 
-      {/* Noise */}
-      <div className="absolute inset-0 noise pointer-events-none" />
-
       {/* ── Logo ── */}
       <div className="relative flex items-center gap-3 px-4 xl:px-5 pt-7 pb-9">
         <div className="relative group cursor-pointer">
-          <div className="absolute -inset-2 rounded-2xl bg-green-500/15 blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative w-9 h-9 rounded-[11px] bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-green-500/25">
-            <span className="text-black font-black text-sm tracking-tight">W</span>
-          </div>
+          <div className="absolute -inset-2 rounded-2xl bg-[#005EF8]/15 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+          <WisprIcon size={32} className="relative text-[#005EF8] drop-shadow-[0_0_8px_rgba(0,94,248,0.3)]" />
         </div>
         <div className="hidden xl:flex flex-col">
-          <span className="text-[16px] font-bold tracking-[-0.04em] text-gradient">
-            whisper
-          </span>
-          <span className="text-[9px] font-medium text-white/20 tracking-widest uppercase">
-            COTI Network
-          </span>
+          <WisprWordmark className="text-gradient" />
         </div>
       </div>
 
@@ -113,12 +101,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
                 {isActive && (
                   <motion.div
                     layoutId="sidebar-active-bg"
-                    className="absolute inset-0 rounded-xl"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(0,230,118,0.1) 0%, rgba(0,200,83,0.04) 100%)",
-                      border: "1px solid rgba(0,230,118,0.12)",
-                      boxShadow: "0 0 20px rgba(0,230,118,0.05), inset 0 1px 0 rgba(255,255,255,0.03)",
-                    }}
+                    className="absolute inset-0 rounded-xl bg-white/[0.06] border border-white/[0.06]"
                     transition={{ type: "spring", stiffness: 350, damping: 28 }}
                   />
                 )}
@@ -128,13 +111,14 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
                   <div className="absolute inset-0 rounded-xl bg-transparent group-hover:bg-white/[0.04] transition-colors duration-200" />
                 )}
 
-                {/* Glowing left indicator */}
+                {/* Active left indicator */}
                 {isActive && (
                   <motion.div
                     layoutId="sidebar-glow-bar"
-                    className="absolute -left-2 xl:-left-2.5 top-1/2 -translate-y-1/2 w-[3px] h-7 rounded-r-full bg-gradient-to-b from-green-400 via-emerald-400 to-teal-500"
+                    className="absolute -left-2 xl:-left-2.5 top-1/2 -translate-y-1/2 w-[3px] h-7 rounded-r-full"
                     style={{
-                      boxShadow: "0 0 10px rgba(0,230,118,0.6), 0 0 25px rgba(0,230,118,0.2), 0 0 40px rgba(0,230,118,0.08)",
+                      background: "linear-gradient(180deg, #3B82F6 0%, #005EF8 100%)",
+                      boxShadow: "0 0 10px rgba(0,94,248,0.6), 0 0 25px rgba(0,94,248,0.2)",
                     }}
                     transition={{ type: "spring", stiffness: 350, damping: 28 }}
                   />
@@ -145,10 +129,10 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
                   {isCreate ? (
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300 ${
                       isActive
-                        ? "bg-gradient-to-br from-green-400 to-emerald-600 shadow-lg shadow-green-500/30"
-                        : "bg-white/[0.06] group-hover:bg-white/[0.12] group-hover:shadow-sm group-hover:shadow-green-500/10"
+                        ? "bg-[#005EF8] shadow-lg shadow-[#005EF8]/30"
+                        : "bg-white/[0.06] group-hover:bg-white/[0.12]"
                     }`}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isActive ? "black" : "white"} strokeWidth="2.5" strokeLinecap="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isActive ? "white" : "currentColor"} strokeWidth="2.5" strokeLinecap="round" className={isActive ? "" : "text-white/40 group-hover:text-white/70"}>
                         <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                       </svg>
                     </div>
@@ -164,10 +148,9 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
                       strokeLinejoin="round"
                       className={`transition-all duration-200 ${
                         isActive
-                          ? "text-green-400 drop-shadow-[0_0_6px_rgba(0,230,118,0.3)]"
-                          : "text-white/30 group-hover:text-white/70 group-hover:scale-105"
+                          ? "text-white"
+                          : "text-white/30 group-hover:text-white/70"
                       }`}
-                      style={{ transformOrigin: "center" }}
                     >
                       {iconPaths[item.icon]?.split(" M").map((d, i) => (
                         <path key={i} d={i === 0 ? d : `M${d}`} />
@@ -196,7 +179,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
                     transition={{ duration: 0.15 }}
                     className="xl:hidden absolute left-full top-1/2 -translate-y-1/2 ml-3 z-[60] pointer-events-none"
                   >
-                    <div className="px-2.5 py-1 rounded-lg bg-white/[0.08] backdrop-blur-xl border border-white/[0.06] text-[11px] font-medium text-white/80 whitespace-nowrap shadow-xl">
+                    <div className="px-2.5 py-1 rounded-lg bg-[#1C1C1E] border border-white/[0.08] text-[11px] font-medium text-white/80 whitespace-nowrap shadow-xl">
                       {item.label}
                     </div>
                   </motion.div>
@@ -215,7 +198,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
       {/* ── Network badge ── */}
       <div className="relative mx-2.5 mb-3">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.02]">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_6px_rgba(0,230,118,0.5)] pulse-soft" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005EF8] shadow-[0_0_6px_rgba(0,94,248,0.5)] pulse-soft" />
           <span className="hidden xl:block text-[10px] font-medium text-white/25 tracking-wide">COTI Testnet</span>
           <span className="xl:hidden text-[8px] font-bold text-white/20">COTI</span>
         </div>
@@ -229,7 +212,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
               <button
                 onClick={onboard}
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-green-400 transition-all duration-200 bg-green-500/[0.06] border border-green-500/[0.1] hover:bg-green-500/[0.12] hover:border-green-500/[0.2] hover:shadow-[0_0_15px_rgba(0,230,118,0.1)]"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#005EF8] transition-all duration-200 bg-[#005EF8]/[0.08] border border-[#005EF8]/[0.12] hover:bg-[#005EF8]/[0.14] hover:border-[#005EF8]/[0.2]"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" />
@@ -243,8 +226,8 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
               className="group w-full flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-white/[0.04] transition-all duration-200"
             >
               <div className="relative flex-shrink-0">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 opacity-30 blur-md group-hover:opacity-60 transition-opacity duration-300" />
-                <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 flex items-center justify-center ring-1 ring-white/10">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-[#005EF8] to-[#3B82F6] opacity-30 blur-md group-hover:opacity-60 transition-opacity duration-300" />
+                <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#005EF8] to-[#3B82F6] flex items-center justify-center ring-1 ring-white/10">
                   <span className="text-[11px] font-bold text-white">
                     {(handle || address.slice(2, 4)).slice(0, 2).toUpperCase()}
                   </span>
@@ -252,12 +235,12 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
               </div>
               <div className="hidden xl:block text-left min-w-0">
                 <div className="text-[12px] font-semibold text-white/80 truncate">
-                  {handle ? `${handle}.whisper` : shortenAddress(address)}
+                  {handle ? `${handle}.wispr` : shortenAddress(address)}
                 </div>
                 <div className="text-[10px] text-white/20 flex items-center gap-1.5">
                   <span className={`w-1.5 h-1.5 rounded-full ${
                     isOnboarded
-                      ? "bg-green-400 shadow-[0_0_4px_rgba(0,230,118,0.6)]"
+                      ? "bg-[#22C55E] shadow-[0_0_4px_rgba(34,197,94,0.6)]"
                       : "bg-yellow-400 shadow-[0_0_4px_rgba(250,204,21,0.4)]"
                   }`} />
                   {isOnboarded ? "Ready" : "Not onboarded"}
@@ -269,11 +252,11 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
           <button
             onClick={connect}
             disabled={isLoading}
-            className="group w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 overflow-hidden relative bg-white/[0.03] border border-white/[0.06] hover:border-green-500/[0.2] hover:shadow-[0_0_20px_rgba(0,230,118,0.06)]"
+            className="group w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 overflow-hidden relative bg-white/[0.03] border border-white/[0.06] hover:border-[#005EF8]/[0.3]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/[0.08] to-green-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#005EF8]/0 via-[#005EF8]/[0.08] to-[#005EF8]/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
             <span className="relative flex items-center gap-2 text-white/50 group-hover:text-white/90 transition-colors">
-              <span className="w-2 h-2 bg-green-400 rounded-full pulse-soft shadow-[0_0_8px_rgba(0,230,118,0.5)]" />
+              <span className="w-2 h-2 bg-[#005EF8] rounded-full pulse-soft shadow-[0_0_8px_rgba(0,94,248,0.5)]" />
               <span className="hidden xl:inline">{isLoading ? "..." : "Connect"}</span>
             </span>
           </button>

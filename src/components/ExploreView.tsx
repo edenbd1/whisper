@@ -75,7 +75,7 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
                       {bet.category}
                     </span>
                     {bet.trending && (
-                      <span className="glass px-2 py-0.5 rounded-full text-[10px] font-bold text-green-400">
+                      <span className="glass px-2 py-0.5 rounded-full text-[10px] font-bold text-[#005EF8]">
                         #{bet.trending}
                       </span>
                     )}

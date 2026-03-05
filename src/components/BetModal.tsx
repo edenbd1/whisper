@@ -107,8 +107,8 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center py-8"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-5 ring-1 ring-green-500/20">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <div className="w-16 h-16 rounded-2xl bg-[#005EF8]/10 flex items-center justify-center mx-auto mb-5 ring-1 ring-[#005EF8]/20">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </div>
                   <h3 className="text-xl font-bold text-white mb-1.5">Position Opened</h3>
                   <p className="text-sm text-white/30 mb-1">
@@ -119,7 +119,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   </p>
                   {txHash && (
                     <a href={getExplorerTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
-                      className="text-green-400/60 text-xs hover:text-green-400 transition-colors underline decoration-green-400/20 underline-offset-2">
+                      className="text-[#005EF8]/60 text-xs hover:text-[#005EF8] transition-colors underline decoration-[#005EF8]/20 underline-offset-2">
                       View on CotiScan
                     </a>
                   )}
@@ -203,8 +203,8 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   )}
 
                   {/* Privacy note */}
-                  <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-xl bg-green-500/[0.03] border border-green-500/[0.06]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 opacity-60">
+                  <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-xl bg-[#005EF8]/[0.03] border border-[#005EF8]/[0.06]">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 opacity-60">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
                     <span className="text-[11px] text-white/20 leading-relaxed">Encrypted on COTI. Your position stays confidential.</span>

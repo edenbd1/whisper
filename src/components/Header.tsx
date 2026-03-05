@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
+import { WisprIcon } from "./WisprLogo";
 
 interface HeaderProps {
   handle: string | null;
@@ -21,10 +22,8 @@ export default function Header({ handle }: HeaderProps) {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
           >
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-              <span className="text-black font-black text-[10px]">W</span>
-            </div>
-            <span className="text-[15px] font-bold tracking-[-0.02em] text-white">whisper</span>
+            <WisprIcon size={22} className="text-[#005EF8]" />
+            <span className="text-[15px] font-bold tracking-[-0.03em] text-white">Wispr</span>
           </motion.div>
 
           {/* Wallet */}
@@ -34,7 +33,7 @@ export default function Header({ handle }: HeaderProps) {
                 <button
                   onClick={onboard}
                   disabled={isLoading}
-                  className="glass px-3 py-1.5 rounded-full text-[11px] font-semibold text-green-400"
+                  className="glass px-3 py-1.5 rounded-full text-[11px] font-semibold text-[#005EF8]"
                 >
                   {isLoading ? "..." : "Onboard"}
                 </button>
@@ -43,8 +42,8 @@ export default function Header({ handle }: HeaderProps) {
                 onClick={disconnect}
                 className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-white/80"
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${isOnboarded ? "bg-green-400" : "bg-yellow-400"}`} />
-                {handle ? `${handle}.whisper` : shortenAddress(address)}
+                <span className={`w-1.5 h-1.5 rounded-full ${isOnboarded ? "bg-[#22C55E]" : "bg-yellow-400"}`} />
+                {handle ? `${handle}.wispr` : shortenAddress(address)}
               </button>
             </div>
           ) : (
@@ -53,7 +52,7 @@ export default function Header({ handle }: HeaderProps) {
               disabled={isLoading}
               className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-white/80"
             >
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full pulse-soft" />
+              <span className="w-1.5 h-1.5 bg-[#005EF8] rounded-full pulse-soft" />
               {isLoading ? "..." : "Connect"}
             </button>
           )}
