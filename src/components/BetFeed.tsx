@@ -2,10 +2,9 @@
 
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { flushSync } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { mockBets } from "@/lib/mockData";
 import BetCard from "./BetCard";
-import SideActions from "./SideActions";
 
 function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: () => void }) {
   return (
@@ -185,8 +184,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     });
   }, []);
 
-  const activeBet = mockBets[activeIndex];
-
   return (
     <div className="flex items-center justify-center h-full gap-6">
       {/* Card column */}
@@ -249,28 +246,10 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         </div>
       </div>
 
-      {/* Right panel: side actions + nav (desktop only) */}
-      <div className="hidden lg:flex flex-col items-center justify-end gap-5 pb-28 h-full">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeIndex}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            <SideActions
-              likes={Math.floor(activeBet.participants * 0.3)}
-              comments={Math.floor(activeBet.participants * 0.05)}
-              shares={Math.floor(activeBet.participants * 0.02)}
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="flex flex-col gap-1.5 mt-4">
-          <NavArrow direction="up" onClick={() => scrollByOne("up")} />
-          <NavArrow direction="down" onClick={() => scrollByOne("down")} />
-        </div>
+      {/* Nav arrows (desktop only) */}
+      <div className="hidden lg:flex flex-col items-center justify-end gap-1.5 pb-10 h-full">
+        <NavArrow direction="up" onClick={() => scrollByOne("up")} />
+        <NavArrow direction="down" onClick={() => scrollByOne("down")} />
       </div>
     </div>
   );
