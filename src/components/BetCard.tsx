@@ -10,9 +10,10 @@ import BetModal from "./BetModal";
 interface BetCardProps {
   bet: Bet;
   isActive: boolean;
+  instant?: boolean;
 }
 
-export default function BetCard({ bet, isActive }: BetCardProps) {
+export default function BetCard({ bet, isActive, instant }: BetCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSide, setSelectedSide] = useState<BetSide>("yes");
   const [hasVoted, setHasVoted] = useState(false);
@@ -59,7 +60,7 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
           className="absolute inset-0 w-full h-full object-cover"
           initial={{ scale: 1.1, opacity: 0 }}
           animate={isActive ? { scale: 1.02, opacity: 1 } : { scale: 1.1, opacity: 0.6 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: instant ? 0 : 1.2, ease: [0.16, 1, 0.3, 1] }}
           loading="lazy"
         />
 
@@ -74,7 +75,7 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: -16 }}
-          transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ delay: instant ? 0 : 0.1, duration: instant ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="absolute top-16 lg:top-5 left-5 right-5 flex items-center gap-2 flex-wrap z-20"
         >
           <span className="glass px-3 py-1.5 rounded-full text-[11px] font-semibold text-white/70">
@@ -101,7 +102,7 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ delay: 0.05, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ delay: instant ? 0 : 0.05, duration: instant ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="absolute bottom-[100px] lg:bottom-6 left-5 right-5 lg:right-5 z-10 space-y-3"
         >
           {/* Privacy badge */}
@@ -150,7 +151,7 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
               className="odds-bar-yes progress-glow"
               initial={{ width: 0 }}
               animate={isActive ? { width: `${yesPrice}%` } : { width: 0 }}
-              transition={{ delay: 0.3, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: instant ? 0 : 0.3, duration: instant ? 0 : 1.2, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
 
