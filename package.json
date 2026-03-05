@@ -13,6 +13,7 @@
     "@coti-io/coti-sdk-typescript": "^1.0.6",
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@tanstack/react-query": "^5.90.21",
+    "clsx": "^2.1.1",
     "ethers": "^6.16.0",
     "framer-motion": "^12.35.0",
     "next": "16.1.6",
