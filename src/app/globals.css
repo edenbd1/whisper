@@ -300,6 +300,23 @@ input[type="number"] { -moz-appearance: textfield; }
 .stagger > *:nth-child(5) { animation-delay: 240ms; }
 .stagger > *:nth-child(6) { animation-delay: 300ms; }
 
+/* ───────────── Sidebar edge glow ───────────── */
+@keyframes sidebar-edge {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.4; }
+}
+.sidebar-edge-line {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 230, 118, 0.15) 20%,
+    rgba(0, 230, 118, 0.3) 50%,
+    rgba(0, 230, 118, 0.15) 80%,
+    transparent 100%
+  );
+  animation: sidebar-edge 4s ease-in-out infinite;
+}
+
 /* ───────────── No scrollbar utility ───────────── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }

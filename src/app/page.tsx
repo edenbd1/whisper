@@ -70,7 +70,7 @@ export default function Home() {
       <Header handle={handle} />
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
       {/* Spacer to reserve space for the fixed sidebar */}
-      <div className="hidden lg:block flex-shrink-0 w-[72px] xl:w-[244px]" />
+      <div className="hidden lg:block flex-shrink-0 w-[68px] xl:w-[220px]" />
       <div className="flex-1 h-full min-w-0">
         {renderContent()}
       </div>
