@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BetSide } from "@/types";
 import { useWallet } from "@/context/WalletContext";
+import { useMarket } from "@/context/MarketContext";
 import { CONTRACT_ADDRESSES, WHISPER_MARKET_ABI } from "@/lib/contracts";
 import { getExplorerTxUrl } from "@/lib/coti";
 
@@ -13,7 +14,7 @@ interface BetModalProps {
   side: BetSide;
   question: string;
   marketId?: number;
-  onConfirm: (amount: number) => void;
+  onConfirm: () => void;
 }
 
 const presetAmounts = [0.1, 0.5, 1, 5];
@@ -26,15 +27,29 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
   const { isConnected, signer, connect } = useWallet();
+  const { previewTrade, executeTrade, getMarketPrice } = useMarket();
 
   const isYes = side === "yes";
   const numAmount = parseFloat(amount) || 0;
+  const betId = String((marketId ?? 0) + 1);
+
+  const currentPrice = getMarketPrice(betId);
+  const preview = useMemo(() => {
+    if (numAmount <= 0) return null;
+    return previewTrade(betId, side, numAmount);
+  }, [betId, side, numAmount, previewTrade]);
 
   const handleBet = async () => {
     if (!isConnected || !signer) { await connect(); return; }
     if (numAmount <= 0) return;
 
-    if (!CONTRACT_ADDRESSES.market) { onConfirm(numAmount); return; }
+    if (!CONTRACT_ADDRESSES.market) {
+      // No contract - just simulate
+      executeTrade(betId, side, numAmount);
+      onConfirm();
+      setTxState("success");
+      return;
+    }
 
     setTxState("pending");
     setError("");
@@ -47,8 +62,9 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       });
       setTxHash(tx.hash);
       await tx.wait();
+      executeTrade(betId, side, numAmount, tx.hash);
       setTxState("success");
-      onConfirm(numAmount);
+      onConfirm();
     } catch (err: any) {
       setError(err?.reason || err?.message || "Transaction failed");
       setTxState("error");
@@ -61,6 +77,8 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
     setError("");
     onClose();
   };
+
+  const sidePrice = isYes ? currentPrice.yes : currentPrice.no;
 
   return (
     <AnimatePresence>
@@ -81,7 +99,6 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
             className="fixed bottom-0 left-0 right-0 z-[70] max-w-lg mx-auto"
           >
             <div className="bg-[#0a0a0a] border-t border-white/[0.06] rounded-t-3xl p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-              {/* Handle */}
               <div className="w-10 h-1 bg-white/[0.08] rounded-full mx-auto mb-6" />
 
               {txState === "success" ? (
@@ -93,8 +110,13 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-5 ring-1 ring-green-500/20">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-1.5">Bet Placed</h3>
-                  <p className="text-sm text-white/30 mb-5">{numAmount} COTI on <span className={isYes ? "text-green-400" : "text-red-400"}>{isYes ? "YES" : "NO"}</span></p>
+                  <h3 className="text-xl font-bold text-white mb-1.5">Position Opened</h3>
+                  <p className="text-sm text-white/30 mb-1">
+                    {preview ? `${preview.sharesReceived.toFixed(1)} shares` : `${numAmount} COTI`} on <span className={isYes ? "text-green-400" : "text-red-400"}>{isYes ? "YES" : "NO"}</span>
+                  </p>
+                  <p className="text-xs text-white/20 mb-5">
+                    Avg price: {preview ? `${(preview.avgPrice * 100).toFixed(1)}¢` : `${Math.round(sidePrice * 100)}¢`}
+                  </p>
                   {txHash && (
                     <a href={getExplorerTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
                       className="text-green-400/60 text-xs hover:text-green-400 transition-colors underline decoration-green-400/20 underline-offset-2">
@@ -112,7 +134,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                     <span className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
                       isYes ? "bg-green-500/10 text-green-400 ring-1 ring-green-500/10" : "bg-red-500/10 text-red-400 ring-1 ring-red-500/10"
                     }`}>
-                      {isYes ? "YES" : "NO"}
+                      {isYes ? "YES" : "NO"} · {Math.round(sidePrice * 100)}¢
                     </span>
                     <div className="flex items-center gap-1.5 text-white/20">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -123,7 +145,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                     </div>
                   </div>
 
-                  <p className="text-white font-bold text-[16px] mb-6 leading-snug tracking-[-0.01em]">{question}</p>
+                  <p className="text-white font-bold text-[16px] mb-5 leading-snug tracking-[-0.01em]">{question}</p>
 
                   {/* Amount input */}
                   <div className="relative mb-3">
@@ -138,7 +160,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                   </div>
 
                   {/* Presets */}
-                  <div className="flex gap-2 mb-6">
+                  <div className="flex gap-2 mb-4">
                     {presetAmounts.map((p) => (
                       <button
                         key={p}
@@ -154,12 +176,38 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                     ))}
                   </div>
 
+                  {/* Price impact preview */}
+                  {preview && numAmount > 0 && (
+                    <div className="mb-4 px-3 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] space-y-2">
+                      <div className="flex justify-between text-[12px]">
+                        <span className="text-white/30">Shares received</span>
+                        <span className="text-white/70 font-semibold">{preview.sharesReceived.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-[12px]">
+                        <span className="text-white/30">Avg price</span>
+                        <span className="text-white/70 font-semibold">{(preview.avgPrice * 100).toFixed(1)}¢</span>
+                      </div>
+                      <div className="flex justify-between text-[12px]">
+                        <span className="text-white/30">Price impact</span>
+                        <span className={`font-semibold ${preview.priceImpact > 0.05 ? "text-red-400" : preview.priceImpact > 0.01 ? "text-yellow-400" : "text-green-400"}`}>
+                          {(preview.priceImpact * 100).toFixed(2)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-[12px]">
+                        <span className="text-white/30">New price</span>
+                        <span className="text-white/70 font-semibold">
+                          {isYes ? Math.round(preview.newYesPrice * 100) : Math.round(preview.newNoPrice * 100)}¢
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Privacy note */}
-                  <div className="flex items-center gap-2.5 mb-6 px-3 py-2.5 rounded-xl bg-green-500/[0.03] border border-green-500/[0.06]">
+                  <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-xl bg-green-500/[0.03] border border-green-500/[0.06]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 opacity-60">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
-                    <span className="text-[11px] text-white/20 leading-relaxed">Encrypted on COTI network. Your bet amount stays confidential.</span>
+                    <span className="text-[11px] text-white/20 leading-relaxed">Encrypted on COTI. Your position stays confidential.</span>
                   </div>
 
                   {/* Error */}
@@ -199,7 +247,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                     ) : numAmount <= 0 ? (
                       "Enter amount"
                     ) : (
-                      `Bet ${numAmount} COTI on ${isYes ? "YES" : "NO"}`
+                      `Buy ${isYes ? "Yes" : "No"} · ${preview ? preview.sharesReceived.toFixed(1) : "0"} shares`
                     )}
                   </button>
                 </>

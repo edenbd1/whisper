@@ -20,3 +20,55 @@ export interface UserBet {
   amount: number;
   timestamp: number;
 }
+
+// AMM types
+export interface AMMState {
+  yesShares: number;
+  noShares: number;
+}
+
+export interface MarketPrice {
+  yes: number; // 0-1
+  no: number;  // 0-1
+}
+
+export interface TradePreview {
+  sharesReceived: number;
+  avgPrice: number;
+  priceImpact: number;
+  newYesPrice: number;
+  newNoPrice: number;
+}
+
+export interface SellResult {
+  cotiReceived: number;
+  avgSellPrice: number;
+  priceImpact: number;
+}
+
+// Position types
+export interface Position {
+  id: string;
+  marketId: string;
+  side: BetSide;
+  shares: number;
+  totalCost: number;
+  avgEntryPrice: number;
+  timestamp: number;
+  txHash?: string;
+}
+
+export interface PnLInfo {
+  currentValue: number;
+  costBasis: number;
+  unrealizedPnL: number;
+  percentChange: number;
+}
+
+export interface PortfolioSummary {
+  totalValue: number;
+  totalCost: number;
+  totalPnL: number;
+  totalPnLPercent: number;
+  positionCount: number;
+}

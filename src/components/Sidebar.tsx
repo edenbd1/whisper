@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
+import type { AppTab } from "@/app/page";
 
 type NavItem = "feed" | "explore" | "create" | "likes" | "profile";
 
@@ -15,8 +15,13 @@ const navItems: { id: NavItem; label: string; path: string }[] = [
   { id: "profile", label: "Profile", path: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" },
 ];
 
-export default function Sidebar() {
-  const [active, setActive] = useState<NavItem>("feed");
+interface SidebarProps {
+  activeTab: AppTab;
+  onTabChange: (tab: AppTab) => void;
+  handle: string | null;
+}
+
+export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps) {
   const { isConnected, address, connect, disconnect, isLoading, isOnboarded, onboard } = useWallet();
 
   return (
@@ -34,15 +39,13 @@ export default function Sidebar() {
       {/* Nav */}
       <nav className="flex-1 flex flex-col gap-0.5 px-3">
         {navItems.map((item) => {
-          const isActive = active === item.id;
+          const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
-              onClick={() => setActive(item.id)}
+              onClick={() => onTabChange(item.id)}
               className={`spotlight group relative flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-white/[0.06]"
-                  : "hover:bg-white/[0.03]"
+                isActive ? "bg-white/[0.06]" : "hover:bg-white/[0.03]"
               }`}
             >
               <svg
@@ -100,11 +103,13 @@ export default function Sidebar() {
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center flex-shrink-0 ring-2 ring-white/[0.06]">
                 <span className="text-[11px] font-bold text-white">
-                  {address.slice(2, 4).toUpperCase()}
+                  {(handle || address.slice(2, 4)).slice(0, 2).toUpperCase()}
                 </span>
               </div>
               <div className="hidden xl:block text-left">
-                <div className="text-xs font-semibold text-white/80">{shortenAddress(address)}</div>
+                <div className="text-xs font-semibold text-white/80">
+                  {handle ? `${handle}.whisper` : shortenAddress(address)}
+                </div>
                 <div className="text-[10px] text-white/25 flex items-center gap-1.5">
                   <span className={`w-1.5 h-1.5 rounded-full ${isOnboarded ? "bg-green-400" : "bg-yellow-400"}`} />
                   {isOnboarded ? "Ready" : "Not onboarded"}

@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
+import type { AppTab } from "@/app/page";
 
-type Tab = "feed" | "create" | "ranking" | "profile";
+interface BottomNavProps {
+  activeTab: AppTab;
+  onTabChange: (tab: AppTab) => void;
+}
 
-export default function BottomNav() {
-  const [active, setActive] = useState<Tab>("feed");
+type BottomTab = "feed" | "create" | "ranking" | "profile";
 
-  const tabs: { id: Tab; label: string; icon: (isActive: boolean) => React.ReactNode }[] = [
+export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
+  const tabs: { id: BottomTab; appTab: AppTab; label: string; icon: (isActive: boolean) => React.ReactNode }[] = [
     {
       id: "feed",
+      appTab: "feed",
       label: "Home",
       icon: (a) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill={a ? "white" : "none"} stroke="white" strokeWidth={a ? "2.5" : "1.5"} strokeLinecap="round" strokeLinejoin="round">
@@ -20,6 +24,7 @@ export default function BottomNav() {
     },
     {
       id: "create",
+      appTab: "create",
       label: "",
       icon: () => (
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/20">
@@ -31,6 +36,7 @@ export default function BottomNav() {
     },
     {
       id: "ranking",
+      appTab: "explore",
       label: "Explore",
       icon: (a) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={a ? "2.5" : "1.5"} strokeLinecap="round" strokeLinejoin="round">
@@ -40,6 +46,7 @@ export default function BottomNav() {
     },
     {
       id: "profile",
+      appTab: "profile",
       label: "Profile",
       icon: (a) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill={a ? "white" : "none"} stroke="white" strokeWidth={a ? "2.5" : "1.5"} strokeLinecap="round" strokeLinejoin="round">
@@ -54,11 +61,11 @@ export default function BottomNav() {
       <div className="bg-gradient-to-t from-black via-black/95 to-transparent pt-4">
         <div className="flex items-center justify-around px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
           {tabs.map((tab) => {
-            const isActive = active === tab.id;
+            const isActive = activeTab === tab.appTab;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActive(tab.id)}
+                onClick={() => onTabChange(tab.appTab)}
                 className="relative flex flex-col items-center gap-0.5 px-5 py-1.5 btn-press"
               >
                 {tab.icon(isActive)}

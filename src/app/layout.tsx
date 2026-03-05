@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/context/WalletContext";
+import { MarketProvider } from "@/context/MarketContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,7 +37,9 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.variable} font-sans antialiased bg-[#050505] text-white`}>
         <WalletProvider>
-          {children}
+          <MarketProvider>
+            {children}
+          </MarketProvider>
         </WalletProvider>
       </body>
     </html>

@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
 
-export default function Header() {
+interface HeaderProps {
+  handle: string | null;
+}
+
+export default function Header({ handle }: HeaderProps) {
   const { isConnected, address, isOnboarded, isLoading, connect, disconnect, onboard } = useWallet();
 
   return (
@@ -40,7 +44,7 @@ export default function Header() {
                 className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-white/80"
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${isOnboarded ? "bg-green-400" : "bg-yellow-400"}`} />
-                {shortenAddress(address)}
+                {handle ? `${handle}.whisper` : shortenAddress(address)}
               </button>
             </div>
           ) : (

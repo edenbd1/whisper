@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Bet, BetSide } from "@/types";
 import { formatNumber, daysUntil } from "@/lib/mockData";
+import { useMarket } from "@/context/MarketContext";
 import BetModal from "./BetModal";
 
 interface BetCardProps {
@@ -17,11 +18,12 @@ export default function BetCard({ bet, isActive }: BetCardProps) {
   const [hasVoted, setHasVoted] = useState(false);
   const [votedSide, setVotedSide] = useState<BetSide | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { getMarketPrice } = useMarket();
 
-  const noPercentage = 100 - bet.yesPercentage;
+  const price = getMarketPrice(bet.id);
+  const yesPrice = Math.round(price.yes * 100);
+  const noPrice = Math.round(price.no * 100);
   const days = daysUntil(bet.endsAt);
-  const yesPrice = bet.yesPercentage;
-  const noPrice = noPercentage;
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
