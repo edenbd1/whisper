@@ -8,7 +8,7 @@ interface BottomNavProps {
   onTabChange: (tab: AppTab) => void;
 }
 
-type BottomTab = "feed" | "create" | "ranking" | "profile";
+type BottomTab = "feed" | "create" | "explore" | "profile";
 
 export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const tabs: { id: BottomTab; appTab: AppTab; label: string; icon: (isActive: boolean) => React.ReactNode }[] = [
@@ -35,7 +35,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
       ),
     },
     {
-      id: "ranking",
+      id: "explore",
       appTab: "explore",
       label: "Explore",
       icon: (a) => (

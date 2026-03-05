@@ -33,8 +33,8 @@ function NavArrow({ direction, onClick, disabled }: { direction: "up" | "down"; 
   );
 }
 
-export default function BetFeed() {
-  const [activeIndex, setActiveIndex] = useState(0);
+export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
+  const [activeIndex, setActiveIndex] = useState(startIndex);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 

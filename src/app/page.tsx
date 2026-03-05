@@ -1,19 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import BetFeed from "@/components/BetFeed";
 import BottomNav from "@/components/BottomNav";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import PortfolioView from "@/components/PortfolioView";
+import ExploreView from "@/components/ExploreView";
+import CreateView from "@/components/CreateView";
 import HandleSetup from "@/components/HandleSetup";
 import { useWallet } from "@/context/WalletContext";
 import { saveHandle, loadHandle } from "@/lib/storage";
 
-export type AppTab = "feed" | "explore" | "create" | "ranking" | "likes" | "profile";
+export type AppTab = "feed" | "explore" | "create" | "profile";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<AppTab>("feed");
+  const [feedStartIndex, setFeedStartIndex] = useState(0);
   const { isConnected, address } = useWallet();
   const [handle, setHandle] = useState<string | null>(null);
   const [showHandleSetup, setShowHandleSetup] = useState(false);
@@ -43,12 +46,21 @@ export default function Home() {
     setShowHandleSetup(false);
   };
 
+  const handleSelectMarket = useCallback((index: number) => {
+    setFeedStartIndex(index);
+    setActiveTab("feed");
+  }, []);
+
   const renderContent = () => {
     switch (activeTab) {
+      case "explore":
+        return <ExploreView onSelectMarket={handleSelectMarket} />;
+      case "create":
+        return <CreateView />;
       case "profile":
         return <PortfolioView handle={handle} />;
       default:
-        return <BetFeed />;
+        return <BetFeed startIndex={feedStartIndex} />;
     }
   };
 

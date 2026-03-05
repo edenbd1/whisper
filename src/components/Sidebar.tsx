@@ -5,13 +5,12 @@ import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
 import type { AppTab } from "@/app/page";
 
-type NavItem = "feed" | "explore" | "create" | "likes" | "profile";
+type NavItem = "feed" | "explore" | "create" | "profile";
 
 const navItems: { id: NavItem; label: string; path: string }[] = [
   { id: "feed", label: "Home", path: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10" },
   { id: "explore", label: "Explore", path: "M21 21l-4.35-4.35M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" },
   { id: "create", label: "Create", path: "M12 5v14M5 12h14" },
-  { id: "likes", label: "Likes", path: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" },
   { id: "profile", label: "Profile", path: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" },
 ];
 
