@@ -65,11 +65,13 @@ export default function Home() {
   };
 
   return (
-    <main className="h-[100dvh] w-full bg-[#050505] overflow-hidden">
+    <main className="h-[100dvh] w-full bg-[#050505] overflow-hidden flex">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} handle={handle} />
       <Header handle={handle} />
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
-      <div className="h-full lg:pl-[72px] xl:pl-[244px]">
+      {/* Spacer to reserve space for the fixed sidebar */}
+      <div className="hidden lg:block flex-shrink-0 w-[72px] xl:w-[244px]" />
+      <div className="flex-1 h-full min-w-0">
         {renderContent()}
       </div>
 
