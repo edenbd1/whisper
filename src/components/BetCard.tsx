@@ -120,6 +120,7 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
           )}
 
           <button
+            aria-label={liked ? "Unlike" : "Like"}
             onClick={() => { setLiked(!liked); setLikeCount(liked ? likeCount - 1 : likeCount + 1); }}
             className="flex flex-col items-center gap-0.5"
           >
@@ -133,14 +134,15 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
             <span className="text-[11px] font-semibold text-white/70">{formatNumber(likeCount)}</span>
           </button>
 
-          <button className="flex flex-col items-center gap-0.5">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8">
+          <button aria-label="Comments" className="flex flex-col items-center gap-0.5">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" aria-hidden="true">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
             <span className="text-[11px] font-semibold text-white/70">{formatNumber(commentCount)}</span>
           </button>
 
           <button
+            aria-label="Share"
             onClick={() => {
               const text = `${bet.question} — YES ${yesPrice}¢ / NO ${noPrice}¢`;
               if (navigator.share) {
@@ -157,7 +159,7 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
             <span className="text-[11px] font-semibold text-white/70">{formatNumber(shareCount)}</span>
           </button>
 
-          <button onClick={() => setSaved(!saved)} className="flex flex-col items-center gap-0.5">
+          <button aria-label={saved ? "Unsave" : "Save"} onClick={() => setSaved(!saved)} className="flex flex-col items-center gap-0.5">
             <motion.div animate={{ scale: saved ? [1, 1.2, 1] : 1 }} transition={{ duration: 0.15 }}>
               <svg width="28" height="28" viewBox="0 0 24 24" fill={saved ? "white" : "none"} stroke="white" strokeWidth="1.8">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />

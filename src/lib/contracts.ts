@@ -81,6 +81,13 @@ export const CUSDC_ABI = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [{ name: "account", type: "address" }],
+    name: "setAccountEncryptionAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export const WISPR_MARKET_ABI = [

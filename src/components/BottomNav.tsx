@@ -66,6 +66,8 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.appTab)}
+                aria-label={tab.label || "Create market"}
+                aria-current={isActive ? "page" : undefined}
                 className="relative flex flex-col items-center gap-0.5 px-5 py-1.5 btn-press"
               >
                 {tab.icon(isActive)}

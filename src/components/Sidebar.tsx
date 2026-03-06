@@ -38,13 +38,20 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
   useEffect(() => {
     const el = sidebarRef.current;
     if (!el) return;
-    const onMove = (e: MouseEvent) => setMouseY(e.clientY - el.getBoundingClientRect().top);
+    let rafId = 0;
+    const onMove = (e: MouseEvent) => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setMouseY(e.clientY - el.getBoundingClientRect().top);
+      });
+    };
     const onEnter = () => setIsHovering(true);
     const onLeave = () => { setIsHovering(false); setHoveredItem(null); };
-    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mousemove", onMove, { passive: true });
     el.addEventListener("mouseenter", onEnter);
     el.addEventListener("mouseleave", onLeave);
     return () => {
+      cancelAnimationFrame(rafId);
       el.removeEventListener("mousemove", onMove);
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);
@@ -95,6 +102,8 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
                 onClick={() => onTabChange(item.id)}
                 onMouseEnter={() => setHoveredItem(item.id)}
                 onMouseLeave={() => setHoveredItem(null)}
+                aria-label={item.label}
+                aria-current={isActive ? "page" : undefined}
                 className="group relative w-full flex items-center gap-3.5 px-3 py-2.5 rounded-xl"
               >
                 {/* Active background */}
@@ -212,6 +221,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
               <button
                 onClick={onboard}
                 disabled={isLoading}
+                aria-label="Onboard wallet for confidential transactions"
                 className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#005EF8] transition-all duration-200 bg-[#005EF8]/[0.08] border border-[#005EF8]/[0.12] hover:bg-[#005EF8]/[0.14] hover:border-[#005EF8]/[0.2]"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -223,6 +233,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
             )}
             <button
               onClick={disconnect}
+              aria-label="Disconnect wallet"
               className="group w-full flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-white/[0.04] transition-all duration-200"
             >
               <div className="relative flex-shrink-0">
@@ -252,6 +263,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
           <button
             onClick={connect}
             disabled={isLoading}
+            aria-label="Connect wallet"
             className="group w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 overflow-hidden relative bg-white/[0.03] border border-white/[0.06] hover:border-[#005EF8]/[0.3]"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#005EF8]/0 via-[#005EF8]/[0.08] to-[#005EF8]/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />

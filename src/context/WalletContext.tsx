@@ -194,6 +194,19 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         storeWallet(state.address, aesKey);
       }
 
+      // Register encryption address so balanceOf returns user-decryptable ciphertext
+      try {
+        const { Contract } = await import("@coti-io/coti-ethers");
+        const { CONTRACT_ADDRESSES, CUSDC_ABI } = await import("@/lib/contracts");
+        if (CONTRACT_ADDRESSES.token) {
+          const tokenContract = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, state.signer);
+          const tx = await tokenContract.setAccountEncryptionAddress(state.address, { gasLimit: 500_000 });
+          await tx.wait();
+        }
+      } catch (err) {
+        console.warn("setAccountEncryptionAddress failed (non-blocking):", err);
+      }
+
       setState((s) => ({
         ...s,
         isOnboarded: true,

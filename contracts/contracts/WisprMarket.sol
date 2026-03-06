@@ -41,7 +41,7 @@ contract WisprMarket {
     event MarketResolved(uint256 indexed id, bool outcome);
     event WinningsClaimed(uint256 indexed id, address indexed claimer, uint64 amount);
     event MarketCancelled(uint256 indexed id);
-    event RefundClaimed(uint256 indexed id, address indexed claimer, uint64 amount);
+    event RefundClaimed(uint256 indexed id, address indexed claimer);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -164,7 +164,7 @@ contract WisprMarket {
         gtBool success = token.transfer(msg.sender, gtRefund);
         require(MpcCore.decrypt(success), "Refund failed");
 
-        emit RefundClaimed(marketId, msg.sender, refund);
+        emit RefundClaimed(marketId, msg.sender);
     }
 
     function claimWinnings(uint256 marketId) external {
@@ -177,7 +177,8 @@ contract WisprMarket {
         // Decrypt the winning side bet
         gtUint64 gtUserBet;
         uint64 winningSide;
-        uint64 totalPool = m.totalYes + m.totalNo;
+        uint128 totalPool = uint128(m.totalYes) + uint128(m.totalNo);
+        require(totalPool > 0, "Empty pool");
 
         if (m.outcome) {
             gtUserBet = MpcCore.onBoard(_yesBets[marketId][msg.sender]);
@@ -194,7 +195,7 @@ contract WisprMarket {
         hasClaimed[marketId][msg.sender] = true;
 
         // Proportional payout: (userBet / winningSide) * totalPool
-        uint64 payout = uint64((uint128(userBet) * uint128(totalPool)) / uint128(winningSide));
+        uint64 payout = uint64((uint128(userBet) * totalPool) / uint128(winningSide));
 
         gtUint64 gtPayout = MpcCore.setPublic64(payout);
         gtBool success = token.transfer(msg.sender, gtPayout);
