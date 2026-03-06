@@ -10,13 +10,14 @@ import { shortenAddress } from "@/lib/coti";
 import { CONTRACT_ADDRESSES, CUSDC_ABI } from "@/lib/contracts";
 import SellModal from "./SellModal";
 
+const BALANCE_KEY_PREFIX = `cusdc-${CONTRACT_ADDRESSES.token?.slice(0, 8)}-`;
 function getStoredBalance(address: string): number {
   try {
-    return parseFloat(localStorage.getItem(`cusdc-${address.toLowerCase()}`) || "0");
+    return parseFloat(localStorage.getItem(`${BALANCE_KEY_PREFIX}${address.toLowerCase()}`) || "0");
   } catch { return 0; }
 }
 function setStoredBalance(address: string, balance: number) {
-  localStorage.setItem(`cusdc-${address.toLowerCase()}`, balance.toString());
+  localStorage.setItem(`${BALANCE_KEY_PREFIX}${address.toLowerCase()}`, balance.toString());
 }
 
 export default function PortfolioView({ handle }: { handle: string | null }) {

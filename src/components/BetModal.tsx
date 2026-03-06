@@ -26,7 +26,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
   const [txState, setTxState] = useState<TxState>("idle");
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
-  const { isConnected, isOnboarded, signer, connect } = useWallet();
+  const { isConnected, signer, connect } = useWallet();
   const { previewTrade, executeTrade, getMarketPrice } = useMarket();
 
   const isYes = side === "yes";
@@ -51,26 +51,21 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       return;
     }
 
-    if (!isOnboarded) {
-      setError("Please onboard your wallet first (go to Portfolio → Onboard)");
-      setTxState("error");
-      return;
-    }
-
     setTxState("pending");
     setError("");
     try {
-      const { Contract, Interface } = await import("@coti-io/coti-ethers");
+      const { Contract } = await import("@coti-io/coti-ethers");
       const amountRaw = BigInt(Math.round(numAmount * 1e6)); // 6 decimals
-
-      // 1. Encrypt amount and approve market to spend cUSDC
-      const iface = new Interface(CUSDC_ABI);
-      const approveSelector = iface.getFunction("approve")!.selector;
-      const encrypted = await (signer as any).encryptValue(amountRaw, CONTRACT_ADDRESSES.token, approveSelector);
-
       const tokenContract = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
-      const approveTx = await tokenContract.approve(CONTRACT_ADDRESSES.market, encrypted, { gasLimit: 500_000 });
-      await approveTx.wait();
+
+      // 1. Approve market to spend cUSDC (max uint64, only if not already approved)
+      const approvedKey = `approved-${CONTRACT_ADDRESSES.market}`;
+      if (!localStorage.getItem(approvedKey)) {
+        const maxUint64 = BigInt("18446744073709551615");
+        const approveTx = await tokenContract.approvePublic(CONTRACT_ADDRESSES.market, maxUint64, { gasLimit: 500_000 });
+        await approveTx.wait();
+        localStorage.setItem(approvedKey, "1");
+      }
 
       // 2. Place bet
       const marketContract = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);

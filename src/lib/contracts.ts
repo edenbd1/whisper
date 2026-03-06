@@ -39,16 +39,9 @@ export const CUSDC_ABI = [
   {
     inputs: [
       { name: "spender", type: "address" },
-      {
-        name: "value",
-        type: "tuple",
-        components: [
-          { name: "ciphertext", type: "uint256" },
-          { name: "signature", type: "bytes" },
-        ],
-      },
+      { name: "amount", type: "uint64" },
     ],
-    name: "approve",
+    name: "approvePublic",
     outputs: [{ name: "", type: "bool" }],
     stateMutability: "nonpayable",
     type: "function",

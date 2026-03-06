@@ -50,4 +50,13 @@ contract ConfidentialUSDC is PrivateERC20 {
             emit FaucetClaim(msg.sender);
         }
     }
+
+    /**
+     * @notice Approve with a plaintext amount (encrypted on-chain via MPC).
+     * @dev Avoids the need for off-chain encryption, reducing wallet popups.
+     */
+    function approvePublic(address spender, uint64 amount) external returns (bool) {
+        _approve(msg.sender, spender, MpcCore.setPublic64(amount));
+        return true;
+    }
 }
