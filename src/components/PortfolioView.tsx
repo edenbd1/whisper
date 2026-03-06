@@ -1,18 +1,46 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { useMarket } from "@/context/MarketContext";
 import { mockBets, formatNumber } from "@/lib/mockData";
 import { Position, BetSide } from "@/types";
 import { shortenAddress } from "@/lib/coti";
+import { CONTRACT_ADDRESSES, CUSDC_ABI } from "@/lib/contracts";
 import SellModal from "./SellModal";
 
 export default function PortfolioView({ handle }: { handle: string | null }) {
-  const { address, isConnected } = useWallet();
+  const { address, isConnected, signer } = useWallet();
   const { positions, getPositionPnL, getMarketPrice } = useMarket();
   const [sellTarget, setSellTarget] = useState<Position | null>(null);
+  const [faucetState, setFaucetState] = useState<"idle" | "pending" | "success" | "error">("idle");
+  const [faucetError, setFaucetError] = useState("");
+
+  const claimFaucet = useCallback(async () => {
+    if (!signer || !CONTRACT_ADDRESSES.token) {
+      // No contract deployed - simulate
+      setFaucetState("success");
+      return;
+    }
+    setFaucetState("pending");
+    setFaucetError("");
+    try {
+      const { Contract } = await import("@coti-io/coti-ethers");
+      const token = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
+      const tx = await token.faucet({ gasLimit: 1_000_000 });
+      await tx.wait();
+      setFaucetState("success");
+    } catch (err: any) {
+      const msg = err?.reason || err?.message || "Transaction failed";
+      if (msg.includes("Already claimed")) {
+        setFaucetError("Already claimed. Faucet is one-time per wallet.");
+      } else {
+        setFaucetError(msg);
+      }
+      setFaucetState("error");
+    }
+  }, [signer]);
 
   // Aggregate positions by market+side
   const aggregated = useMemo(() => {
@@ -78,6 +106,65 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
               <h2 className="text-lg font-bold text-white/70">{address ? shortenAddress(address) : ""}</h2>
             )}
           </div>
+        </div>
+
+        {/* cUSDC Wallet */}
+        <div className="glass rounded-2xl p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#005EF8]/10 flex items-center justify-center ring-1 ring-[#005EF8]/15">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2" strokeLinecap="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-[11px] text-white/30 font-semibold uppercase tracking-wider">Confidential USDC</p>
+                <p className="text-[10px] text-white/15">Encrypted balance on COTI</p>
+              </div>
+            </div>
+          </div>
+
+          {faucetState === "success" ? (
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-green-500/[0.06] border border-green-500/10">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+              <span className="text-xs text-green-400 font-semibold">1,000 cUSDC claimed successfully</span>
+            </div>
+          ) : faucetState === "error" ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/[0.04] border border-red-500/10">
+                <span className="text-xs text-red-400">{faucetError}</span>
+              </div>
+              <button
+                onClick={() => setFaucetState("idle")}
+                className="text-[11px] text-white/30 hover:text-white/50 transition-colors"
+              >
+                Try again
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={claimFaucet}
+              disabled={faucetState === "pending"}
+              className={`w-full py-3 rounded-xl text-sm font-bold transition-all btn-press ${
+                faucetState === "pending"
+                  ? "glass text-white/30 cursor-wait"
+                  : "bg-[#005EF8]/10 text-[#005EF8] ring-1 ring-[#005EF8]/15 hover:bg-[#005EF8]/20"
+              }`}
+            >
+              {faucetState === "pending" ? (
+                <span className="flex items-center justify-center gap-2">
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-4 h-4 border-2 border-[#005EF8]/20 border-t-[#005EF8]/60 rounded-full inline-block"
+                  />
+                  Claiming...
+                </span>
+              ) : (
+                "Claim 1,000 cUSDC (Testnet Faucet)"
+              )}
+            </button>
+          )}
         </div>
 
         {/* Portfolio summary */}

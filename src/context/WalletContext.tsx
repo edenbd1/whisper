@@ -159,11 +159,24 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, isLoading: true }));
 
     try {
-      await (state.signer as any).generateOrRecoverAes();
-      const onboardInfo = (state.signer as any).getUserOnboardInfo?.();
-      const aesKey = onboardInfo?.aesKey;
+      // Check native COTI balance first (needed for gas)
+      const balance = await state.provider.getBalance(state.address);
+      if (balance === BigInt(0)) {
+        alert("You need native COTI for gas. Get testnet COTI from the faucet first.");
+        setState((s) => ({ ...s, isLoading: false }));
+        return;
+      }
 
-      if (aesKey && state.address) {
+      // Use the standalone onboard function for better error visibility
+      const { onboard: cotiOnboard } = await import("@coti-io/coti-ethers");
+      const onboardInfo = await cotiOnboard(
+        "0x536A67f0cc46513E7d27a370ed1aF9FDcC7A5095", // AccountOnboard contract
+        state.signer as any
+      );
+
+      const aesKey = onboardInfo?.aesKey;
+      if (aesKey) {
+        (state.signer as any).setUserOnboardInfo?.(onboardInfo);
         storeWallet(state.address, aesKey);
       }
 
@@ -173,11 +186,19 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         aesKey: aesKey || null,
         isLoading: false,
       }));
-    } catch (err) {
+    } catch (err: any) {
       console.error("Onboarding failed:", err);
+      const msg = err?.message || "Unknown error";
+      if (msg.includes("user rejected") || msg.includes("denied")) {
+        alert("Signature request was rejected. Please approve the signing to complete onboarding.");
+      } else if (msg.includes("balance is 0")) {
+        alert("You need native COTI for gas. Get testnet COTI from the faucet first.");
+      } else {
+        alert(`Onboarding failed: ${msg}`);
+      }
       setState((s) => ({ ...s, isLoading: false }));
     }
-  }, [state.signer, state.address]);
+  }, [state.signer, state.address, state.provider]);
 
   // Listen for account/chain changes
   useEffect(() => {
