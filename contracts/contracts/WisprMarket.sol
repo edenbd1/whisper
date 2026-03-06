@@ -24,6 +24,7 @@ contract WisprMarket {
         bool resolved;
         bool outcome;
         bool exists;
+        bool cancelled;
     }
 
     uint256 public marketCount;
@@ -36,6 +37,8 @@ contract WisprMarket {
     event BetPlaced(uint256 indexed id, address indexed bettor, bool isYes, uint64 amount);
     event MarketResolved(uint256 indexed id, bool outcome);
     event WinningsClaimed(uint256 indexed id, address indexed claimer, uint64 amount);
+    event MarketCancelled(uint256 indexed id);
+    event RefundClaimed(uint256 indexed id, address indexed claimer, uint64 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -66,7 +69,8 @@ contract WisprMarket {
             totalParticipants: 0,
             resolved: false,
             outcome: false,
-            exists: true
+            exists: true,
+            cancelled: false
         });
 
         emit MarketCreated(id, question, endTime);
@@ -86,11 +90,7 @@ contract WisprMarket {
         require(block.timestamp < m.endTime, "Market has ended");
         require(amount > 0, "Must bet something");
 
-        // Transfer cUSDC from user to this contract
-        gtUint64 gtAmount = MpcCore.setPublic64(amount);
-        gtBool success = token.transferFrom(msg.sender, address(this), gtAmount);
-        require(MpcCore.decrypt(success), "Transfer failed");
-
+        // State changes first (checks-effects-interactions)
         if (yesBets[marketId][msg.sender] == 0 && noBets[marketId][msg.sender] == 0) {
             m.totalParticipants++;
         }
@@ -103,6 +103,11 @@ contract WisprMarket {
             m.totalNo += amount;
         }
 
+        // External call last
+        gtUint64 gtAmount = MpcCore.setPublic64(amount);
+        gtBool success = token.transferFrom(msg.sender, address(this), gtAmount);
+        require(MpcCore.decrypt(success), "Transfer failed");
+
         emit BetPlaced(marketId, msg.sender, isYes, amount);
     }
 
@@ -110,11 +115,40 @@ contract WisprMarket {
         Market storage m = markets[marketId];
         require(m.exists, "Market does not exist");
         require(!m.resolved, "Already resolved");
+        require(block.timestamp >= m.endTime, "Market has not ended yet");
 
         m.resolved = true;
         m.outcome = outcome;
 
         emit MarketResolved(marketId, outcome);
+    }
+
+    function cancelMarket(uint256 marketId) external onlyOwner {
+        Market storage m = markets[marketId];
+        require(m.exists, "Market does not exist");
+        require(!m.resolved, "Already resolved");
+
+        m.resolved = true;
+        m.cancelled = true;
+
+        emit MarketCancelled(marketId);
+    }
+
+    function claimRefund(uint256 marketId) external {
+        Market storage m = markets[marketId];
+        require(m.cancelled, "Market not cancelled");
+        require(!hasClaimed[marketId][msg.sender], "Already claimed");
+
+        uint64 refund = yesBets[marketId][msg.sender] + noBets[marketId][msg.sender];
+        require(refund > 0, "Nothing to refund");
+
+        hasClaimed[marketId][msg.sender] = true;
+
+        gtUint64 gtRefund = MpcCore.setPublic64(refund);
+        gtBool success = token.transfer(msg.sender, gtRefund);
+        require(MpcCore.decrypt(success), "Refund failed");
+
+        emit RefundClaimed(marketId, msg.sender, refund);
     }
 
     function claimWinnings(uint256 marketId) external {

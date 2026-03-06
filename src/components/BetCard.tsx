@@ -219,8 +219,8 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
               onClick={() => handleBet("no")}
               className={`btn-press flex-1 py-3 rounded-2xl font-bold text-[13px] transition-all duration-300 ${
                 hasVoted && votedSide === "no"
-                  ? "bg-red-500/80 text-white ring-2 ring-red-400/30"
-                  : "bg-red-400/25 text-white/90 hover:bg-red-400/35"
+                  ? "bg-red-500 text-white ring-2 ring-red-400/30"
+                  : "bg-red-500/80 text-white hover:bg-red-500"
               }`}
             >
               <span className="flex items-center justify-center gap-1.5">

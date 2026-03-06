@@ -38,7 +38,7 @@ html, body {
 ::-webkit-scrollbar { display: none; }
 * { scrollbar-width: none; }
 
-/* ───────────── Feed scroll snap ───────────── */
+/* Feed scroll snap */
 .feed-container {
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
@@ -53,12 +53,13 @@ html, body {
   position: relative;
 }
 
-/* ───────────── Glassmorphism ───────────── */
+/* Glassmorphism */
 .glass {
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(24px) saturate(1.2);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .glass-strong {
@@ -68,7 +69,7 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* ───────────── Glow effects ───────────── */
+/* Glow effects */
 .glow-accent {
   box-shadow:
     0 0 20px rgba(0, 94, 248, 0.25),
@@ -96,7 +97,7 @@ html, body {
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* ───────────── Shimmer / Skeleton ───────────── */
+/* Shimmer / Skeleton */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -107,7 +108,7 @@ html, body {
   animation: shimmer 2.5s ease-in-out infinite;
 }
 
-/* ───────────── Pulse animations ───────────── */
+/* Pulse animations */
 @keyframes pulse-live {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(0.85); }
@@ -120,21 +121,21 @@ html, body {
 }
 .pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
 
-/* ───────────── Progress bar glow ───────────── */
+/* Progress bar glow */
 @keyframes progress-glow {
   0%, 100% { filter: brightness(1) drop-shadow(0 0 4px rgba(34, 197, 94, 0.3)); }
   50% { filter: brightness(1.2) drop-shadow(0 0 8px rgba(34, 197, 94, 0.5)); }
 }
 .progress-glow { animation: progress-glow 3s ease-in-out infinite; }
 
-/* ───────────── Floating animation ───────────── */
+/* Floating animation */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
 }
 .float { animation: float 4s ease-in-out infinite; }
 
-/* ───────────── Gradient text ───────────── */
+/* Gradient text */
 .text-gradient {
   background: linear-gradient(135deg, #005EF8 0%, #3B82F6 50%, #005EF8 100%);
   background-size: 200% auto;
@@ -149,7 +150,7 @@ html, body {
   50% { background-position: 200% center; }
 }
 
-/* ───────────── Spotlight / Cursor glow ───────────── */
+/* Spotlight / Cursor glow */
 .spotlight {
   position: relative;
   overflow: hidden;
@@ -172,13 +173,13 @@ html, body {
   opacity: 1;
 }
 
-/* ───────────── Dot grid background ───────────── */
+/* Dot grid background */
 .dot-grid {
   background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* ───────────── Noise texture ───────────── */
+/* Noise texture */
 .noise::after {
   content: "";
   position: absolute;
@@ -189,7 +190,7 @@ html, body {
   z-index: 1;
 }
 
-/* ───────────── Input reset ───────────── */
+/* Input reset */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -197,7 +198,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 input[type="number"] { -moz-appearance: textfield; }
 
-/* ───────────── Odds bar ───────────── */
+/* Odds bar */
 .odds-bar {
   position: relative;
   height: 6px;
@@ -223,7 +224,7 @@ input[type="number"] { -moz-appearance: textfield; }
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ───────────── Card overlay ───────────── */
+/* Card overlay */
 .card-overlay {
   background:
     linear-gradient(to top,
@@ -235,7 +236,7 @@ input[type="number"] { -moz-appearance: textfield; }
     );
 }
 
-/* ───────────── Vignette ───────────── */
+/* Vignette */
 .vignette::after {
   content: "";
   position: absolute;
@@ -244,7 +245,7 @@ input[type="number"] { -moz-appearance: textfield; }
   pointer-events: none;
 }
 
-/* ───────────── Button press ───────────── */
+/* Button press */
 .btn-press {
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -252,7 +253,7 @@ input[type="number"] { -moz-appearance: textfield; }
   transform: scale(0.96);
 }
 
-/* ───────────── Fade-in utilities ───────────── */
+/* Fade-in utilities */
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -275,7 +276,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .stagger > *:nth-child(5) { animation-delay: 240ms; }
 .stagger > *:nth-child(6) { animation-delay: 300ms; }
 
-/* ───────────── Sidebar edge glow ───────────── */
+/* Sidebar edge glow */
 @keyframes sidebar-edge {
   0%, 100% { opacity: 0.15; }
   50% { opacity: 0.4; }
@@ -292,6 +293,6 @@ input[type="number"] { -moz-appearance: textfield; }
   animation: sidebar-edge 4s ease-in-out infinite;
 }
 
-/* ───────────── No scrollbar utility ───────────── */
+/* No scrollbar utility */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }

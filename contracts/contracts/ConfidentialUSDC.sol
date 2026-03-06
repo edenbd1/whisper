@@ -42,13 +42,13 @@ contract ConfidentialUSDC is PrivateERC20 {
 
     function faucet() external {
         require(!hasClaimed[msg.sender], "Already claimed");
-        hasClaimed[msg.sender] = true;
 
         gtBool success = _mint(msg.sender, MpcCore.setPublic64(FAUCET_AMOUNT));
-        if (MpcCore.decrypt(success)) {
-            _totalSupplyValue += FAUCET_AMOUNT;
-            emit FaucetClaim(msg.sender);
-        }
+        require(MpcCore.decrypt(success), "Mint failed");
+
+        hasClaimed[msg.sender] = true;
+        _totalSupplyValue += FAUCET_AMOUNT;
+        emit FaucetClaim(msg.sender);
     }
 
     /**

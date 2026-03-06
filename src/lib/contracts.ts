@@ -174,6 +174,20 @@ export const WISPR_MARKET_ABI = [
     type: "function",
   },
   {
+    inputs: [{ name: "marketId", type: "uint256" }],
+    name: "cancelMarket",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ name: "marketId", type: "uint256" }],
+    name: "claimRefund",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     anonymous: false,
     inputs: [
       { indexed: true, name: "id", type: "uint256" },

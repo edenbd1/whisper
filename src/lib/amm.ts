@@ -38,7 +38,9 @@ export function previewBuy(
   side: BetSide,
   amount: number
 ): TradePreview {
+  if (amount <= 0) return { sharesReceived: 0, avgPrice: 0, priceImpact: 0, newYesPrice: 0.5, newNoPrice: 0.5 };
   const k = state.yesShares * state.noShares;
+  if (k <= 0) return { sharesReceived: 0, avgPrice: 0, priceImpact: 0, newYesPrice: 0.5, newNoPrice: 0.5 };
   const oldPrice = getPrice(state);
 
   let newYes: number, newNo: number, sharesReceived: number;
@@ -82,7 +84,9 @@ export function executeBuy(
   side: BetSide,
   amount: number
 ): { newState: AMMState; sharesReceived: number; avgPrice: number } {
+  if (amount <= 0) return { newState: state, sharesReceived: 0, avgPrice: 0 };
   const k = state.yesShares * state.noShares;
+  if (k <= 0) return { newState: state, sharesReceived: 0, avgPrice: 0 };
 
   let newYes: number, newNo: number, sharesReceived: number;
 
@@ -130,6 +134,7 @@ export function previewSell(
   side: BetSide,
   sharesToSell: number
 ): SellResult {
+  if (sharesToSell <= 0) return { cotiReceived: 0, avgSellPrice: 0, priceImpact: 0 };
   const oldPrice = getPrice(state);
   const cotiReceived = solveSellCoti(state.yesShares, state.noShares, side, sharesToSell);
   const avgSellPrice = sharesToSell > 0 ? cotiReceived / sharesToSell : 0;
@@ -148,6 +153,7 @@ export function executeSell(
   side: BetSide,
   sharesToSell: number
 ): { newState: AMMState; cotiReceived: number } {
+  if (sharesToSell <= 0) return { newState: state, cotiReceived: 0 };
   const cotiReceived = solveSellCoti(state.yesShares, state.noShares, side, sharesToSell);
 
   let newYes: number, newNo: number;

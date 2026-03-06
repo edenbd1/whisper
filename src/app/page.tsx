@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import BetFeed from "@/components/BetFeed";
 import BottomNav from "@/components/BottomNav";
 import Header from "@/components/Header";
@@ -72,7 +73,18 @@ export default function Home() {
       {/* Spacer to reserve space for the fixed sidebar */}
       <div className="hidden lg:block flex-shrink-0 w-[68px] xl:w-[220px]" />
       <div className="flex-1 h-full min-w-0">
-        {renderContent()}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="h-full"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Handle setup modal */}

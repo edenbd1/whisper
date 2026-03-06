@@ -73,7 +73,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
         <div className="sidebar-edge-line absolute inset-0" />
       </div>
 
-      {/* ── Logo ── */}
+      {/* Logo */}
       <div className="relative flex items-center gap-3 px-4 xl:px-5 pt-7 pb-9">
         <div className="relative group cursor-pointer">
           <div className="absolute -inset-2 rounded-2xl bg-[#005EF8]/15 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
@@ -84,7 +84,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
         </div>
       </div>
 
-      {/* ── Nav ── */}
+      {/* Nav */}
       <nav className="relative flex-1 flex flex-col gap-0.5 px-2 xl:px-2.5">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
@@ -190,12 +190,12 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
         })}
       </nav>
 
-      {/* ── Separator ── */}
+      {/* Separator */}
       <div className="relative mx-4 mb-3">
         <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
       </div>
 
-      {/* ── Network badge ── */}
+      {/* Network badge */}
       <div className="relative mx-2.5 mb-3">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.02]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005EF8] shadow-[0_0_6px_rgba(0,94,248,0.5)] pulse-soft" />
@@ -204,7 +204,7 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
         </div>
       </div>
 
-      {/* ── Wallet ── */}
+      {/* Wallet */}
       <div className="relative px-2 xl:px-2.5 pb-5 space-y-2">
         {isConnected && address ? (
           <>
