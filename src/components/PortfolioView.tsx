@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { useMarket } from "@/context/MarketContext";
@@ -10,16 +10,49 @@ import { shortenAddress } from "@/lib/coti";
 import { CONTRACT_ADDRESSES, CUSDC_ABI } from "@/lib/contracts";
 import SellModal from "./SellModal";
 
+function getStoredBalance(address: string): number {
+  try {
+    return parseFloat(localStorage.getItem(`cusdc-${address.toLowerCase()}`) || "0");
+  } catch { return 0; }
+}
+function setStoredBalance(address: string, balance: number) {
+  localStorage.setItem(`cusdc-${address.toLowerCase()}`, balance.toString());
+}
+
 export default function PortfolioView({ handle }: { handle: string | null }) {
   const { address, isConnected, signer } = useWallet();
   const { positions, getPositionPnL, getMarketPrice } = useMarket();
   const [sellTarget, setSellTarget] = useState<Position | null>(null);
   const [faucetState, setFaucetState] = useState<"idle" | "pending" | "success" | "error">("idle");
   const [faucetError, setFaucetError] = useState("");
+  const [walletBalance, setWalletBalance] = useState(0);
+
+  // Load stored balance, or check on-chain if we have no record
+  useEffect(() => {
+    if (!address) return;
+    const stored = getStoredBalance(address);
+    if (stored > 0) {
+      setWalletBalance(stored);
+    } else if (CONTRACT_ADDRESSES.token && signer) {
+      // Check if already claimed on-chain but not tracked locally
+      import("@coti-io/coti-ethers").then(({ Contract }) => {
+        const token = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
+        token.hasClaimed(address).then((claimed: boolean) => {
+          if (claimed) {
+            setWalletBalance(1000);
+            setStoredBalance(address, 1000);
+          }
+        }).catch(() => {});
+      });
+    }
+  }, [address, signer]);
 
   const claimFaucet = useCallback(async () => {
-    if (!signer || !CONTRACT_ADDRESSES.token) {
-      // No contract deployed - simulate
+    if (!signer || !address) return;
+    if (!CONTRACT_ADDRESSES.token) {
+      const newBal = walletBalance + 1000;
+      setWalletBalance(newBal);
+      setStoredBalance(address, newBal);
       setFaucetState("success");
       return;
     }
@@ -30,17 +63,25 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
       const token = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
       const tx = await token.faucet({ gasLimit: 1_000_000 });
       await tx.wait();
+      const newBal = walletBalance + 1000;
+      setWalletBalance(newBal);
+      setStoredBalance(address, newBal);
       setFaucetState("success");
     } catch (err: any) {
       const msg = err?.reason || err?.message || "Transaction failed";
       if (msg.includes("Already claimed")) {
         setFaucetError("Already claimed. Faucet is one-time per wallet.");
+        // If they already claimed but balance is 0, set it
+        if (walletBalance === 0) {
+          setWalletBalance(1000);
+          setStoredBalance(address, 1000);
+        }
       } else {
         setFaucetError(msg);
       }
       setFaucetState("error");
     }
-  }, [signer]);
+  }, [signer, address, walletBalance]);
 
   // Aggregate positions by market+side
   const aggregated = useMemo(() => {
@@ -108,81 +149,71 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
           </div>
         </div>
 
-        {/* cUSDC Wallet */}
-        <div className="glass rounded-2xl p-5 mb-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#005EF8]/10 flex items-center justify-center ring-1 ring-[#005EF8]/15">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2" strokeLinecap="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-[11px] text-white/30 font-semibold uppercase tracking-wider">Confidential USDC</p>
-                <p className="text-[10px] text-white/15">Encrypted balance on COTI</p>
-              </div>
+        {/* Balance cards */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {/* Wallet Balance */}
+          <div className="glass rounded-2xl p-4">
+            <div className="flex items-center gap-1.5 mb-2">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2" strokeLinecap="round" className="opacity-60">
+                <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">Wallet</p>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-black text-white">{walletBalance.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+              <span className="text-[11px] text-white/25 font-semibold">cUSDC</span>
             </div>
           </div>
 
-          {faucetState === "success" ? (
-            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-green-500/[0.06] border border-green-500/10">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
-              <span className="text-xs text-green-400 font-semibold">1,000 cUSDC claimed successfully</span>
+          {/* Positions Value */}
+          <div className="glass rounded-2xl p-4">
+            <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mb-2">Positions</p>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-black text-white">{summary.totalValue.toFixed(2)}</span>
+              <span className="text-[11px] text-white/25 font-semibold">cUSDC</span>
             </div>
-          ) : faucetState === "error" ? (
-            <div className="space-y-2">
+            {summary.count > 0 && (
+              <p className={`text-[11px] font-semibold mt-1 ${summary.totalPnL >= 0 ? "text-green-400" : "text-red-400"}`}>
+                {summary.totalPnL >= 0 ? "+" : ""}{summary.totalPnLPercent.toFixed(1)}%
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Faucet */}
+        {walletBalance === 0 && (
+          <div className="mb-4">
+            {faucetState === "error" ? (
               <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/[0.04] border border-red-500/10">
                 <span className="text-xs text-red-400">{faucetError}</span>
+                <button onClick={() => setFaucetState("idle")} className="text-[10px] text-white/30 hover:text-white/50 ml-auto">Retry</button>
               </div>
+            ) : (
               <button
-                onClick={() => setFaucetState("idle")}
-                className="text-[11px] text-white/30 hover:text-white/50 transition-colors"
+                onClick={claimFaucet}
+                disabled={faucetState === "pending"}
+                className={`w-full py-3 rounded-xl text-sm font-bold transition-all btn-press ${
+                  faucetState === "pending"
+                    ? "glass text-white/30 cursor-wait"
+                    : "bg-[#005EF8]/10 text-[#005EF8] ring-1 ring-[#005EF8]/15 hover:bg-[#005EF8]/20"
+                }`}
               >
-                Try again
+                {faucetState === "pending" ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-4 h-4 border-2 border-[#005EF8]/20 border-t-[#005EF8]/60 rounded-full inline-block"
+                    />
+                    Claiming...
+                  </span>
+                ) : (
+                  "Claim 1,000 cUSDC (Testnet Faucet)"
+                )}
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={claimFaucet}
-              disabled={faucetState === "pending"}
-              className={`w-full py-3 rounded-xl text-sm font-bold transition-all btn-press ${
-                faucetState === "pending"
-                  ? "glass text-white/30 cursor-wait"
-                  : "bg-[#005EF8]/10 text-[#005EF8] ring-1 ring-[#005EF8]/15 hover:bg-[#005EF8]/20"
-              }`}
-            >
-              {faucetState === "pending" ? (
-                <span className="flex items-center justify-center gap-2">
-                  <motion.span
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-[#005EF8]/20 border-t-[#005EF8]/60 rounded-full inline-block"
-                  />
-                  Claiming...
-                </span>
-              ) : (
-                "Claim 1,000 cUSDC (Testnet Faucet)"
-              )}
-            </button>
-          )}
-        </div>
-
-        {/* Portfolio summary */}
-        <div className="glass rounded-2xl p-5 mb-6">
-          <p className="text-[11px] text-white/30 uppercase tracking-wider font-semibold mb-1">Portfolio Value</p>
-          <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-black text-white">{summary.totalValue.toFixed(2)}</span>
-            <span className="text-sm text-white/30 font-medium">cUSDC</span>
+            )}
           </div>
-          {summary.count > 0 && (
-            <div className={`flex items-center gap-1.5 mt-2 text-sm font-semibold ${summary.totalPnL >= 0 ? "text-green-400" : "text-red-400"}`}>
-              <span>{summary.totalPnL >= 0 ? "+" : ""}{summary.totalPnL.toFixed(2)} cUSDC</span>
-              <span className="text-white/20">·</span>
-              <span>{summary.totalPnL >= 0 ? "+" : ""}{summary.totalPnLPercent.toFixed(1)}%</span>
-            </div>
-          )}
-          <p className="text-[11px] text-white/20 mt-2">{summary.count} active position{summary.count !== 1 ? "s" : ""}</p>
-        </div>
+        )}
 
         {/* Positions list */}
         {aggregated.length === 0 ? (

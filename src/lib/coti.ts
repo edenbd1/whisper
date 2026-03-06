@@ -1,6 +1,6 @@
 export const COTI_TESTNET = {
   chainId: 7082400,
-  chainIdHex: "0x6C1060",
+  chainIdHex: "0x6C11A0",
   name: "COTI Testnet",
   rpc: "https://testnet.coti.io/rpc",
   ws: "wss://testnet.coti.io/ws",

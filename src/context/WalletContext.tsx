@@ -71,7 +71,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const switchToCotiNetwork = useCallback(async () => {
     if (!window.ethereum) return;
 
-    const chainIdHex = `0x${COTI_TESTNET.chainId.toString(16)}`;
+    const chainIdHex = COTI_TESTNET.chainIdHex;
 
     try {
       await window.ethereum.request({
@@ -79,26 +79,31 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         params: [{ chainId: chainIdHex }],
       });
     } catch (switchError: any) {
-      if (switchError.code === 4902) {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [
-            {
-              chainId: chainIdHex,
-              chainName: COTI_TESTNET.name,
-              nativeCurrency: COTI_TESTNET.currency,
-              rpcUrls: [COTI_TESTNET.rpc],
-              blockExplorerUrls: [COTI_TESTNET.explorer],
-            },
-          ],
-        });
-      }
+      // 4902 = chain not added yet, any other error = try adding too
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: chainIdHex,
+            chainName: COTI_TESTNET.name,
+            nativeCurrency: COTI_TESTNET.currency,
+            rpcUrls: [COTI_TESTNET.rpc],
+            blockExplorerUrls: [COTI_TESTNET.explorer],
+          },
+        ],
+      });
+    }
+
+    // Verify the chain actually switched (compare lowercase - wallets return mixed case)
+    const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
+    if (currentChainId.toLowerCase() !== chainIdHex.toLowerCase()) {
+      throw new Error(`Please switch to COTI Testnet in your wallet. Current chain: ${currentChainId}`);
     }
   }, []);
 
   const connect = useCallback(async () => {
     if (!window.ethereum) {
-      alert("Please install MetaMask!");
+      alert("No wallet detected. Please install MetaMask or Rabby.");
       return;
     }
 
@@ -108,9 +113,15 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       await window.ethereum.request({ method: "eth_requestAccounts" });
       await switchToCotiNetwork();
 
+      // Small delay to let wallet settle after chain switch
+      await new Promise((r) => setTimeout(r, 500));
+
       // Dynamic import to avoid SSR issues
       const { BrowserProvider } = await import("@coti-io/coti-ethers");
       const provider = new BrowserProvider(window.ethereum as any);
+      const network = await provider.getNetwork();
+      console.log("Connected to chain:", network.chainId.toString());
+
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
 
@@ -135,8 +146,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         aesKey: storedAes,
         isLoading: false,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Connect failed:", err);
+      const msg = err?.message || "Connection failed";
+      alert(msg);
       setState((s) => ({ ...s, isLoading: false }));
     }
   }, [switchToCotiNetwork]);
