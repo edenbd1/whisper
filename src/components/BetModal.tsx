@@ -26,7 +26,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
   const [txState, setTxState] = useState<TxState>("idle");
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
-  const { isConnected, signer, connect } = useWallet();
+  const { isConnected, isOnboarded, signer, connect } = useWallet();
   const { previewTrade, executeTrade, getMarketPrice } = useMarket();
 
   const isYes = side === "yes";
@@ -51,15 +51,25 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       return;
     }
 
+    if (!isOnboarded) {
+      setError("Please onboard your wallet first (go to Portfolio → Onboard)");
+      setTxState("error");
+      return;
+    }
+
     setTxState("pending");
     setError("");
     try {
-      const { Contract } = await import("@coti-io/coti-ethers");
+      const { Contract, Interface } = await import("@coti-io/coti-ethers");
       const amountRaw = BigInt(Math.round(numAmount * 1e6)); // 6 decimals
 
-      // 1. Approve market to spend cUSDC
+      // 1. Encrypt amount and approve market to spend cUSDC
+      const iface = new Interface(CUSDC_ABI);
+      const approveSelector = iface.getFunction("approve")!.selector;
+      const encrypted = await (signer as any).encryptValue(amountRaw, CONTRACT_ADDRESSES.token, approveSelector);
+
       const tokenContract = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
-      const approveTx = await tokenContract.approve(CONTRACT_ADDRESSES.market, amountRaw, { gasLimit: 500_000 });
+      const approveTx = await tokenContract.approve(CONTRACT_ADDRESSES.market, encrypted, { gasLimit: 500_000 });
       await approveTx.wait();
 
       // 2. Place bet
