@@ -52,7 +52,7 @@ contract WisprMarket {
         string calldata category,
         string calldata imageUrl,
         uint256 endTime
-    ) external onlyOwner returns (uint256) {
+    ) external returns (uint256) {
         require(endTime > block.timestamp, "End time must be in the future");
 
         uint256 id = marketCount++;

@@ -3,20 +3,48 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
+import { CONTRACT_ADDRESSES, WISPR_MARKET_ABI } from "@/lib/contracts";
+import { getExplorerTxUrl } from "@/lib/coti";
 
 export default function CreateView() {
-  const { isConnected, connect } = useWallet();
+  const { isConnected, signer, connect } = useWallet();
   const [question, setQuestion] = useState("");
   const [category, setCategory] = useState("Crypto");
   const [endDate, setEndDate] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [txHash, setTxHash] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
 
-  const categories = ["Crypto", "Geopolitics", "Technology", "Sports", "Business", "Science"];
+  const categories = ["Crypto", "Geopolitics", "Technology", "Sports", "Business", "Science", "Conspiracy"];
   const isValid = question.length >= 10 && endDate;
 
-  const handleSubmit = () => {
-    if (!isValid) return;
-    setSubmitted(true);
+  const handleSubmit = async () => {
+    if (!isValid || !signer) return;
+
+    if (!CONTRACT_ADDRESSES.market) {
+      setSubmitted(true);
+      return;
+    }
+
+    setPending(true);
+    setError("");
+    try {
+      const { Contract } = await import("@coti-io/coti-ethers");
+      const market = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);
+      const endTime = Math.floor(new Date(endDate).getTime() / 1000);
+      const img = imageUrl || `https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=800&q=80`;
+      const tx = await market.createMarket(question, category, img, endTime, { gasLimit: 2_000_000 });
+      setTxHash(tx.hash);
+      await tx.wait();
+      setSubmitted(true);
+    } catch (err: any) {
+      const msg = err?.reason || err?.message || "Transaction failed";
+      setError(msg.includes("user rejected") ? "Transaction rejected" : msg.length > 100 ? msg.slice(0, 100) + "..." : msg);
+    } finally {
+      setPending(false);
+    }
   };
 
   if (!isConnected) {
@@ -51,11 +79,16 @@ export default function CreateView() {
           <div className="w-16 h-16 rounded-2xl bg-[#005EF8]/10 flex items-center justify-center mx-auto ring-1 ring-[#005EF8]/20">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#005EF8" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
           </div>
-          <h3 className="text-xl font-bold text-white">Market Submitted</h3>
+          <h3 className="text-xl font-bold text-white">Market Created</h3>
           <p className="text-sm text-white/30">{question}</p>
-          <p className="text-xs text-white/15">Market creation requires owner approval on WisprMarket contract</p>
+          {txHash && (
+            <a href={getExplorerTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
+              className="text-[#005EF8]/60 text-xs hover:text-[#005EF8] transition-colors underline decoration-[#005EF8]/20 underline-offset-2">
+              View on CotiScan
+            </a>
+          )}
           <button
-            onClick={() => { setSubmitted(false); setQuestion(""); setEndDate(""); }}
+            onClick={() => { setSubmitted(false); setQuestion(""); setEndDate(""); setImageUrl(""); setTxHash(""); }}
             className="glass px-6 py-2.5 rounded-xl text-xs font-semibold text-white/80 hover:bg-white/[0.06] transition-colors btn-press"
           >
             Create Another
@@ -123,6 +156,20 @@ export default function CreateView() {
             />
           </div>
 
+          {/* Image URL (optional) */}
+          <div>
+            <label className="text-[11px] text-white/30 font-semibold uppercase tracking-wider mb-2 block">
+              Image URL <span className="text-white/15 normal-case">(optional)</span>
+            </label>
+            <input
+              type="url"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://images.unsplash.com/..."
+              className="w-full glass rounded-xl px-4 py-3 text-sm font-medium text-white placeholder:text-white/15 focus:outline-none focus:ring-1 focus:ring-[#005EF8]/20 transition-all"
+            />
+          </div>
+
           {/* Initial odds info */}
           <div className="glass rounded-xl p-4 space-y-2">
             <div className="flex justify-between text-[12px]">
@@ -147,17 +194,26 @@ export default function CreateView() {
             <span className="text-[11px] text-white/20 leading-relaxed">Markets are deployed on COTI with confidential betting.</span>
           </div>
 
+          {/* Error */}
+          {error && (
+            <div className="px-3 py-2.5 rounded-xl bg-red-500/[0.04] border border-red-500/[0.08]">
+              <p className="text-red-400 text-xs">{error}</p>
+            </div>
+          )}
+
           {/* Submit */}
           <button
             onClick={handleSubmit}
-            disabled={!isValid}
+            disabled={!isValid || pending}
             className={`w-full py-4 rounded-xl text-sm font-bold transition-all duration-300 btn-press ${
-              isValid
+              pending
+                ? "glass text-white/30 cursor-wait"
+                : isValid
                 ? "bg-[#005EF8] text-white glow-accent hover:bg-[#3B82F6]"
                 : "bg-white/[0.03] text-white/10 cursor-not-allowed"
             }`}
           >
-            {!isValid ? "Fill in all fields" : "Create Market"}
+            {pending ? "Creating on COTI..." : !isValid ? "Fill in all fields" : "Create Market"}
           </button>
         </div>
       </div>

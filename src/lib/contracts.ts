@@ -97,6 +97,28 @@ export const WISPR_MARKET_ABI = [
     type: "function",
   },
   {
+    inputs: [
+      { name: "question", type: "string" },
+      { name: "category", type: "string" },
+      { name: "imageUrl", type: "string" },
+      { name: "endTime", type: "uint256" },
+    ],
+    name: "createMarket",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "marketId", type: "uint256" },
+      { name: "outcome", type: "bool" },
+    ],
+    name: "resolveMarket",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [{ name: "marketId", type: "uint256" }],
     name: "getMarket",
     outputs: [

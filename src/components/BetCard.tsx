@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bet, BetSide } from "@/types";
 import { formatNumber, daysUntil } from "@/lib/mockData";
@@ -52,15 +53,21 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
     <>
       <div ref={cardRef} className="relative w-full h-full overflow-hidden bg-black">
         {/* Background image */}
-        <motion.img
-          src={bet.image}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+        <motion.div
+          className="absolute inset-0"
           initial={{ scale: 1.1, opacity: 0 }}
           animate={isActive ? { scale: 1.02, opacity: 1 } : { scale: 1.1, opacity: 0.6 }}
           transition={t(1.2)}
-          loading="lazy"
-        />
+        >
+          <Image
+            src={bet.image}
+            alt={bet.question}
+            fill
+            sizes="100vw"
+            priority={true}
+            className="object-cover"
+          />
+        </motion.div>
 
         {/* Overlays */}
         <div className="card-overlay absolute inset-0" />

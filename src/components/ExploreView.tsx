@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { mockBets, formatNumber, daysUntil } from "@/lib/mockData";
 import { useMarket } from "@/context/MarketContext";
 import { Bet } from "@/types";
+import { SkeletonCard } from "./Skeleton";
 
 const categories = ["All", "Crypto", "Geopolitics", "Technology", "Sports", "Business", "Science", "Conspiracy"];
 
@@ -14,7 +16,13 @@ interface ExploreViewProps {
 
 export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
   const { getMarketPrice } = useMarket();
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
 
   const filtered = activeCategory === "All"
     ? mockBets
@@ -44,7 +52,11 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
         </div>
 
         {/* Market grid */}
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-white/20 text-sm mb-1">No markets in this category</p>
             <button onClick={() => setActiveCategory("All")} className="text-[#005EF8]/60 text-xs hover:text-[#005EF8] transition-colors">
@@ -71,11 +83,12 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
               >
                 {/* Image header */}
                 <div className="relative h-28 overflow-hidden">
-                  <img
+                  <Image
                     src={bet.image}
-                    alt=""
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
+                    alt={bet.question}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
                   <div className="absolute top-2.5 left-2.5 flex gap-1.5">

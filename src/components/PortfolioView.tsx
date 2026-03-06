@@ -9,6 +9,8 @@ import { Position, BetSide } from "@/types";
 import { shortenAddress } from "@/lib/coti";
 import { CONTRACT_ADDRESSES, CUSDC_ABI } from "@/lib/contracts";
 import SellModal from "./SellModal";
+import ResolvePanel from "./ResolvePanel";
+import { SkeletonPosition } from "./Skeleton";
 
 const BALANCE_KEY_PREFIX = `cusdc-${CONTRACT_ADDRESSES.token?.slice(0, 8)}-`;
 function getStoredBalance(address: string): number {
@@ -27,6 +29,12 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
   const [faucetState, setFaucetState] = useState<"idle" | "pending" | "success" | "error">("idle");
   const [faucetError, setFaucetError] = useState("");
   const [walletBalance, setWalletBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 400);
+    return () => clearTimeout(t);
+  }, []);
 
   // Load stored balance, or check on-chain if we have no record
   useEffect(() => {
@@ -217,7 +225,12 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
         )}
 
         {/* Positions list */}
-        {aggregated.length === 0 ? (
+        {loading ? (
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-white/30 uppercase tracking-wider mb-3">Positions</h3>
+            {Array.from({ length: 3 }).map((_, i) => <SkeletonPosition key={i} />)}
+          </div>
+        ) : aggregated.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-white/20 text-sm mb-1">No positions yet</p>
             <p className="text-white/10 text-xs">Swipe through markets and place bets to build your portfolio</p>
@@ -273,6 +286,13 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
                 );
               })}
             </AnimatePresence>
+          </div>
+        )}
+
+        {/* Resolution panel */}
+        {CONTRACT_ADDRESSES.market && (
+          <div className="mt-8">
+            <ResolvePanel />
           </div>
         )}
       </div>
