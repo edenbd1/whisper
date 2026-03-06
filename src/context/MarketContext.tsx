@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { mockBets } from "@/lib/mockData";
 import { initializePool, getPrice, executeBuy, previewBuy, previewSell, executeSell as ammExecuteSell } from "@/lib/amm";
-import { saveAMMStates, loadAMMStates, savePositions, loadPositions } from "@/lib/storage";
+import { saveAMMStates, loadAMMStates, savePositions, loadPositions, savePriceHistory, loadPriceHistory } from "@/lib/storage";
 import { AMMState, Bet, BetSide, MarketPrice, Position, TradePreview, SellResult, PnLInfo } from "@/types";
 import { useWallet } from "./WalletContext";
 
@@ -16,6 +16,7 @@ interface MarketContextType {
   sellPosition: (marketId: string, side: BetSide, shares: number) => void;
   positions: Position[];
   getPositionPnL: (position: Position) => PnLInfo;
+  getPriceHistory: (marketId: string) => number[];
 }
 
 const MarketContext = createContext<MarketContextType | null>(null);
@@ -41,6 +42,23 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     return stored || initAllPools();
   });
   const [positions, setPositions] = useState<Position[]>([]);
+  const [priceHistory, setPriceHistory] = useState<Record<string, number[]>>(() => {
+    const stored = loadPriceHistory();
+    if (stored) return stored;
+    // Seed initial history from mock data
+    const history: Record<string, number[]> = {};
+    for (const bet of mockBets) {
+      const base = bet.yesPercentage / 100;
+      const points: number[] = [];
+      for (let i = 0; i < 12; i++) {
+        const noise = (Math.random() - 0.5) * 0.08;
+        points.push(Math.max(0.01, Math.min(0.99, base + noise * (i / 12))));
+      }
+      points.push(base);
+      history[bet.id] = points;
+    }
+    return history;
+  });
 
   // Load positions when wallet changes
   useEffect(() => {
@@ -62,6 +80,11 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       savePositions(address, positions);
     }
   }, [address, positions]);
+
+  // Persist price history
+  useEffect(() => {
+    savePriceHistory(priceHistory);
+  }, [priceHistory]);
 
   const getMarketPrice = useCallback((marketId: string): MarketPrice => {
     const state = ammStates[marketId];
@@ -93,6 +116,13 @@ export function MarketProvider({ children }: { children: ReactNode }) {
         txHash,
       };
       setPositions(prev => [...prev, newPosition]);
+
+      // Record price point
+      const newPrice = getPrice(newState);
+      setPriceHistory(prev => ({
+        ...prev,
+        [marketId]: [...(prev[marketId] || []), newPrice.yes],
+      }));
 
       return { ...prev, [marketId]: newState };
     });
@@ -137,6 +167,10 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const getPriceHistory = useCallback((marketId: string): number[] => {
+    return priceHistory[marketId] || [];
+  }, [priceHistory]);
+
   const getPositionPnL = useCallback((position: Position): PnLInfo => {
     const price = getMarketPrice(position.marketId);
     const currentPrice = position.side === "yes" ? price.yes : price.no;
@@ -157,6 +191,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       sellPosition,
       positions,
       getPositionPnL,
+      getPriceHistory,
     }}>
       {children}
     </MarketContext.Provider>

@@ -6,8 +6,8 @@ import "@coti-io/coti-contracts/contracts/utils/mpc/MpcCore.sol";
 
 /**
  * @title WisprMarket
- * @notice Prediction market using Confidential USDC (cUSDC) for betting
- * @dev Users approve cUSDC, then bet with cleartext amounts. Payouts use encrypted transfers.
+ * @notice Confidential prediction market using encrypted bet storage via COTI MPC
+ * @dev Individual bets stored as ctUint64 (encrypted). Only aggregate totals are public.
  */
 contract WisprMarket {
     address public owner;
@@ -29,12 +29,15 @@ contract WisprMarket {
 
     uint256 public marketCount;
     mapping(uint256 => Market) public markets;
-    mapping(uint256 => mapping(address => uint64)) public yesBets;
-    mapping(uint256 => mapping(address => uint64)) public noBets;
+
+    // Encrypted per-user bet storage
+    mapping(uint256 => mapping(address => ctUint64)) private _yesBets;
+    mapping(uint256 => mapping(address => ctUint64)) private _noBets;
+    mapping(uint256 => mapping(address => bool)) public hasParticipated;
     mapping(uint256 => mapping(address => bool)) public hasClaimed;
 
     event MarketCreated(uint256 indexed id, string question, uint256 endTime);
-    event BetPlaced(uint256 indexed id, address indexed bettor, bool isYes, uint64 amount);
+    event BetPlaced(uint256 indexed id, address indexed bettor, bool isYes);
     event MarketResolved(uint256 indexed id, bool outcome);
     event WinningsClaimed(uint256 indexed id, address indexed claimer, uint64 amount);
     event MarketCancelled(uint256 indexed id);
@@ -79,9 +82,7 @@ contract WisprMarket {
 
     /**
      * @notice Place a bet on a market using cUSDC
-     * @param marketId The market to bet on
-     * @param isYes True for YES, false for NO
-     * @param amount Amount in cUSDC (6 decimals). Caller must approve this contract first.
+     * @dev Bet amount stored encrypted via MPC. Only aggregate totals remain public.
      */
     function bet(uint256 marketId, bool isYes, uint64 amount) external {
         Market storage m = markets[marketId];
@@ -90,25 +91,37 @@ contract WisprMarket {
         require(block.timestamp < m.endTime, "Market has ended");
         require(amount > 0, "Must bet something");
 
-        // State changes first (checks-effects-interactions)
-        if (yesBets[marketId][msg.sender] == 0 && noBets[marketId][msg.sender] == 0) {
+        // Track unique participants
+        if (!hasParticipated[marketId][msg.sender]) {
+            hasParticipated[marketId][msg.sender] = true;
             m.totalParticipants++;
         }
 
+        // Encrypted bet accumulation
+        gtUint64 gtAmount = MpcCore.setPublic64(amount);
+
         if (isYes) {
-            yesBets[marketId][msg.sender] += amount;
+            gtUint64 current = MpcCore.onBoard(_yesBets[marketId][msg.sender]);
+            _yesBets[marketId][msg.sender] = MpcCore.offBoard(MpcCore.add(current, gtAmount));
             m.totalYes += amount;
         } else {
-            noBets[marketId][msg.sender] += amount;
+            gtUint64 current = MpcCore.onBoard(_noBets[marketId][msg.sender]);
+            _noBets[marketId][msg.sender] = MpcCore.offBoard(MpcCore.add(current, gtAmount));
             m.totalNo += amount;
         }
 
-        // External call last
-        gtUint64 gtAmount = MpcCore.setPublic64(amount);
+        // Transfer tokens last (checks-effects-interactions)
         gtBool success = token.transferFrom(msg.sender, address(this), gtAmount);
         require(MpcCore.decrypt(success), "Transfer failed");
 
-        emit BetPlaced(marketId, msg.sender, isYes, amount);
+        emit BetPlaced(marketId, msg.sender, isYes);
+    }
+
+    /**
+     * @notice Get your encrypted bet for a market (only you can decrypt)
+     */
+    function getMyBet(uint256 marketId) external view returns (ctUint64 yesBet, ctUint64 noBet) {
+        return (_yesBets[marketId][msg.sender], _noBets[marketId][msg.sender]);
     }
 
     function resolveMarket(uint256 marketId, bool outcome) external onlyOwner {
@@ -139,12 +152,15 @@ contract WisprMarket {
         require(m.cancelled, "Market not cancelled");
         require(!hasClaimed[marketId][msg.sender], "Already claimed");
 
-        uint64 refund = yesBets[marketId][msg.sender] + noBets[marketId][msg.sender];
+        // Decrypt user bets to compute refund
+        gtUint64 gtYes = MpcCore.onBoard(_yesBets[marketId][msg.sender]);
+        gtUint64 gtNo = MpcCore.onBoard(_noBets[marketId][msg.sender]);
+        gtUint64 gtRefund = MpcCore.add(gtYes, gtNo);
+        uint64 refund = MpcCore.decrypt(gtRefund);
         require(refund > 0, "Nothing to refund");
 
         hasClaimed[marketId][msg.sender] = true;
 
-        gtUint64 gtRefund = MpcCore.setPublic64(refund);
         gtBool success = token.transfer(msg.sender, gtRefund);
         require(MpcCore.decrypt(success), "Refund failed");
 
@@ -155,20 +171,23 @@ contract WisprMarket {
         Market storage m = markets[marketId];
         require(m.exists, "Market does not exist");
         require(m.resolved, "Market not resolved yet");
+        require(!m.cancelled, "Market was cancelled");
         require(!hasClaimed[marketId][msg.sender], "Already claimed");
 
-        uint64 userBet;
+        // Decrypt the winning side bet
+        gtUint64 gtUserBet;
         uint64 winningSide;
         uint64 totalPool = m.totalYes + m.totalNo;
 
         if (m.outcome) {
-            userBet = yesBets[marketId][msg.sender];
+            gtUserBet = MpcCore.onBoard(_yesBets[marketId][msg.sender]);
             winningSide = m.totalYes;
         } else {
-            userBet = noBets[marketId][msg.sender];
+            gtUserBet = MpcCore.onBoard(_noBets[marketId][msg.sender]);
             winningSide = m.totalNo;
         }
 
+        uint64 userBet = MpcCore.decrypt(gtUserBet);
         require(userBet > 0, "No winning bet");
         require(winningSide > 0, "No winners");
 
@@ -177,7 +196,6 @@ contract WisprMarket {
         // Proportional payout: (userBet / winningSide) * totalPool
         uint64 payout = uint64((uint128(userBet) * uint128(totalPool)) / uint128(winningSide));
 
-        // Transfer cUSDC payout from contract to winner
         gtUint64 gtPayout = MpcCore.setPublic64(payout);
         gtBool success = token.transfer(msg.sender, gtPayout);
         require(MpcCore.decrypt(success), "Payout transfer failed");

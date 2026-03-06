@@ -42,6 +42,15 @@ export function loadPositions(address: string): Position[] {
   return safeGet<Position[]>(`whisper_positions_${address.toLowerCase()}`, []);
 }
 
+// Price history (per market)
+export function savePriceHistory(history: Record<string, number[]>): void {
+  safeSet("whisper_price_history", history);
+}
+
+export function loadPriceHistory(): Record<string, number[]> | null {
+  return safeGet<Record<string, number[]> | null>("whisper_price_history", null);
+}
+
 // Handle (per wallet)
 export function saveHandle(address: string, handle: string): void {
   safeSet(`whisper_handle_${address.toLowerCase()}`, handle);

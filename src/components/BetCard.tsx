@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bet, BetSide } from "@/types";
 import { formatNumber, daysUntil } from "@/lib/mockData";
 import { useMarket } from "@/context/MarketContext";
+import { useToast } from "./Toast";
+import Sparkline from "./Sparkline";
 import BetModal from "./BetModal";
 
 interface BetCardProps {
@@ -23,12 +25,14 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
   const [saved, setSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(Math.floor(bet.participants * 0.3));
   const cardRef = useRef<HTMLDivElement>(null);
-  const { getMarketPrice } = useMarket();
+  const { getMarketPrice, getPriceHistory } = useMarket();
+  const { showToast } = useToast();
 
   const price = getMarketPrice(bet.id);
   const yesPrice = Math.round(price.yes * 100);
   const noPrice = Math.round(price.no * 100);
   const days = daysUntil(bet.endsAt);
+  const history = getPriceHistory(bet.id);
   const commentCount = Math.floor(bet.participants * 0.05);
   const shareCount = Math.floor(bet.participants * 0.02);
 
@@ -136,7 +140,17 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
             <span className="text-[11px] font-semibold text-white/70">{formatNumber(commentCount)}</span>
           </button>
 
-          <button className="flex flex-col items-center gap-0.5">
+          <button
+            onClick={() => {
+              const text = `${bet.question} — YES ${yesPrice}¢ / NO ${noPrice}¢`;
+              if (navigator.share) {
+                navigator.share({ title: "Wispr Market", text }).catch(() => {});
+              } else {
+                navigator.clipboard.writeText(text).then(() => showToast("Copied to clipboard"));
+              }
+            }}
+            className="flex flex-col items-center gap-0.5"
+          >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8">
               <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
             </svg>
@@ -175,17 +189,21 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
             {bet.question}
           </h2>
 
-          {/* Stats row: mini bar + % YES · days · participants */}
+          {/* Stats row: sparkline + % YES · days · participants */}
           <div className="flex items-center gap-2.5 text-[12px] text-white/40 font-medium">
             <div className="flex items-center gap-2">
-              <div className="w-[48px] h-[3px] rounded-full bg-white/10 overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full bg-green-400"
-                  initial={{ width: 0 }}
-                  animate={isActive ? { width: `${yesPrice}%` } : { width: 0 }}
-                  transition={t(1, 0.3)}
-                />
-              </div>
+              {history.length >= 2 ? (
+                <Sparkline data={history} width={48} height={16} color="auto" />
+              ) : (
+                <div className="w-[48px] h-[3px] rounded-full bg-white/10 overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-green-400"
+                    initial={{ width: 0 }}
+                    animate={isActive ? { width: `${yesPrice}%` } : { width: 0 }}
+                    transition={t(1, 0.3)}
+                  />
+                </div>
+              )}
               <span className="text-green-400 font-bold">{yesPrice}¢ YES</span>
             </div>
             <span className="text-white/15">·</span>

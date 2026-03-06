@@ -17,6 +17,7 @@ interface WalletContextType extends WalletState {
   connect: () => Promise<void>;
   disconnect: () => void;
   onboard: () => Promise<void>;
+  decryptBalance: () => Promise<number | null>;
 }
 
 const WalletContext = createContext<WalletContextType | null>(null);
@@ -213,6 +214,26 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }
   }, [state.signer, state.address, state.provider]);
 
+  const decryptBalance = useCallback(async (): Promise<number | null> => {
+    if (!state.signer || !state.address || !state.isOnboarded) return null;
+    try {
+      const { Contract } = await import("@coti-io/coti-ethers");
+      const { CONTRACT_ADDRESSES, CUSDC_ABI } = await import("@/lib/contracts");
+      if (!CONTRACT_ADDRESSES.token) return null;
+
+      const tokenContract = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, state.signer);
+      const encryptedBalance = await tokenContract.balanceOf(state.address);
+
+      // Use COTI signer's decryptValue to decrypt the ctUint64
+      const decrypted = await (state.signer as any).decryptValue(encryptedBalance);
+      // Convert from 6 decimals
+      return Number(decrypted) / 1e6;
+    } catch (err) {
+      console.error("Failed to decrypt balance:", err);
+      return null;
+    }
+  }, [state.signer, state.address, state.isOnboarded]);
+
   // Listen for account/chain changes
   useEffect(() => {
     if (!window.ethereum) return;
@@ -237,7 +258,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, [disconnect]);
 
   return (
-    <WalletContext.Provider value={{ ...state, connect, disconnect, onboard }}>
+    <WalletContext.Provider value={{ ...state, connect, disconnect, onboard, decryptBalance }}>
       {children}
     </WalletContext.Provider>
   );

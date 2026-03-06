@@ -154,22 +154,12 @@ export const WISPR_MARKET_ABI = [
     type: "function",
   },
   {
-    inputs: [
-      { name: "", type: "uint256" },
-      { name: "", type: "address" },
+    inputs: [{ name: "marketId", type: "uint256" }],
+    name: "getMyBet",
+    outputs: [
+      { name: "yesBet", type: "uint256" },
+      { name: "noBet", type: "uint256" },
     ],
-    name: "yesBets",
-    outputs: [{ name: "", type: "uint64" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { name: "", type: "uint256" },
-      { name: "", type: "address" },
-    ],
-    name: "noBets",
-    outputs: [{ name: "", type: "uint64" }],
     stateMutability: "view",
     type: "function",
   },
@@ -193,7 +183,6 @@ export const WISPR_MARKET_ABI = [
       { indexed: true, name: "id", type: "uint256" },
       { indexed: true, name: "bettor", type: "address" },
       { indexed: false, name: "isYes", type: "bool" },
-      { indexed: false, name: "amount", type: "uint64" },
     ],
     name: "BetPlaced",
     type: "event",

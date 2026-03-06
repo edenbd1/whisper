@@ -4,6 +4,7 @@ import "./globals.css";
 import { WalletProvider } from "@/context/WalletContext";
 import { MarketProvider } from "@/context/MarketContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { ToastProvider } from "@/components/Toast";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,7 +41,9 @@ export default function RootLayout({
         <ErrorBoundary>
           <WalletProvider>
             <MarketProvider>
-              {children}
+              <ToastProvider>
+                {children}
+              </ToastProvider>
             </MarketProvider>
           </WalletProvider>
         </ErrorBoundary>

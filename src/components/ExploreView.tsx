@@ -7,6 +7,7 @@ import { mockBets, formatNumber, daysUntil } from "@/lib/mockData";
 import { useMarket } from "@/context/MarketContext";
 import { Bet } from "@/types";
 import { SkeletonCard } from "./Skeleton";
+import Sparkline from "./Sparkline";
 
 const categories = ["All", "Crypto", "Geopolitics", "Technology", "Sports", "Business", "Science", "Conspiracy"];
 
@@ -17,7 +18,7 @@ interface ExploreViewProps {
 export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-  const { getMarketPrice } = useMarket();
+  const { getMarketPrice, getPriceHistory } = useMarket();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 600);
@@ -71,6 +72,7 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
             const noPrice = Math.round(price.no * 100);
             const days = daysUntil(bet.endsAt);
             const originalIndex = mockBets.findIndex(b => b.id === bet.id);
+            const history = getPriceHistory(bet.id);
 
             return (
               <motion.button
@@ -109,17 +111,22 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
                     {bet.question}
                   </p>
 
-                  {/* Prices */}
-                  <div className="flex items-center gap-3 mb-2.5">
-                    <div className="flex items-baseline gap-0.5">
-                      <span className="text-lg font-black text-green-400">{yesPrice}</span>
-                      <span className="text-[10px] font-bold text-green-400/40">¢ YES</span>
+                  {/* Prices + Sparkline */}
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-baseline gap-0.5">
+                        <span className="text-lg font-black text-green-400">{yesPrice}</span>
+                        <span className="text-[10px] font-bold text-green-400/40">¢ YES</span>
+                      </div>
+                      <div className="h-4 w-px bg-white/[0.06]" />
+                      <div className="flex items-baseline gap-0.5">
+                        <span className="text-lg font-black text-red-400">{noPrice}</span>
+                        <span className="text-[10px] font-bold text-red-400/40">¢ NO</span>
+                      </div>
                     </div>
-                    <div className="h-4 w-px bg-white/[0.06]" />
-                    <div className="flex items-baseline gap-0.5">
-                      <span className="text-lg font-black text-red-400">{noPrice}</span>
-                      <span className="text-[10px] font-bold text-red-400/40">¢ NO</span>
-                    </div>
+                    {history.length >= 2 && (
+                      <Sparkline data={history} width={56} height={20} color="auto" />
+                    )}
                   </div>
 
                   {/* Odds bar */}

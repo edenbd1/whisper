@@ -23,7 +23,7 @@ function setStoredBalance(address: string, balance: number) {
 }
 
 export default function PortfolioView({ handle }: { handle: string | null }) {
-  const { address, isConnected, signer } = useWallet();
+  const { address, isConnected, signer, isOnboarded, decryptBalance } = useWallet();
   const { positions, getPositionPnL, getMarketPrice } = useMarket();
   const [sellTarget, setSellTarget] = useState<Position | null>(null);
   const [faucetState, setFaucetState] = useState<"idle" | "pending" | "success" | "error">("idle");
@@ -36,14 +36,30 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
     return () => clearTimeout(t);
   }, []);
 
-  // Load stored balance, or check on-chain if we have no record
+  // Load balance: try on-chain decryption first, then localStorage fallback
   useEffect(() => {
     if (!address) return;
+
+    // Try decrypting on-chain balance if onboarded
+    if (isOnboarded && decryptBalance) {
+      decryptBalance().then((bal) => {
+        if (bal !== null && bal > 0) {
+          setWalletBalance(bal);
+          setStoredBalance(address, bal);
+          return;
+        }
+        // Fallback to stored
+        setWalletBalance(getStoredBalance(address));
+      }).catch(() => {
+        setWalletBalance(getStoredBalance(address));
+      });
+      return;
+    }
+
     const stored = getStoredBalance(address);
     if (stored > 0) {
       setWalletBalance(stored);
     } else if (CONTRACT_ADDRESSES.token && signer) {
-      // Check if already claimed on-chain but not tracked locally
       import("@coti-io/coti-ethers").then(({ Contract }) => {
         const token = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
         token.hasClaimed(address).then((claimed: boolean) => {
@@ -54,7 +70,7 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
         }).catch(() => {});
       });
     }
-  }, [address, signer]);
+  }, [address, signer, isOnboarded, decryptBalance]);
 
   const claimFaucet = useCallback(async () => {
     if (!signer || !address) return;
