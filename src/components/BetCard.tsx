@@ -179,7 +179,7 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
                   transition={t(1, 0.3)}
                 />
               </div>
-              <span className="text-green-400 font-bold">{yesPrice}% YES</span>
+              <span className="text-green-400 font-bold">{yesPrice}¢ YES</span>
             </div>
             <span className="text-white/15">·</span>
             <span className="flex items-center gap-1">
@@ -205,7 +205,7 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
             >
               <span className="flex items-center justify-center gap-1.5">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
-                YES · {yesPrice}%
+                YES · {yesPrice}¢
               </span>
             </button>
             <button
@@ -218,7 +218,7 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
             >
               <span className="flex items-center justify-center gap-1.5">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                NO · {noPrice}%
+                NO · {noPrice}¢
               </span>
             </button>
           </div>

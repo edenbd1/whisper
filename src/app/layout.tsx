@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { WalletProvider } from "@/context/WalletContext";
 import { MarketProvider } from "@/context/MarketContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,11 +37,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} font-sans antialiased bg-black text-white`}>
-        <WalletProvider>
-          <MarketProvider>
-            {children}
-          </MarketProvider>
-        </WalletProvider>
+        <ErrorBoundary>
+          <WalletProvider>
+            <MarketProvider>
+              {children}
+            </MarketProvider>
+          </WalletProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

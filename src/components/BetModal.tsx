@@ -24,6 +24,7 @@ type TxState = "idle" | "pending" | "success" | "error";
 export default function BetModal({ isOpen, onClose, side, question, marketId, onConfirm }: BetModalProps) {
   const [amount, setAmount] = useState<string>("50");
   const [txState, setTxState] = useState<TxState>("idle");
+  const [txStep, setTxStep] = useState("");
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
   const { isConnected, signer, connect } = useWallet();
@@ -61,6 +62,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       // 1. Approve market to spend cUSDC (max uint64, only if not already approved)
       const approvedKey = `approved-${CONTRACT_ADDRESSES.market}`;
       if (!localStorage.getItem(approvedKey)) {
+        setTxStep("Approving cUSDC...");
         const maxUint64 = BigInt("18446744073709551615");
         const approveTx = await tokenContract.approvePublic(CONTRACT_ADDRESSES.market, maxUint64, { gasLimit: 500_000 });
         await approveTx.wait();
@@ -68,6 +70,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       }
 
       // 2. Place bet
+      setTxStep("Placing bet...");
       const marketContract = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);
       const tx = await marketContract.bet(marketId ?? 0, isYes, amountRaw, { gasLimit: 1_000_000 });
       setTxHash(tx.hash);
@@ -76,7 +79,14 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       setTxState("success");
       onConfirm();
     } catch (err: any) {
-      setError(err?.reason || err?.message || "Transaction failed");
+      const msg = err?.reason || err?.message || "Transaction failed";
+      if (msg.includes("user rejected") || msg.includes("denied")) {
+        setError("Transaction rejected by wallet");
+      } else if (msg.includes("insufficient")) {
+        setError("Insufficient cUSDC balance. Claim from faucet first.");
+      } else {
+        setError(msg.length > 120 ? msg.slice(0, 120) + "..." : msg);
+      }
       setTxState("error");
     }
   };
@@ -99,7 +109,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[60]"
-            onClick={resetAndClose}
+            onClick={txState === "pending" ? undefined : resetAndClose}
           />
           <motion.div
             initial={{ y: "100%" }}
@@ -162,9 +172,14 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                     <input
                       type="number"
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v === "" || parseFloat(v) >= 0) setAmount(v);
+                      }}
+                      min="0"
+                      step="1"
                       placeholder="0"
-                      className="w-full glass rounded-xl px-4 py-4 text-2xl font-bold text-white text-center focus:outline-none focus:ring-1 focus:ring-white/10 transition-all"
+                      className="w-full glass rounded-xl px-4 py-4 text-2xl font-bold text-white text-center focus:outline-none focus:ring-1 focus:ring-white/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 text-sm font-semibold">cUSDC</span>
                   </div>
@@ -222,8 +237,9 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
 
                   {/* Error */}
                   {txState === "error" && error && (
-                    <div className="mb-4 px-3 py-2.5 rounded-xl bg-red-500/[0.04] border border-red-500/[0.08]">
-                      <p className="text-red-400 text-xs">{error}</p>
+                    <div className="mb-4 px-3 py-2.5 rounded-xl bg-red-500/[0.04] border border-red-500/[0.08] flex items-center justify-between gap-2">
+                      <p className="text-red-400 text-xs flex-1">{error}</p>
+                      <button onClick={() => setTxState("idle")} className="text-[10px] text-white/30 hover:text-white/50 flex-shrink-0 font-semibold">Dismiss</button>
                     </div>
                   )}
 
@@ -250,7 +266,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                           className="w-4 h-4 border-2 border-white/20 border-t-white/60 rounded-full inline-block"
                         />
-                        Confirming...
+                        {txStep || "Confirming..."}
                       </span>
                     ) : !isConnected ? (
                       "Connect Wallet"

@@ -6,7 +6,7 @@ import { mockBets, formatNumber, daysUntil } from "@/lib/mockData";
 import { useMarket } from "@/context/MarketContext";
 import { Bet } from "@/types";
 
-const categories = ["All", "Crypto", "Geopolitics", "Technology", "Sports", "Business", "Science"];
+const categories = ["All", "Crypto", "Geopolitics", "Technology", "Sports", "Business", "Science", "Conspiracy"];
 
 interface ExploreViewProps {
   onSelectMarket: (index: number) => void;
@@ -44,6 +44,14 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
         </div>
 
         {/* Market grid */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-white/20 text-sm mb-1">No markets in this category</p>
+            <button onClick={() => setActiveCategory("All")} className="text-[#005EF8]/60 text-xs hover:text-[#005EF8] transition-colors">
+              Show all markets
+            </button>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
           {filtered.map((bet, i) => {
             const price = getMarketPrice(bet.id);
@@ -92,12 +100,12 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
                   <div className="flex items-center gap-3 mb-2.5">
                     <div className="flex items-baseline gap-0.5">
                       <span className="text-lg font-black text-green-400">{yesPrice}</span>
-                      <span className="text-[10px] font-bold text-green-400/40">c</span>
+                      <span className="text-[10px] font-bold text-green-400/40">¢ YES</span>
                     </div>
                     <div className="h-4 w-px bg-white/[0.06]" />
                     <div className="flex items-baseline gap-0.5">
                       <span className="text-lg font-black text-red-400">{noPrice}</span>
-                      <span className="text-[10px] font-bold text-red-400/40">c</span>
+                      <span className="text-[10px] font-bold text-red-400/40">¢ NO</span>
                     </div>
                   </div>
 
@@ -117,6 +125,7 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );
