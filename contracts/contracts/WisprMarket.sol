@@ -81,6 +81,16 @@ contract WisprMarket {
     }
 
     /**
+     * @dev Safely onboard a ctUint64 — returns setPublic64(0) for uninitialized slots.
+     */
+    function _safeOnboard(ctUint64 value) internal returns (gtUint64) {
+        if (ctUint64.unwrap(value) == 0) {
+            return MpcCore.setPublic64(0);
+        }
+        return MpcCore.onBoard(value);
+    }
+
+    /**
      * @notice Place a bet on a market using cUSDC
      * @dev Bet amount stored encrypted via MPC. Only aggregate totals remain public.
      */
@@ -101,11 +111,11 @@ contract WisprMarket {
         gtUint64 gtAmount = MpcCore.setPublic64(amount);
 
         if (isYes) {
-            gtUint64 current = MpcCore.onBoard(_yesBets[marketId][msg.sender]);
+            gtUint64 current = _safeOnboard(_yesBets[marketId][msg.sender]);
             _yesBets[marketId][msg.sender] = MpcCore.offBoard(MpcCore.add(current, gtAmount));
             m.totalYes += amount;
         } else {
-            gtUint64 current = MpcCore.onBoard(_noBets[marketId][msg.sender]);
+            gtUint64 current = _safeOnboard(_noBets[marketId][msg.sender]);
             _noBets[marketId][msg.sender] = MpcCore.offBoard(MpcCore.add(current, gtAmount));
             m.totalNo += amount;
         }
@@ -153,8 +163,8 @@ contract WisprMarket {
         require(!hasClaimed[marketId][msg.sender], "Already claimed");
 
         // Decrypt user bets to compute refund
-        gtUint64 gtYes = MpcCore.onBoard(_yesBets[marketId][msg.sender]);
-        gtUint64 gtNo = MpcCore.onBoard(_noBets[marketId][msg.sender]);
+        gtUint64 gtYes = _safeOnboard(_yesBets[marketId][msg.sender]);
+        gtUint64 gtNo = _safeOnboard(_noBets[marketId][msg.sender]);
         gtUint64 gtRefund = MpcCore.add(gtYes, gtNo);
         uint64 refund = MpcCore.decrypt(gtRefund);
         require(refund > 0, "Nothing to refund");
@@ -181,10 +191,10 @@ contract WisprMarket {
         require(totalPool > 0, "Empty pool");
 
         if (m.outcome) {
-            gtUserBet = MpcCore.onBoard(_yesBets[marketId][msg.sender]);
+            gtUserBet = _safeOnboard(_yesBets[marketId][msg.sender]);
             winningSide = m.totalYes;
         } else {
-            gtUserBet = MpcCore.onBoard(_noBets[marketId][msg.sender]);
+            gtUserBet = _safeOnboard(_noBets[marketId][msg.sender]);
             winningSide = m.totalNo;
         }
 
