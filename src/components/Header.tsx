@@ -5,11 +5,7 @@ import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
 import { WisprIcon } from "./WisprLogo";
 
-interface HeaderProps {
-  handle: string | null;
-}
-
-export default function Header({ handle }: HeaderProps) {
+export default function Header() {
   const { isConnected, address, isOnboarded, isLoading, connect, disconnect, onboard } = useWallet();
 
   return (
@@ -43,7 +39,7 @@ export default function Header({ handle }: HeaderProps) {
                 className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-white/80"
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${isOnboarded ? "bg-[#22C55E]" : "bg-yellow-400"}`} />
-                {handle ? `${handle}.wispr` : shortenAddress(address)}
+                {shortenAddress(address)}
               </button>
             </div>
           ) : (

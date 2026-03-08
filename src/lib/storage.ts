@@ -50,12 +50,3 @@ export function savePriceHistory(history: Record<string, number[]>): void {
 export function loadPriceHistory(): Record<string, number[]> | null {
   return safeGet<Record<string, number[]> | null>("whisper_price_history", null);
 }
-
-// Handle (per wallet)
-export function saveHandle(address: string, handle: string): void {
-  safeSet(`whisper_handle_${address.toLowerCase()}`, handle);
-}
-
-export function loadHandle(address: string): string | null {
-  return safeGet<string | null>(`whisper_handle_${address.toLowerCase()}`, null);
-}

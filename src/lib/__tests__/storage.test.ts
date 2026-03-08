@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from "vitest";
-import { saveAMMStates, loadAMMStates, savePositions, loadPositions, saveHandle, loadHandle, savePriceHistory, loadPriceHistory } from "../storage";
+import { saveAMMStates, loadAMMStates, savePositions, loadPositions, savePriceHistory, loadPriceHistory } from "../storage";
 
 beforeEach(() => {
   localStorage.clear();
@@ -43,23 +43,6 @@ describe("storage - positions", () => {
   it("is case-insensitive for addresses", () => {
     savePositions("0xABC", [{ id: "x", marketId: "1", side: "yes" as const, shares: 1, totalCost: 1, avgEntryPrice: 1, timestamp: 1 }]);
     expect(loadPositions("0xabc")).toHaveLength(1);
-  });
-});
-
-describe("storage - handles", () => {
-  it("saves and loads handle", () => {
-    saveHandle("0xDEF", "alice");
-    expect(loadHandle("0xDEF")).toBe("alice");
-  });
-
-  it("returns null for unknown handle", () => {
-    expect(loadHandle("0xNONE")).toBeNull();
-  });
-
-  it("overwrites existing handle", () => {
-    saveHandle("0xDEF", "alice");
-    saveHandle("0xDEF", "bob");
-    expect(loadHandle("0xDEF")).toBe("bob");
   });
 });
 

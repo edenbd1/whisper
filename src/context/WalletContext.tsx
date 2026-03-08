@@ -118,8 +118,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       await new Promise((r) => setTimeout(r, 500));
 
       // Dynamic import to avoid SSR issues
-      const { BrowserProvider } = await import("@coti-io/coti-ethers");
-      const provider = new BrowserProvider(window.ethereum as any);
+      const { BrowserProvider, Network } = await import("@coti-io/coti-ethers");
+      // Create provider with explicit network to disable ENS resolution
+      const cotiNetwork = new Network("coti-testnet", COTI_TESTNET.chainId);
+      const provider = new BrowserProvider(window.ethereum as any, cotiNetwork);
       const network = await provider.getNetwork();
       console.log("Connected to chain:", network.chainId.toString());
 

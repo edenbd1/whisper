@@ -25,10 +25,9 @@ const iconPaths: Record<string, string> = {
 interface SidebarProps {
   activeTab: AppTab;
   onTabChange: (tab: AppTab) => void;
-  handle: string | null;
 }
 
-export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps) {
+export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const { isConnected, address, connect, disconnect, isLoading, isOnboarded, onboard } = useWallet();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [mouseY, setMouseY] = useState(0);
@@ -240,13 +239,13 @@ export default function Sidebar({ activeTab, onTabChange, handle }: SidebarProps
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-[#005EF8] to-[#3B82F6] opacity-30 blur-md group-hover:opacity-60 transition-opacity duration-300" />
                 <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#005EF8] to-[#3B82F6] flex items-center justify-center ring-1 ring-white/10">
                   <span className="text-[11px] font-bold text-white">
-                    {(handle || address.slice(2, 4)).slice(0, 2).toUpperCase()}
+                    {address.slice(2, 4).toUpperCase()}
                   </span>
                 </div>
               </div>
               <div className="hidden xl:block text-left min-w-0">
                 <div className="text-[12px] font-semibold text-white/80 truncate">
-                  {handle ? `${handle}.wispr` : shortenAddress(address)}
+                  {shortenAddress(address)}
                 </div>
                 <div className="text-[10px] text-white/20 flex items-center gap-1.5">
                   <span className={`w-1.5 h-1.5 rounded-full ${

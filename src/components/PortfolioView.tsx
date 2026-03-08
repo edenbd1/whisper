@@ -22,7 +22,7 @@ function setStoredBalance(address: string, balance: number) {
   localStorage.setItem(`${BALANCE_KEY_PREFIX}${address.toLowerCase()}`, balance.toString());
 }
 
-export default function PortfolioView({ handle }: { handle: string | null }) {
+export default function PortfolioView() {
   const { address, isConnected, signer, isOnboarded, decryptBalance } = useWallet();
   const { positions, getPositionPnL, getMarketPrice } = useMarket();
   const [sellTarget, setSellTarget] = useState<Position | null>(null);
@@ -159,18 +159,11 @@ export default function PortfolioView({ handle }: { handle: string | null }) {
         <div className="flex items-center gap-4 mb-8">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center ring-2 ring-white/[0.06]">
             <span className="text-lg font-bold text-white">
-              {(handle || address?.slice(2, 4) || "??").slice(0, 2).toUpperCase()}
+              {(address?.slice(2, 4) || "??").toUpperCase()}
             </span>
           </div>
           <div>
-            {handle ? (
-              <>
-                <h2 className="text-lg font-bold text-white">{handle}<span className="text-white/20">.wispr</span></h2>
-                <p className="text-xs text-white/30">{address ? shortenAddress(address) : ""}</p>
-              </>
-            ) : (
-              <h2 className="text-lg font-bold text-white/70">{address ? shortenAddress(address) : ""}</h2>
-            )}
+            <h2 className="text-lg font-bold text-white/70">{address ? shortenAddress(address) : ""}</h2>
           </div>
         </div>
 
