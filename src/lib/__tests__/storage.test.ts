@@ -1,10 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach, vi } from "vitest";
-
-vi.mock("@/lib/contracts", () => ({
-  CONTRACT_ADDRESSES: { token: "", market: "0x34a1AC33" },
-}));
-
+import { describe, it, expect, beforeEach } from "vitest";
 import { saveAMMStates, loadAMMStates, savePositions, loadPositions, savePriceHistory, loadPriceHistory } from "../storage";
 
 beforeEach(() => {
