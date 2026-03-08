@@ -37,15 +37,20 @@ function initAllPools(): Record<string, AMMState> {
 
 export function MarketProvider({ children }: { children: ReactNode }) {
   const { address } = useWallet();
-  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>(() => {
+  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>(initAllPools);
+
+  // Load persisted AMM states on client
+  useEffect(() => {
     const stored = loadAMMStates();
-    return stored || initAllPools();
-  });
+    if (stored) setAmmStates(stored);
+  }, []);
   const [positions, setPositions] = useState<Position[]>([]);
-  const [priceHistory, setPriceHistory] = useState<Record<string, number[]>>(() => {
+  const [priceHistory, setPriceHistory] = useState<Record<string, number[]>>({});
+
+  // Seed price history on client only (avoids hydration mismatch from Math.random)
+  useEffect(() => {
     const stored = loadPriceHistory();
-    if (stored) return stored;
-    // Seed initial history from mock data
+    if (stored) { setPriceHistory(stored); return; }
     const history: Record<string, number[]> = {};
     for (const bet of mockBets) {
       const base = bet.yesPercentage / 100;
@@ -57,8 +62,8 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       points.push(base);
       history[bet.id] = points;
     }
-    return history;
-  });
+    setPriceHistory(history);
+  }, []);
 
   // Load positions when wallet changes
   useEffect(() => {
@@ -81,9 +86,11 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     }
   }, [address, positions]);
 
-  // Persist price history
+  // Persist price history (skip empty initial state)
   useEffect(() => {
-    savePriceHistory(priceHistory);
+    if (Object.keys(priceHistory).length > 0) {
+      savePriceHistory(priceHistory);
+    }
   }, [priceHistory]);
 
   const getMarketPrice = useCallback((marketId: string): MarketPrice => {

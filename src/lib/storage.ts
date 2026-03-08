@@ -1,4 +1,8 @@
 import { AMMState, Position } from "@/types";
+import { CONTRACT_ADDRESSES } from "@/lib/contracts";
+
+// Scope storage keys to current market contract so redeployments start fresh
+const MARKET_KEY = CONTRACT_ADDRESSES.market?.slice(0, 10) || "local";
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -23,30 +27,29 @@ function safeSet(key: string, value: unknown): void {
   }
 }
 
-// AMM States
+// AMM States (scoped to contract)
 export function saveAMMStates(states: Record<string, AMMState>): void {
-  safeSet("whisper_amm_states", states);
+  safeSet(`wispr_amm_${MARKET_KEY}`, states);
 }
 
 export function loadAMMStates(): Record<string, AMMState> | null {
-  const data = safeGet<Record<string, AMMState> | null>("whisper_amm_states", null);
-  return data;
+  return safeGet<Record<string, AMMState> | null>(`wispr_amm_${MARKET_KEY}`, null);
 }
 
-// Positions (per wallet)
+// Positions (per wallet + contract)
 export function savePositions(address: string, positions: Position[]): void {
-  safeSet(`whisper_positions_${address.toLowerCase()}`, positions);
+  safeSet(`wispr_pos_${MARKET_KEY}_${address.toLowerCase()}`, positions);
 }
 
 export function loadPositions(address: string): Position[] {
-  return safeGet<Position[]>(`whisper_positions_${address.toLowerCase()}`, []);
+  return safeGet<Position[]>(`wispr_pos_${MARKET_KEY}_${address.toLowerCase()}`, []);
 }
 
-// Price history (per market)
+// Price history (scoped to contract)
 export function savePriceHistory(history: Record<string, number[]>): void {
-  safeSet("whisper_price_history", history);
+  safeSet(`wispr_hist_${MARKET_KEY}`, history);
 }
 
 export function loadPriceHistory(): Record<string, number[]> | null {
-  return safeGet<Record<string, number[]> | null>("whisper_price_history", null);
+  return safeGet<Record<string, number[]> | null>(`wispr_hist_${MARKET_KEY}`, null);
 }
