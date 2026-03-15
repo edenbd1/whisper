@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
-import { WisprIcon } from "./WisprLogo";
+import { WisprLogoFull } from "./WisprLogo";
 
 export default function Header() {
   const { isConnected, address, isOnboarded, isLoading, connect, disconnect, onboard } = useWallet();
@@ -16,10 +16,8 @@ export default function Header() {
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-2"
           >
-            <WisprIcon size={22} className="text-[#005EF8]" />
-            <span className="text-[15px] font-bold tracking-[-0.03em] text-white">Whisper</span>
+            <WisprLogoFull height={22} />
           </motion.div>
 
           {/* Wallet */}

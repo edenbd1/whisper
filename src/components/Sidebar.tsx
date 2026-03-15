@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
-import { WisprIcon, WisprWordmark } from "./WisprLogo";
+import { WisprIcon, WisprLogoFull } from "./WisprLogo";
 import type { AppTab } from "@/app/page";
 
 type NavItem = { id: AppTab; label: string; icon: string };
@@ -82,13 +82,17 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </div>
 
       {/* Logo */}
-      <div className="relative flex items-center gap-3 px-4 xl:px-5 pt-7 pb-9">
+      <div className="relative px-4 xl:px-5 pt-7 pb-9">
         <div className="relative group cursor-pointer">
           <div className="absolute -inset-2 rounded-2xl bg-[#005EF8]/15 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-          <WisprIcon size={32} className="relative text-[#005EF8] drop-shadow-[0_0_8px_rgba(0,94,248,0.3)]" />
-        </div>
-        <div className="hidden xl:flex flex-col">
-          <WisprWordmark className="text-gradient" />
+          {/* Collapsed: icon only */}
+          <div className="xl:hidden relative">
+            <WisprIcon size={32} className="relative text-[#005EF8] drop-shadow-[0_0_8px_rgba(0,94,248,0.3)]" />
+          </div>
+          {/* Expanded: full logo */}
+          <div className="hidden xl:block relative">
+            <WisprLogoFull height={30} />
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,13 @@
-# Whisper
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/logo-full.svg" />
+    <img src="public/logo-full-dark.svg" alt="Whisper" height="60" />
+  </picture>
+</p>
 
-**Confidential prediction markets with a TikTok-style UX, powered by COTI's privacy layer.**
+<p align="center">
+  <strong>Confidential prediction markets with a TikTok-style UX, powered by COTI's privacy layer.</strong>
+</p>
 
 Swipe through full-screen prediction cards. Buy YES or NO shares at dynamic AMM prices. Your positions stay encrypted on-chain. Built for the [COTI Vibe Code Challenge](https://stay.coti.io/vibe-coding).
 
