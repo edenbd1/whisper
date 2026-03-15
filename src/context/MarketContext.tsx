@@ -40,7 +40,7 @@ function buildPools(bets: Bet[]): Record<string, AMMState> {
 export function MarketProvider({ children }: { children: ReactNode }) {
   const { address } = useWallet();
   const [markets, setMarkets] = useState<Bet[]>(mockBets);
-  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>({});
+  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>(() => buildPools(mockBets));
   const [positions, setPositions] = useState<Position[]>([]);
   const [priceHistory, setPriceHistory] = useState<Record<string, number[]>>({});
 
