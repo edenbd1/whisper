@@ -1,7 +1,7 @@
 const { ethers } = require("ethers");
 require("dotenv").config();
 
-const MARKET_ARTIFACT = require("../artifacts/contracts/WisprMarket.sol/WisprMarket.json");
+const MARKET_ARTIFACT = require("../artifacts/contracts/WhisperMarket.sol/WhisperMarket.json");
 const TOKEN_ADDRESS = "0x0340Cdbb0915a70a8784df9e3df51346440F9dc7";
 
 async function main() {
@@ -12,8 +12,8 @@ async function main() {
   const balance = await provider.getBalance(wallet.address);
   console.log("Balance:", ethers.formatEther(balance), "COTI\n");
 
-  // Deploy WisprMarket v8 (safeOnboard fix)
-  console.log("--- Deploying WisprMarket v8 ---");
+  // Deploy WhisperMarket v8 (safeOnboard fix)
+  console.log("--- Deploying WhisperMarket v8 ---");
   const marketFactory = new ethers.ContractFactory(
     MARKET_ARTIFACT.abi,
     MARKET_ARTIFACT.bytecode,
@@ -23,7 +23,7 @@ async function main() {
   console.log("TX sent:", market.deploymentTransaction().hash);
   await market.waitForDeployment();
   const marketAddress = await market.getAddress();
-  console.log("WisprMarket deployed to:", marketAddress);
+  console.log("WhisperMarket deployed to:", marketAddress);
 
   // Create initial markets
   console.log("\n--- Creating initial markets ---");
@@ -47,7 +47,7 @@ async function main() {
 
   console.log("\n=== DEPLOYMENT COMPLETE ===");
   console.log("Token (unchanged):", TOKEN_ADDRESS);
-  console.log("WisprMarket (v8):", marketAddress);
+  console.log("WhisperMarket (v8):", marketAddress);
   console.log(`\nNEXT_PUBLIC_MARKET_ADDRESS=${marketAddress}`);
 
   const remaining = await provider.getBalance(wallet.address);

@@ -6,7 +6,7 @@ import "@coti-io/coti-contracts/contracts/utils/mpc/MpcCore.sol";
 
 /**
  * @title ConfidentialUSDC (cUSDC)
- * @notice Confidential ERC20 pegged to USDC for the Wispr prediction market
+ * @notice Confidential ERC20 pegged to USDC for the Whisper prediction market
  * @dev Balances are encrypted on-chain using COTI's garbled circuits. 6 decimals.
  */
 contract ConfidentialUSDC is PrivateERC20 {

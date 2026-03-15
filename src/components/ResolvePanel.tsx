@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
-import { CONTRACT_ADDRESSES, WISPR_MARKET_ABI } from "@/lib/contracts";
+import { CONTRACT_ADDRESSES, WHISPER_MARKET_ABI } from "@/lib/contracts";
 import { getExplorerTxUrl } from "@/lib/coti";
 import { useMarket } from "@/context/MarketContext";
 
@@ -27,7 +27,7 @@ export default function ResolvePanel() {
     setError("");
     try {
       const { Contract } = await import("@coti-io/coti-ethers");
-      const market = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);
+      const market = new Contract(CONTRACT_ADDRESSES.market, WHISPER_MARKET_ABI, signer);
       const tx = await market.resolveMarket(marketId, outcome, { gasLimit: 500_000 });
       setTxHash(tx.hash);
       await tx.wait();
@@ -56,7 +56,7 @@ export default function ResolvePanel() {
     setError("");
     try {
       const { Contract } = await import("@coti-io/coti-ethers");
-      const market = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);
+      const market = new Contract(CONTRACT_ADDRESSES.market, WHISPER_MARKET_ABI, signer);
       const tx = await market.claimWinnings(marketId, { gasLimit: 1_000_000 });
       setTxHash(tx.hash);
       await tx.wait();

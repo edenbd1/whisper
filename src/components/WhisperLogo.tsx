@@ -1,4 +1,4 @@
-export function WisprIcon({ size = 24, className }: { size?: number; className?: string }) {
+export function WhisperIcon({ size = 24, className }: { size?: number; className?: string }) {
   return (
     <svg
       width={size}
@@ -18,7 +18,7 @@ export function WisprIcon({ size = 24, className }: { size?: number; className?:
   );
 }
 
-export function WisprWordmark({ className }: { className?: string }) {
+export function WhisperWordmark({ className }: { className?: string }) {
   return (
     <span className={`text-[17px] font-bold tracking-[-0.04em] ${className ?? ""}`}>
       Whisper
@@ -30,7 +30,7 @@ export function WisprWordmark({ className }: { className?: string }) {
  * Full logo: icon + "Whisper" as a single inline SVG.
  * Uses the exact same viewBox and coordinates as public/logo-full.svg.
  */
-export function WisprLogoFull({ height = 32, className }: { height?: number; className?: string }) {
+export function WhisperLogoFull({ height = 32, className }: { height?: number; className?: string }) {
   const width = (236 / 44) * height;
   return (
     <svg

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BetSide } from "@/types";
 import { useWallet } from "@/context/WalletContext";
 import { useMarket } from "@/context/MarketContext";
-import { CONTRACT_ADDRESSES, CUSDC_ABI, WISPR_MARKET_ABI } from "@/lib/contracts";
+import { CONTRACT_ADDRESSES, CUSDC_ABI, WHISPER_MARKET_ABI } from "@/lib/contracts";
 import { getExplorerTxUrl } from "@/lib/coti";
 
 interface BetModalProps {
@@ -71,7 +71,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
 
       // 2. Place bet
       setTxStep("Placing bet...");
-      const marketContract = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);
+      const marketContract = new Contract(CONTRACT_ADDRESSES.market, WHISPER_MARKET_ABI, signer);
       const tx = await marketContract.bet(marketId ?? 0, isYes, amountRaw, { gasLimit: 1_000_000 });
       setTxHash(tx.hash);
       await tx.wait();

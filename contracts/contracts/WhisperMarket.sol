@@ -5,11 +5,11 @@ import {IPrivateERC20} from "@coti-io/coti-contracts/contracts/token/PrivateERC2
 import "@coti-io/coti-contracts/contracts/utils/mpc/MpcCore.sol";
 
 /**
- * @title WisprMarket
+ * @title WhisperMarket
  * @notice Confidential prediction market using encrypted bet storage via COTI MPC
  * @dev Individual bets stored as ctUint64 (encrypted). Only aggregate totals are public.
  */
-contract WisprMarket {
+contract WhisperMarket {
     address public owner;
     IPrivateERC20 public token;
 

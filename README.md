@@ -8,7 +8,7 @@
 
 Swipe through full-screen prediction cards. Buy YES or NO shares at dynamic AMM prices. Your positions stay encrypted on-chain. Built for the [COTI Vibe Code Challenge](https://stay.coti.io/vibe-coding).
 
-> **Live on COTI Testnet** | [App](https://whisper-coti.vercel.app) | [ConfidentialUSDC](https://testnet.cotiscan.io/address/0x0340Cdbb0915a70a8784df9e3df51346440F9dc7) | [WisprMarket](https://testnet.cotiscan.io/address/0x34a1AC33E686E61d114912c8C25095426CDC7F93)
+> **Live on COTI Testnet** | [App](https://whisper-coti.vercel.app) | [ConfidentialUSDC](https://testnet.cotiscan.io/address/0x0340Cdbb0915a70a8784df9e3df51346440F9dc7) | [WhisperMarket](https://testnet.cotiscan.io/address/0x34a1AC33E686E61d114912c8C25095426CDC7F93)
 
 ---
 
@@ -164,7 +164,7 @@ contract ConfidentialUSDC is PrivateERC20 {
 - Faucet: 1,000 cUSDC per address (testnet)
 - All balances encrypted on-chain via `utUint64`
 
-### WisprMarket — `0x34a1AC33E686E61d114912c8C25095426CDC7F93`
+### WhisperMarket — `0x34a1AC33E686E61d114912c8C25095426CDC7F93`
 
 On-chain prediction markets with encrypted bet storage.
 
@@ -263,7 +263,7 @@ Pool returns to original state
 - MetaMask wallet connection with automatic COTI chain switching
 - AES key generation via standalone `onboard()` (MPC onboarding)
 - `localStorage` persistence of AES keys per wallet
-- On-chain betting through `WisprMarket` contract with encrypted bet storage
+- On-chain betting through `WhisperMarket` contract with encrypted bet storage
 - Full `@coti-io/coti-ethers` integration (no wagmi/viem)
 - `approvePublic()` for infinite approval pattern (1 tx after first bet)
 
@@ -343,7 +343,7 @@ src/
     contracts.ts            # ABIs + addresses
 contracts/
   ConfidentialUSDC.sol      # PrivateERC20 (encrypted balances, faucet)
-  WisprMarket.sol           # Prediction market (encrypted bets via MPC)
+  WhisperMarket.sol           # Prediction market (encrypted bets via MPC)
 ```
 
 ---

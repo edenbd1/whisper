@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
-import { WisprLogoFull } from "./WisprLogo";
+import { WhisperLogoFull } from "./WhisperLogo";
 
 export default function Header() {
   const { isConnected, address, isOnboarded, isLoading, connect, disconnect, onboard } = useWallet();
@@ -17,7 +17,7 @@ export default function Header() {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <WisprLogoFull height={22} />
+            <WhisperLogoFull height={22} />
           </motion.div>
 
           {/* Wallet */}

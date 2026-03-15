@@ -15,13 +15,13 @@ async function main() {
   const tokenAddress = await token.getAddress();
   console.log("ConfidentialUSDC deployed to:", tokenAddress);
 
-  // Deploy WisprMarket with token address
-  console.log("\n--- Deploying WisprMarket ---");
-  const WisprMarket = await ethers.getContractFactory("WisprMarket");
-  const market = await WisprMarket.deploy(tokenAddress, { gasLimit: 5_000_000 });
+  // Deploy WhisperMarket with token address
+  console.log("\n--- Deploying WhisperMarket ---");
+  const WhisperMarket = await ethers.getContractFactory("WhisperMarket");
+  const market = await WhisperMarket.deploy(tokenAddress, { gasLimit: 5_000_000 });
   await market.waitForDeployment();
   const marketAddress = await market.getAddress();
-  console.log("WisprMarket deployed to:", marketAddress);
+  console.log("WhisperMarket deployed to:", marketAddress);
 
   // Create initial markets
   console.log("\n--- Creating initial markets ---");
@@ -92,7 +92,7 @@ async function main() {
 
   console.log("\n=== DEPLOYMENT COMPLETE ===");
   console.log("ConfidentialUSDC:", tokenAddress);
-  console.log("WisprMarket:", marketAddress);
+  console.log("WhisperMarket:", marketAddress);
   console.log("\nAdd to your .env.local:");
   console.log(`NEXT_PUBLIC_TOKEN_ADDRESS=${tokenAddress}`);
   console.log(`NEXT_PUBLIC_MARKET_ADDRESS=${marketAddress}`);

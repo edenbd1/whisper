@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { useMarket } from "@/context/MarketContext";
-import { CONTRACT_ADDRESSES, WISPR_MARKET_ABI } from "@/lib/contracts";
+import { CONTRACT_ADDRESSES, WHISPER_MARKET_ABI } from "@/lib/contracts";
 import { getExplorerTxUrl } from "@/lib/coti";
 
 export default function CreateView() {
@@ -34,7 +34,7 @@ export default function CreateView() {
     setError("");
     try {
       const { Contract } = await import("@coti-io/coti-ethers");
-      const market = new Contract(CONTRACT_ADDRESSES.market, WISPR_MARKET_ABI, signer);
+      const market = new Contract(CONTRACT_ADDRESSES.market, WHISPER_MARKET_ABI, signer);
       const endTime = Math.floor(new Date(endDate).getTime() / 1000);
       const img = imageUrl || `https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=800&q=80`;
       const tx = await market.createMarket(question, category, img, endTime, { gasLimit: 2_000_000 });

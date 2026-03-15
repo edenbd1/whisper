@@ -90,7 +90,7 @@ export const CUSDC_ABI = [
   },
 ] as const;
 
-export const WISPR_MARKET_ABI = [
+export const WHISPER_MARKET_ABI = [
   {
     inputs: [{ name: "_token", type: "address" }],
     stateMutability: "nonpayable",

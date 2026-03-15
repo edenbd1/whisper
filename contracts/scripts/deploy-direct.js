@@ -2,7 +2,7 @@ const { ethers } = require("ethers");
 require("dotenv").config();
 
 const CUSDC_ARTIFACT = require("../artifacts/contracts/ConfidentialUSDC.sol/ConfidentialUSDC.json");
-const MARKET_ARTIFACT = require("../artifacts/contracts/WisprMarket.sol/WisprMarket.json");
+const MARKET_ARTIFACT = require("../artifacts/contracts/WhisperMarket.sol/WhisperMarket.json");
 
 async function main() {
   const provider = new ethers.JsonRpcProvider("https://testnet.coti.io/rpc");
@@ -25,8 +25,8 @@ async function main() {
   const cusdcAddress = await cusdc.getAddress();
   console.log("ConfidentialUSDC deployed to:", cusdcAddress);
 
-  // Deploy WisprMarket
-  console.log("\n--- Deploying WisprMarket ---");
+  // Deploy WhisperMarket
+  console.log("\n--- Deploying WhisperMarket ---");
   const marketFactory = new ethers.ContractFactory(
     MARKET_ARTIFACT.abi,
     MARKET_ARTIFACT.bytecode,
@@ -36,7 +36,7 @@ async function main() {
   console.log("TX sent:", market.deploymentTransaction().hash);
   await market.waitForDeployment();
   const marketAddress = await market.getAddress();
-  console.log("WisprMarket deployed to:", marketAddress);
+  console.log("WhisperMarket deployed to:", marketAddress);
 
   // Create initial markets
   console.log("\n--- Creating initial markets ---");
@@ -60,7 +60,7 @@ async function main() {
 
   console.log("\n=== DEPLOYMENT COMPLETE ===");
   console.log("ConfidentialUSDC:", cusdcAddress);
-  console.log("WisprMarket:", marketAddress);
+  console.log("WhisperMarket:", marketAddress);
   console.log("\nUpdate .env.local:");
   console.log(`NEXT_PUBLIC_TOKEN_ADDRESS=${cusdcAddress}`);
   console.log(`NEXT_PUBLIC_MARKET_ADDRESS=${marketAddress}`);

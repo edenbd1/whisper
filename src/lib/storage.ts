@@ -29,27 +29,27 @@ function safeSet(key: string, value: unknown): void {
 
 // AMM States (scoped to contract)
 export function saveAMMStates(states: Record<string, AMMState>): void {
-  safeSet(`wispr_amm_${MARKET_KEY}`, states);
+  safeSet(`whisper_amm_${MARKET_KEY}`, states);
 }
 
 export function loadAMMStates(): Record<string, AMMState> | null {
-  return safeGet<Record<string, AMMState> | null>(`wispr_amm_${MARKET_KEY}`, null);
+  return safeGet<Record<string, AMMState> | null>(`whisper_amm_${MARKET_KEY}`, null);
 }
 
 // Positions (per wallet + contract)
 export function savePositions(address: string, positions: Position[]): void {
-  safeSet(`wispr_pos_${MARKET_KEY}_${address.toLowerCase()}`, positions);
+  safeSet(`whisper_pos_${MARKET_KEY}_${address.toLowerCase()}`, positions);
 }
 
 export function loadPositions(address: string): Position[] {
-  return safeGet<Position[]>(`wispr_pos_${MARKET_KEY}_${address.toLowerCase()}`, []);
+  return safeGet<Position[]>(`whisper_pos_${MARKET_KEY}_${address.toLowerCase()}`, []);
 }
 
 // Price history (scoped to contract)
 export function savePriceHistory(history: Record<string, number[]>): void {
-  safeSet(`wispr_hist_${MARKET_KEY}`, history);
+  safeSet(`whisper_hist_${MARKET_KEY}`, history);
 }
 
 export function loadPriceHistory(): Record<string, number[]> | null {
-  return safeGet<Record<string, number[]> | null>(`wispr_hist_${MARKET_KEY}`, null);
+  return safeGet<Record<string, number[]> | null>(`whisper_hist_${MARKET_KEY}`, null);
 }
