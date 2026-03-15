@@ -26,30 +26,24 @@ export function WisprWordmark({ className }: { className?: string }) {
   );
 }
 
-/**
- * Full logo: icon + "Whisper" wordmark as a single inline SVG.
- * Same SVG used in public/logo-full.svg for the README.
- */
 export function WisprLogoFull({ height = 28, className }: { height?: number; className?: string }) {
-  // viewBox is 260x68, scale to desired height
-  const width = (260 / 68) * height;
+  const iconSize = height * 0.85;
+  const fontSize = height * 0.82;
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 260 68"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      {/* Icon */}
-      <g transform="translate(2, 2) scale(0.75)" fill="#005EF8" stroke="#005EF8" strokeWidth="3" strokeLinejoin="round" style={{ paintOrder: "stroke" }}>
-        <polygon points="1,0 20,18 0,30" />
-        <polygon points="50,10 50,46 0,80 0,46" />
-        <polygon points="100,10 100,46 50,80 50,46" />
-      </g>
-      {/* Wordmark */}
-      <text x="86" y="48" fontFamily="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" fontSize="38" fontWeight="800" letterSpacing="-1.8" fill="#005EF8">Whisper</text>
-    </svg>
+    <div className={`flex items-center gap-1.5 ${className ?? ""}`}>
+      <WisprIcon size={iconSize} className="text-[#005EF8] drop-shadow-[0_0_8px_rgba(0,94,248,0.3)]" />
+      <span
+        className="text-[#005EF8]"
+        style={{
+          fontSize: `${fontSize}px`,
+          fontFamily: "var(--font-poppins), Poppins, sans-serif",
+          fontWeight: 700,
+          letterSpacing: "-0.02em",
+          lineHeight: 1,
+        }}
+      >
+        Whisper
+      </span>
+    </div>
   );
 }
