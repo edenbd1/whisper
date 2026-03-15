@@ -29,7 +29,7 @@ function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: (
 }
 
 export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
-  const { markets } = useMarket();
+  const { markets, loading } = useMarket();
   const [activeIndex, setActiveIndex] = useState(startIndex);
   const [instant, setInstant] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -184,6 +184,21 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       behavior: "smooth",
     });
   }, []);
+
+  if (loading || markets.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center space-y-4">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="w-8 h-8 border-2 border-white/10 border-t-[#005EF8] rounded-full mx-auto"
+          />
+          <p className="text-white/20 text-sm font-medium">Loading markets from COTI...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center h-full gap-6">

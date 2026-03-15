@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { mockBets } from "@/lib/mockData";
 import { fetchMarketsFromChain } from "@/lib/chain";
 import { initializePool, getPrice, executeBuy, previewBuy, previewSell, executeSell as ammExecuteSell } from "@/lib/amm";
 import { saveAMMStates, loadAMMStates, savePositions, loadPositions, savePriceHistory, loadPriceHistory } from "@/lib/storage";
@@ -10,6 +9,7 @@ import { useWallet } from "./WalletContext";
 
 interface MarketContextType {
   markets: Bet[];
+  loading: boolean;
   getMarketPrice: (marketId: string) => MarketPrice;
   previewTrade: (marketId: string, side: BetSide, amount: number) => TradePreview;
   executeTrade: (marketId: string, side: BetSide, amount: number, txHash?: string) => void;
@@ -39,31 +39,28 @@ function buildPools(bets: Bet[]): Record<string, AMMState> {
 
 export function MarketProvider({ children }: { children: ReactNode }) {
   const { address } = useWallet();
-  const [markets, setMarkets] = useState<Bet[]>(mockBets);
-  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>(() => buildPools(mockBets));
+  const [markets, setMarkets] = useState<Bet[]>([]);
+  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>({});
   const [positions, setPositions] = useState<Position[]>([]);
   const [priceHistory, setPriceHistory] = useState<Record<string, number[]>>({});
+  const [loading, setLoading] = useState(true);
 
-  // Fetch markets from chain on mount, fall back to mockBets
+  // Fetch markets from chain on mount
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       try {
         const chainMarkets = await fetchMarketsFromChain();
-        if (cancelled) return;
-        if (chainMarkets.length > 0) {
-          setMarkets(chainMarkets);
-          initPools(chainMarkets);
-          initHistory(chainMarkets);
-          return;
-        }
+        if (cancelled || chainMarkets.length === 0) return;
+        setMarkets(chainMarkets);
+        initPools(chainMarkets);
+        initHistory(chainMarkets);
       } catch {
-        // Chain unavailable — use fallback
+        // Chain unavailable
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      if (cancelled) return;
-      initPools(mockBets);
-      initHistory(mockBets);
     }
 
     function initPools(bets: Bet[]) {
@@ -235,6 +232,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   return (
     <MarketContext.Provider value={{
       markets,
+      loading,
       getMarketPrice,
       previewTrade,
       executeTrade,

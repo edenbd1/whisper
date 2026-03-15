@@ -1,37 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mockBets, formatNumber, daysUntil } from "../mockData";
-
-describe("mockData - mockBets", () => {
-  it("has 8 markets", () => {
-    expect(mockBets).toHaveLength(8);
-  });
-
-  it("all markets have unique ids", () => {
-    const ids = mockBets.map(b => b.id);
-    expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  it("all markets have yesPercentage 0-100", () => {
-    for (const bet of mockBets) {
-      expect(bet.yesPercentage).toBeGreaterThanOrEqual(0);
-      expect(bet.yesPercentage).toBeLessThanOrEqual(100);
-    }
-  });
-
-  it("all markets have positive pool size and participants", () => {
-    for (const bet of mockBets) {
-      expect(bet.poolSize).toBeGreaterThan(0);
-      expect(bet.participants).toBeGreaterThan(0);
-    }
-  });
-
-  it("all markets have future end dates", () => {
-    const now = new Date("2026-03-06");
-    for (const bet of mockBets) {
-      expect(new Date(bet.endsAt).getTime()).toBeGreaterThan(now.getTime());
-    }
-  });
-});
+import { formatNumber, daysUntil } from "../mockData";
 
 describe("formatNumber", () => {
   it("formats millions", () => {
