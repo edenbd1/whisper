@@ -56,8 +56,8 @@ export function MarketProvider({ children }: { children: ReactNode }) {
         setMarkets(chainMarkets);
         initPools(chainMarkets);
         initHistory(chainMarkets);
-      } catch {
-        // Chain unavailable
+      } catch (err) {
+        console.error("[Whisper] Failed to fetch markets:", err);
       } finally {
         if (!cancelled) setLoading(false);
       }

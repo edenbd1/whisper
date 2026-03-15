@@ -1,9 +1,7 @@
-import { COTI_TESTNET } from "./coti";
-import { CONTRACT_ADDRESSES } from "./contracts";
 import { Bet } from "@/types";
 
-const RPC = COTI_TESTNET.rpc;
-const MARKET = CONTRACT_ADDRESSES.market;
+const RPC = "https://testnet.coti.io/rpc";
+const MARKET = "0x34a1AC33E686E61d114912c8C25095426CDC7F93";
 
 // marketCount() selector
 const MARKET_COUNT_SEL = "0xec979082";
