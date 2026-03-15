@@ -124,10 +124,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const provider = new BrowserProvider(window.ethereum as any, cotiNetwork);
 
       // Patch resolveName to skip ENS (COTI testnet has no ENS)
-      const origResolveName = provider.resolveName.bind(provider);
       provider.resolveName = async (name: string) => {
-        if (typeof name === "string" && isAddress(name)) return getAddress(name);
-        return origResolveName(name);
+        if (/^0x[0-9a-fA-F]{40}$/.test(name)) return getAddress(name);
+        return null;
       };
 
       const network = await provider.getNetwork();
