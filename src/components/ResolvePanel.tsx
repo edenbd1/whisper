@@ -5,10 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { CONTRACT_ADDRESSES, WISPR_MARKET_ABI } from "@/lib/contracts";
 import { getExplorerTxUrl } from "@/lib/coti";
-import { mockBets } from "@/lib/mockData";
+import { useMarket } from "@/context/MarketContext";
 
 export default function ResolvePanel() {
   const { signer } = useWallet();
+  const { markets } = useMarket();
   const [selectedMarket, setSelectedMarket] = useState<number | null>(null);
   const [pending, setPending] = useState(false);
   const [txHash, setTxHash] = useState("");
@@ -97,7 +98,7 @@ export default function ResolvePanel() {
         </div>
       )}
 
-      {mockBets.map((bet, i) => {
+      {markets.map((bet, i) => {
         const isResolved = resolvedMarkets.has(i);
         return (
           <div key={bet.id} className="glass rounded-xl p-4">

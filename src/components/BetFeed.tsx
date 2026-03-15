@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { flushSync } from "react-dom";
 import { motion } from "framer-motion";
-import { mockBets } from "@/lib/mockData";
+import { useMarket } from "@/context/MarketContext";
 import BetCard from "./BetCard";
 
 function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: () => void }) {
@@ -29,12 +29,13 @@ function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: (
 }
 
 export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
+  const { markets } = useMarket();
   const [activeIndex, setActiveIndex] = useState(startIndex);
   const [instant, setInstant] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const isRelocating = useRef(false);
-  const len = mockBets.length;
+  const len = markets.length;
 
   const setItemRef = useCallback((key: string, node: HTMLDivElement | null) => {
     if (node) itemRefs.current.set(key, node);
@@ -198,11 +199,11 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
             ref={(node) => setItemRef("clone-start", node)}
             className="bet-card"
           >
-            <BetCard bet={mockBets[len - 1]} isActive={true} instant />
+            <BetCard bet={markets[len - 1]} isActive={true} instant />
           </div>
 
           {/* Real cards */}
-          {mockBets.map((bet, index) => (
+          {markets.map((bet, index) => (
             <div
               key={bet.id}
               data-feed-key={`real-${index}`}
@@ -219,13 +220,13 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
             ref={(node) => setItemRef("clone-end", node)}
             className="bet-card"
           >
-            <BetCard bet={mockBets[0]} isActive={true} instant />
+            <BetCard bet={markets[0]} isActive={true} instant />
           </div>
         </div>
 
         {/* Scroll indicator dots - mobile */}
         <div className="lg:hidden absolute right-2.5 top-1/2 -translate-y-1/2 flex flex-col gap-1 z-20">
-          {mockBets.map((_, i) => (
+          {markets.map((_, i) => (
             <motion.div
               key={i}
               animate={{
@@ -241,7 +242,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         {/* Counter - desktop */}
         <div className="hidden lg:block absolute bottom-3 left-1/2 -translate-x-1/2 z-20">
           <div className="glass px-3 py-1 rounded-full text-[11px] text-white/40 font-medium tabular-nums">
-            {activeIndex + 1} / {mockBets.length}
+            {activeIndex + 1} / {markets.length}
           </div>
         </div>
       </div>

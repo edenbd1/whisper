@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { useMarket } from "@/context/MarketContext";
-import { mockBets, formatNumber } from "@/lib/mockData";
+import { formatNumber } from "@/lib/mockData";
 import { Position, BetSide } from "@/types";
 import { shortenAddress } from "@/lib/coti";
 import { CONTRACT_ADDRESSES, CUSDC_ABI } from "@/lib/contracts";
@@ -24,7 +24,7 @@ function setStoredBalance(address: string, balance: number) {
 
 export default function PortfolioView() {
   const { address, isConnected, signer, isOnboarded, decryptBalance } = useWallet();
-  const { positions, getPositionPnL, getMarketPrice } = useMarket();
+  const { markets, positions, getPositionPnL, getMarketPrice } = useMarket();
   const [sellTarget, setSellTarget] = useState<Position | null>(null);
   const [faucetState, setFaucetState] = useState<"idle" | "pending" | "success" | "error">("idle");
   const [faucetError, setFaucetError] = useState("");
@@ -249,7 +249,7 @@ export default function PortfolioView() {
             <h3 className="text-xs font-semibold text-white/30 uppercase tracking-wider mb-3">Positions</h3>
             <AnimatePresence>
               {aggregated.map((pos) => {
-                const market = mockBets.find(b => b.id === pos.marketId);
+                const market = markets.find(b => b.id === pos.marketId);
                 if (!market) return null;
                 const price = getMarketPrice(pos.marketId);
                 const currentPrice = pos.side === "yes" ? price.yes : price.no;

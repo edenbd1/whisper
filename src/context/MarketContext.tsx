@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { mockBets } from "@/lib/mockData";
+import { fetchMarketsFromChain } from "@/lib/chain";
 import { initializePool, getPrice, executeBuy, previewBuy, previewSell, executeSell as ammExecuteSell } from "@/lib/amm";
 import { saveAMMStates, loadAMMStates, savePositions, loadPositions, savePriceHistory, loadPriceHistory } from "@/lib/storage";
 import { AMMState, Bet, BetSide, MarketPrice, Position, TradePreview, SellResult, PnLInfo } from "@/types";
@@ -17,6 +18,7 @@ interface MarketContextType {
   positions: Position[];
   getPositionPnL: (position: Position) => PnLInfo;
   getPriceHistory: (marketId: string) => number[];
+  refreshMarkets: () => Promise<void>;
 }
 
 const MarketContext = createContext<MarketContextType | null>(null);
@@ -27,9 +29,9 @@ export function useMarket() {
   return ctx;
 }
 
-function initAllPools(): Record<string, AMMState> {
+function buildPools(bets: Bet[]): Record<string, AMMState> {
   const pools: Record<string, AMMState> = {};
-  for (const bet of mockBets) {
+  for (const bet of bets) {
     pools[bet.id] = initializePool(bet.yesPercentage / 100);
   }
   return pools;
@@ -37,33 +39,60 @@ function initAllPools(): Record<string, AMMState> {
 
 export function MarketProvider({ children }: { children: ReactNode }) {
   const { address } = useWallet();
-  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>(initAllPools);
-
-  // Load persisted AMM states on client
-  useEffect(() => {
-    const stored = loadAMMStates();
-    if (stored) setAmmStates(stored);
-  }, []);
+  const [markets, setMarkets] = useState<Bet[]>(mockBets);
+  const [ammStates, setAmmStates] = useState<Record<string, AMMState>>({});
   const [positions, setPositions] = useState<Position[]>([]);
   const [priceHistory, setPriceHistory] = useState<Record<string, number[]>>({});
 
-  // Seed price history on client only (avoids hydration mismatch from Math.random)
+  // Fetch markets from chain on mount, fall back to mockBets
   useEffect(() => {
-    const stored = loadPriceHistory();
-    if (stored) { setPriceHistory(stored); return; }
-    const history: Record<string, number[]> = {};
-    for (const bet of mockBets) {
-      const base = bet.yesPercentage / 100;
-      const points: number[] = [];
-      for (let i = 0; i < 12; i++) {
-        const noise = (Math.random() - 0.5) * 0.08;
-        points.push(Math.max(0.01, Math.min(0.99, base + noise * (i / 12))));
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const chainMarkets = await fetchMarketsFromChain();
+        if (cancelled) return;
+        if (chainMarkets.length > 0) {
+          setMarkets(chainMarkets);
+          initPools(chainMarkets);
+          initHistory(chainMarkets);
+          return;
+        }
+      } catch {
+        // Chain unavailable — use fallback
       }
-      points.push(base);
-      history[bet.id] = points;
+      if (cancelled) return;
+      initPools(mockBets);
+      initHistory(mockBets);
     }
-    setPriceHistory(history);
-  }, []);
+
+    function initPools(bets: Bet[]) {
+      const stored = loadAMMStates();
+      // Use stored AMM states if keys match current market IDs
+      if (stored && bets.every((b) => b.id in stored)) {
+        setAmmStates(stored);
+        return;
+      }
+      setAmmStates(buildPools(bets));
+    }
+
+    function initHistory(bets: Bet[]) {
+      const stored = loadPriceHistory();
+      if (stored && Object.keys(stored).length > 0) {
+        setPriceHistory(stored);
+        return;
+      }
+      // Initialize with a single price point per market (actual probability)
+      const history: Record<string, number[]> = {};
+      for (const bet of bets) {
+        history[bet.id] = [bet.yesPercentage / 100];
+      }
+      setPriceHistory(history);
+    }
+
+    load();
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load positions when wallet changes
   useEffect(() => {
@@ -76,7 +105,9 @@ export function MarketProvider({ children }: { children: ReactNode }) {
 
   // Persist AMM states
   useEffect(() => {
-    saveAMMStates(ammStates);
+    if (Object.keys(ammStates).length > 0) {
+      saveAMMStates(ammStates);
+    }
   }, [ammStates]);
 
   // Persist positions
@@ -86,12 +117,25 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     }
   }, [address, positions]);
 
-  // Persist price history (skip empty initial state)
+  // Persist price history
   useEffect(() => {
     if (Object.keys(priceHistory).length > 0) {
       savePriceHistory(priceHistory);
     }
   }, [priceHistory]);
+
+  // Refresh markets from chain (call after trades / market creation)
+  const refreshMarkets = useCallback(async () => {
+    try {
+      const chainMarkets = await fetchMarketsFromChain();
+      if (chainMarkets.length === 0) return;
+      setMarkets(chainMarkets);
+      // Reinitialize AMM pools from on-chain probabilities
+      setAmmStates(buildPools(chainMarkets));
+    } catch {
+      // Keep current state on error
+    }
+  }, []);
 
   const getMarketPrice = useCallback((marketId: string): MarketPrice => {
     const state = ammStates[marketId];
@@ -154,7 +198,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
           if (pos.marketId === marketId && pos.side === side && remaining > 0) {
             if (pos.shares <= remaining) {
               remaining -= pos.shares;
-              return acc; // Remove this position entirely
+              return acc;
             } else {
               const toSell = remaining;
               const fraction = toSell / pos.shares;
@@ -190,7 +234,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
 
   return (
     <MarketContext.Provider value={{
-      markets: mockBets,
+      markets,
       getMarketPrice,
       previewTrade,
       executeTrade,
@@ -199,6 +243,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       positions,
       getPositionPnL,
       getPriceHistory,
+      refreshMarkets,
     }}>
       {children}
     </MarketContext.Provider>

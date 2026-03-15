@@ -28,11 +28,11 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
   const { isConnected, signer, connect } = useWallet();
-  const { previewTrade, executeTrade, getMarketPrice } = useMarket();
+  const { previewTrade, executeTrade, getMarketPrice, refreshMarkets } = useMarket();
 
   const isYes = side === "yes";
   const numAmount = parseFloat(amount) || 0;
-  const betId = String((marketId ?? 0) + 1);
+  const betId = String(marketId ?? 0);
 
   const currentPrice = getMarketPrice(betId);
   const preview = useMemo(() => {
@@ -78,6 +78,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       executeTrade(betId, side, numAmount, tx.hash);
       setTxState("success");
       onConfirm();
+      refreshMarkets();
     } catch (err: any) {
       const msg = err?.reason || err?.message || "Transaction failed";
       if (msg.includes("user rejected") || msg.includes("denied")) {

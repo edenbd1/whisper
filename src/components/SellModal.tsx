@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Position } from "@/types";
 import { useMarket } from "@/context/MarketContext";
-import { mockBets } from "@/lib/mockData";
 
 interface SellModalProps {
   isOpen: boolean;
@@ -15,9 +14,9 @@ interface SellModalProps {
 export default function SellModal({ isOpen, onClose, position }: SellModalProps) {
   const [sharesToSell, setSharesToSell] = useState<string>(position.shares.toFixed(1));
   const [sold, setSold] = useState(false);
-  const { previewSellPosition, sellPosition, getMarketPrice } = useMarket();
+  const { markets, previewSellPosition, sellPosition, getMarketPrice } = useMarket();
 
-  const market = mockBets.find(b => b.id === position.marketId);
+  const market = markets.find(b => b.id === position.marketId);
   const numShares = parseFloat(sharesToSell) || 0;
   const isYes = position.side === "yes";
 

@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { mockBets, formatNumber, daysUntil } from "@/lib/mockData";
+import { formatNumber, daysUntil } from "@/lib/mockData";
 import { useMarket } from "@/context/MarketContext";
-import { Bet } from "@/types";
 import { SkeletonCard } from "./Skeleton";
 import Sparkline from "./Sparkline";
 
@@ -18,7 +17,7 @@ interface ExploreViewProps {
 export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-  const { getMarketPrice, getPriceHistory } = useMarket();
+  const { markets, getMarketPrice, getPriceHistory } = useMarket();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 600);
@@ -26,8 +25,8 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
   }, []);
 
   const filtered = activeCategory === "All"
-    ? mockBets
-    : mockBets.filter(b => b.category === activeCategory);
+    ? markets
+    : markets.filter(b => b.category === activeCategory);
 
   return (
     <div className="h-full overflow-y-auto pb-24 lg:pb-8">
@@ -71,7 +70,7 @@ export default function ExploreView({ onSelectMarket }: ExploreViewProps) {
             const yesPrice = Math.round(price.yes * 100);
             const noPrice = Math.round(price.no * 100);
             const days = daysUntil(bet.endsAt);
-            const originalIndex = mockBets.findIndex(b => b.id === bet.id);
+            const originalIndex = markets.findIndex(b => b.id === bet.id);
             const history = getPriceHistory(bet.id);
 
             return (

@@ -2,7 +2,7 @@ import { Bet } from "@/types";
 
 export const mockBets: Bet[] = [
   {
-    id: "1",
+    id: "0",
     question: "Will Bitcoin hit $200K before July 2026?",
     category: "Crypto",
     image: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200&q=80",
@@ -14,7 +14,7 @@ export const mockBets: Bet[] = [
     isLive: true,
   },
   {
-    id: "2",
+    id: "1",
     question: "Will the Iran conflict end within 4 weeks?",
     category: "Geopolitics",
     image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200&q=80",
@@ -26,7 +26,7 @@ export const mockBets: Bet[] = [
     isLive: true,
   },
   {
-    id: "3",
+    id: "2",
     question: "Will Ethereum flip Bitcoin's market cap in 2026?",
     category: "Crypto",
     image: "https://images.unsplash.com/photo-1622630998477-20aa696ecb05?w=1200&q=80",
@@ -38,7 +38,7 @@ export const mockBets: Bet[] = [
     isLive: true,
   },
   {
-    id: "4",
+    id: "3",
     question: "Will AI pass the Turing test by end of 2026?",
     category: "Technology",
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80",
@@ -50,7 +50,7 @@ export const mockBets: Bet[] = [
     isLive: true,
   },
   {
-    id: "5",
+    id: "4",
     question: "Will France win the 2026 World Cup?",
     category: "Sports",
     image: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
@@ -62,7 +62,7 @@ export const mockBets: Bet[] = [
     isLive: true,
   },
   {
-    id: "6",
+    id: "5",
     question: "Will Elon Musk step down as CEO of Tesla?",
     category: "Business",
     image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80",
@@ -74,7 +74,7 @@ export const mockBets: Bet[] = [
     isLive: true,
   },
   {
-    id: "7",
+    id: "6",
     question: "Will a meme coin reach $100B market cap?",
     category: "Crypto",
     image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&q=80",
@@ -86,7 +86,7 @@ export const mockBets: Bet[] = [
     isLive: true,
   },
   {
-    id: "8",
+    id: "7",
     question: "Will there be confirmed alien contact by 2027?",
     category: "Science",
     image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
+import { useMarket } from "@/context/MarketContext";
 import { CONTRACT_ADDRESSES, WISPR_MARKET_ABI } from "@/lib/contracts";
 import { getExplorerTxUrl } from "@/lib/coti";
 
 export default function CreateView() {
   const { isConnected, signer, connect } = useWallet();
+  const { refreshMarkets } = useMarket();
   const [question, setQuestion] = useState("");
   const [category, setCategory] = useState("Crypto");
   const [endDate, setEndDate] = useState("");
@@ -38,6 +40,7 @@ export default function CreateView() {
       const tx = await market.createMarket(question, category, img, endTime, { gasLimit: 2_000_000 });
       setTxHash(tx.hash);
       await tx.wait();
+      await refreshMarkets();
       setSubmitted(true);
     } catch (err: any) {
       const msg = err?.reason || err?.message || "Transaction failed";

@@ -257,7 +257,7 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
         onClose={() => setModalOpen(false)}
         side={selectedSide}
         question={bet.question}
-        marketId={parseInt(bet.id) - 1}
+        marketId={parseInt(bet.id)}
         onConfirm={handleConfirm}
       />
     </>
