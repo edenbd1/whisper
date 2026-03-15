@@ -21,7 +21,7 @@ export function WisprIcon({ size = 24, className }: { size?: number; className?:
 export function WisprWordmark({ className }: { className?: string }) {
   return (
     <span className={`text-[17px] font-bold tracking-[-0.04em] ${className ?? ""}`}>
-      Wispr
+      Whisper
     </span>
   );
 }

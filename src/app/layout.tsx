@@ -13,10 +13,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Wispr - Confidential Prediction Markets",
+  title: "Whisper - Confidential Prediction Markets",
   description: "Bet on real-world events with full privacy. Powered by COTI confidential tokens.",
   openGraph: {
-    title: "Wispr - Confidential Prediction Markets",
+    title: "Whisper - Confidential Prediction Markets",
     description: "Bet on real-world events with full privacy. Powered by COTI.",
     type: "website",
   },

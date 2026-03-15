@@ -19,7 +19,7 @@ export default function Header() {
             className="flex items-center gap-2"
           >
             <WisprIcon size={22} className="text-[#005EF8]" />
-            <span className="text-[15px] font-bold tracking-[-0.03em] text-white">Wispr</span>
+            <span className="text-[15px] font-bold tracking-[-0.03em] text-white">Whisper</span>
           </motion.div>
 
           {/* Wallet */}

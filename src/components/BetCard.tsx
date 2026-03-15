@@ -146,7 +146,7 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
             onClick={() => {
               const text = `${bet.question} — YES ${yesPrice}¢ / NO ${noPrice}¢`;
               if (navigator.share) {
-                navigator.share({ title: "Wispr Market", text }).catch(() => {});
+                navigator.share({ title: "Whisper Market", text }).catch(() => {});
               } else {
                 navigator.clipboard.writeText(text).then(() => showToast("Copied to clipboard"));
               }
