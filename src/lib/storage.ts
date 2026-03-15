@@ -3,7 +3,7 @@ import { CONTRACT_ADDRESSES } from "@/lib/contracts";
 
 // Scope storage keys to current market contract so redeployments start fresh
 // Bump version when AMM parameters change to force pool re-initialization
-const AMM_VERSION = "v2";
+const AMM_VERSION = "v3";
 const MARKET_KEY = `${AMM_VERSION}_${CONTRACT_ADDRESSES.market?.slice(0, 10) || "local"}`;
 
 function isBrowser(): boolean {

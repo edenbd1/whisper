@@ -1,6 +1,6 @@
 import { AMMState, MarketPrice, TradePreview, SellResult, BetSide } from "@/types";
 
-const INITIAL_LIQUIDITY = 10000;
+const INITIAL_LIQUIDITY = 100000;
 
 /**
  * Initialize AMM pool from an initial yes probability (0-1).
