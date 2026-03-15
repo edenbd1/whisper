@@ -13,12 +13,14 @@ const navItems: NavItem[] = [
   { id: "feed", label: "Home", icon: "home" },
   { id: "explore", label: "Explore", icon: "search" },
   { id: "create", label: "Create", icon: "plus" },
+  { id: "ranking", label: "Ranking", icon: "trophy" },
   { id: "profile", label: "Profile", icon: "user" },
 ];
 
 const iconPaths: Record<string, string> = {
   home: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
   search: "M21 21l-4.35-4.35M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z",
+  trophy: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6 M18 9h1.5a2.5 2.5 0 0 0 0-5H18 M4 22h16 M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22 M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22 M18 2H6v7a6 6 0 0 0 12 0V2Z",
   user: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z",
 };
 

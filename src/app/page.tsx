@@ -9,7 +9,8 @@ import Sidebar from "@/components/Sidebar";
 import PortfolioView from "@/components/PortfolioView";
 import ExploreView from "@/components/ExploreView";
 import CreateView from "@/components/CreateView";
-export type AppTab = "feed" | "explore" | "create" | "profile";
+import RankingView from "@/components/RankingView";
+export type AppTab = "feed" | "explore" | "create" | "ranking" | "profile";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<AppTab>("feed");
@@ -25,6 +26,8 @@ export default function Home() {
         return <ExploreView onSelectMarket={handleSelectMarket} />;
       case "create":
         return <CreateView />;
+      case "ranking":
+        return <RankingView />;
       case "profile":
         return <PortfolioView />;
       default:
