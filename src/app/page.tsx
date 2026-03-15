@@ -11,6 +11,7 @@ import ExploreView from "@/components/ExploreView";
 import CreateView from "@/components/CreateView";
 import RankingView from "@/components/RankingView";
 export type AppTab = "feed" | "explore" | "create" | "ranking" | "profile";
+const BUILD_VERSION = "v3-100k";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<AppTab>("feed");
@@ -57,6 +58,7 @@ export default function Home() {
         </AnimatePresence>
       </div>
 
+      <div className="fixed bottom-1 right-1 text-[9px] text-white/10 z-[100] pointer-events-none">{BUILD_VERSION}</div>
     </main>
   );
 }
