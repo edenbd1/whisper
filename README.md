@@ -1,4 +1,4 @@
-# Wispr
+# Whisper
 
 **Confidential prediction markets with a TikTok-style UX, powered by COTI's privacy layer.**
 
@@ -8,44 +8,131 @@ Swipe through full-screen prediction cards. Buy YES or NO shares at dynamic AMM 
 
 ---
 
-## What Makes Wispr Different
+## What Makes Whisper Different
 
-Most prediction markets feel like spreadsheets. Wispr feels like scrolling TikTok.
+Most prediction markets feel like spreadsheets. Whisper feels like scrolling TikTok.
 
 - **Vertical swipe feed** — full-screen cards with cinematic backgrounds, swipe to browse
-- **Polymarket-style trading** — shares priced in cents (34c/66c), not percentages. Buy low, sell high before resolution
-- **Real AMM engine** — Constant Product Market Maker with mint-and-swap pricing, price impact preview, and position P&L tracking
-- **On-chain prices** — market data fetched from the WisprMarket contract in real-time, prices reflect actual bets
-- **Confidential by default** — individual bets encrypted via COTI's garbled circuits (MPC). Nobody sees your position size
+- **Polymarket-style trading** — shares priced in cents (34c/66c), not percentages
+- **Real AMM engine** — CPMM with mint-and-swap pricing, price impact preview, P&L tracking
+- **100% on-chain** — all markets, images, and prices fetched directly from the COTI blockchain
+- **Confidential by default** — individual bets encrypted via COTI's garbled circuits (MPC)
+- **On-chain leaderboard** — ranking page built from `BetPlaced` event logs
 - **Mobile-first** — designed for phones, scales to desktop with sidebar navigation
 
 ---
 
-## COTI Privacy Technology
+## How Privacy Works
 
-Wispr uses COTI's garbled circuits at every layer:
+### The Problem
 
-| What | How |
-|------|-----|
-| **Token balances** | `ConfidentialUSDC` extends `PrivateERC20` — balances stored as `utUint64`, encrypted with network + user AES keys |
-| **Individual bets** | Per-user bets stored as `ctUint64` in contract mappings — only the bettor can decrypt their own position |
-| **Aggregate totals** | `totalYes` / `totalNo` are public for price discovery; individual contributions stay encrypted |
-| **Transfers** | Amounts are encrypted inputs — transfer values never appear in plaintext on-chain |
-| **Computation** | Addition, comparison, minting all happen on `gtUint64` garbled values inside the gcEVM |
-| **User decryption** | Only the account holder can decrypt their balance after AES key onboarding |
+On Polymarket, everyone can see: *"0xABC bet $50,000 on YES"*. Whales get front-run, copied, and targeted.
 
-### Account Onboarding Flow
+### Whisper's Solution
+
+On Whisper, observers can see *that* you bet and *which side* — but **never how much**.
+
+### What's Encrypted vs. What's Public
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        ON-CHAIN DATA                            │
+├─────────────────────────┬───────────────────────────────────────┤
+│     🔒 ENCRYPTED        │        🌐 PUBLIC                      │
+│     (COTI MPC)          │        (needed for pricing)           │
+├─────────────────────────┼───────────────────────────────────────┤
+│ Your cUSDC balance      │ Market questions & images             │
+│ Your individual bet     │ totalYes / totalNo (aggregate pools)  │
+│ Transfer amounts        │ Number of participants                │
+│ Position size           │ Who bet and which side (YES/NO)       │
+│ Payout amounts          │ Market end times & resolution status  │
+└─────────────────────────┴───────────────────────────────────────┘
+```
+
+### Why Aggregates Are Public
+
+`totalYes` and `totalNo` **must** be public — without them, there's no way to calculate prices. This is the fundamental trade-off of a prediction market: you need aggregate data for price discovery, but individual positions can stay private.
+
+### The Encryption Flow
+
+```
+                    ┌──────────────┐
+                    │   User bets  │
+                    │  100 cUSDC   │
+                    │   on YES     │
+                    └──────┬───────┘
+                           │
+                    ┌──────▼───────┐
+                    │ MpcCore      │
+                    │ .setPublic64 │──── 100 becomes a garbled value (gtUint64)
+                    │ (amount)     │
+                    └──────┬───────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+       ┌──────▼──────┐  ┌─▼──────┐  ┌──▼──────────┐
+       │  Encrypted   │  │ Public │  │  Encrypted   │
+       │  storage     │  │ update │  │  transfer    │
+       │              │  │        │  │              │
+       │ _yesBets     │  │ total  │  │ cUSDC moves  │
+       │ [market]     │  │ Yes    │  │ from user    │
+       │ [user]       │  │ += 100 │  │ to contract  │
+       │ = ctUint64   │  │        │  │ (amount      │
+       │ (only user   │  │        │  │  hidden)     │
+       │  can decrypt) │  │        │  │              │
+       └──────────────┘  └────────┘  └──────────────┘
+```
+
+### COTI Encryption Types
+
+| Type | Meaning | Where Used |
+|------|---------|------------|
+| `gtUint64` | **Garbled** — exists only during computation inside gcEVM | Addition, comparison operations |
+| `ctUint64` | **Ciphertext** — encrypted at rest, stored on-chain | Per-user bet mappings |
+| `utUint64` | **User-encrypted** — only the owner's AES key can decrypt | Token balances (PrivateERC20) |
+| `itUint64` | **Input** — encrypted value submitted by user in a transaction | Approve amounts |
+
+### Account Onboarding
+
+Before a user can interact with encrypted values, they must generate an AES key via COTI's MPC protocol:
 
 ```typescript
-import { BrowserProvider } from "@coti-io/coti-ethers";
-import { onboard } from "@coti-io/coti-ethers";
+import { BrowserProvider, onboard } from "@coti-io/coti-ethers";
 
 const provider = new BrowserProvider(window.ethereum);
 const signer = await provider.getSigner();
-await onboard(signer); // One-time MPC key generation via AccountOnboard contract
+await onboard(signer); // One-time MPC key generation
 ```
 
-AES keys are persisted per wallet in `localStorage` so users only onboard once.
+This is a one-time operation. The AES key is stored in `localStorage` per wallet address.
+
+---
+
+## User Flow
+
+```
+1. Connect MetaMask
+   └─→ Auto-switch to COTI Testnet (Chain ID 7082400)
+
+2. Onboard (one-time)
+   └─→ MPC key generation → AES key stored in localStorage
+
+3. Claim cUSDC from faucet (one-time)
+   └─→ 1,000 cUSDC minted → balance encrypted on-chain
+
+4. Browse markets
+   └─→ Swipe feed / Explore grid — data fetched from chain via JSON-RPC
+
+5. Place a bet
+   ├─→ First bet: approve cUSDC (1 tx) + place bet (1 tx)
+   └─→ Subsequent bets: place bet only (1 tx)
+
+6. Check portfolio
+   └─→ Positions tracked locally, P&L calculated from AMM prices
+
+7. View ranking
+   └─→ Leaderboard built from on-chain BetPlaced event logs
+```
 
 ---
 
@@ -71,14 +158,31 @@ contract ConfidentialUSDC is PrivateERC20 {
 
 - **Name:** Confidential USDC | **Symbol:** cUSDC | **Decimals:** 6
 - Faucet: 1,000 cUSDC per address (testnet)
-- All balances encrypted on-chain
+- All balances encrypted on-chain via `utUint64`
 
 ### WisprMarket — `0x34a1AC33E686E61d114912c8C25095426CDC7F93`
 
 On-chain prediction markets with encrypted bet storage.
 
-- Create markets with question, category, image, end time
-- Bet YES or NO using cUSDC — individual bets stored encrypted as `ctUint64`
+```solidity
+// Encrypted per-user bet storage
+mapping(uint256 => mapping(address => ctUint64)) private _yesBets;
+mapping(uint256 => mapping(address => ctUint64)) private _noBets;
+
+function bet(uint256 marketId, bool isYes, uint64 amount) external {
+    // Encrypt and accumulate
+    gtUint64 gtAmount = MpcCore.setPublic64(amount);
+    gtUint64 current = _safeOnboard(_yesBets[marketId][msg.sender]);
+    _yesBets[marketId][msg.sender] = MpcCore.offBoard(MpcCore.add(current, gtAmount));
+
+    // Public aggregate for pricing
+    m.totalYes += amount;
+
+    // Transfer (encrypted amount)
+    token.transferFrom(msg.sender, address(this), gtAmount);
+}
+```
+
 - `_safeOnboard()` pattern: checks `ctUint64.unwrap(value) == 0` before `MpcCore.onBoard()` to prevent crash on uninitialized slots
 - Resolution by owner, proportional payouts to winners
 - Cancel + refund support
@@ -86,9 +190,30 @@ On-chain prediction markets with encrypted bet storage.
 
 ---
 
+## On-Chain Data Fetching
+
+**Zero mock data.** All market data comes from the blockchain.
+
+Markets are fetched using raw JSON-RPC calls directly to the COTI Testnet RPC — no ethers.js dependency for reads:
+
+```
+Browser → fetch("https://testnet.coti.io/rpc")
+       → eth_call: marketCount()         → 8 markets
+       → eth_call: getMarket(0..7)       → questions, images, prices
+       → eth_getLogs: BetPlaced events    → leaderboard data
+```
+
+- `marketCount()` + `getMarket(i)` to enumerate all markets
+- Prices derived from on-chain `totalYes` / `totalNo` ratios
+- Leaderboard built from `BetPlaced` event logs
+- After each bet or market creation, the UI refetches from chain
+- ABI decoding done manually (no library dependency in browser)
+
+---
+
 ## AMM Engine
 
-Wispr uses a **Constant Product Market Maker** (same model as Polymarket and Uniswap) with a **mint-and-swap** model for correct prediction market pricing.
+Whisper uses a **Constant Product Market Maker** (same model as Polymarket and Uniswap) with a **mint-and-swap** model for correct prediction market pricing.
 
 **Pricing:** Each market has a virtual pool of YES and NO shares. `price_yes = noShares / (yesShares + noShares)`.
 
@@ -109,18 +234,6 @@ Price moves: 34.0c → 34.3c (0.31% impact)
 Sell 14.64 shares → ~5 cUSDC back
 Pool returns to original state
 ```
-
----
-
-## On-Chain Data Fetching
-
-Markets are fetched directly from the WisprMarket contract using a read-only `JsonRpcProvider`:
-
-- `marketCount()` + `getMarket(i)` to enumerate all markets
-- Prices derived from on-chain `totalYes` / `totalNo` ratios
-- After each bet or market creation, the UI refetches from chain
-- Price history tracks actual trade data, not simulated values
-- `mockBets` used only as offline fallback
 
 ---
 
@@ -163,7 +276,7 @@ Markets are fetched directly from the WisprMarket contract using a read-only `Js
 | Contracts | Solidity 0.8.19, Hardhat 2 |
 | Privacy | `@coti-io/coti-contracts` (MpcCore, PrivateERC20) |
 | Wallet | `@coti-io/coti-ethers` (ethers.js v6 + COTI extensions) |
-| Testing | Vitest 4 (57 tests) |
+| Testing | Vitest 4 (52 tests) |
 | Deployment | Vercel |
 
 ---
@@ -202,14 +315,16 @@ node scripts/deploy-direct.js   # Full deploy (token + market)
 
 ```
 src/
-  app/page.tsx              # App shell, tab routing
+  app/page.tsx              # App shell, 5-tab routing
   components/
     BetFeed.tsx             # Vertical swipe container + keyboard nav
     BetCard.tsx             # Full-screen card with AMM prices
     BetModal.tsx            # Trade placement with price impact
     SellModal.tsx           # Position selling interface
     PortfolioView.tsx       # P&L tracking + position management
+    ExploreView.tsx         # Grid view with category filters
     CreateView.tsx          # On-chain market creation
+    RankingView.tsx         # On-chain leaderboard from BetPlaced events
     ResolvePanel.tsx        # Market resolution + claim winnings
     Header.tsx / Sidebar.tsx / BottomNav.tsx
   context/
@@ -217,7 +332,8 @@ src/
     MarketContext.tsx        # AMM state + on-chain fetch + positions
   lib/
     amm.ts                  # CPMM math (pure functions)
-    chain.ts                # Read-only on-chain market fetching
+    chain.ts                # Raw JSON-RPC market fetching (no ethers)
+    leaderboard.ts          # On-chain event log aggregation
     storage.ts              # localStorage layer (scoped to contract)
     coti.ts                 # Network config
     contracts.ts            # ABIs + addresses
