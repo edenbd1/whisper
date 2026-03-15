@@ -27,14 +27,14 @@ export function WisprWordmark({ className }: { className?: string }) {
 }
 
 export function WisprLogoFull({ height = 28, className }: { height?: number; className?: string }) {
-  const iconSize = height;
-  const fontSize = height * 0.65;
+  const iconSize = height * 0.9;
+  const fontSize = height * 0.72;
   return (
-    <div className={`flex items-center gap-2.5 ${className ?? ""}`}>
-      <WisprIcon size={iconSize} className="text-[#005EF8]" />
+    <div className={`flex items-center gap-2 ${className ?? ""}`}>
+      <WisprIcon size={iconSize} className="text-[#005EF8] drop-shadow-[0_0_8px_rgba(0,94,248,0.3)]" />
       <span
-        className="font-bold tracking-[-0.04em] text-white"
-        style={{ fontSize: `${fontSize}px` }}
+        className="font-extrabold tracking-[-0.05em] text-[#005EF8]"
+        style={{ fontSize: `${fontSize}px`, lineHeight: 1 }}
       >
         Whisper
       </span>

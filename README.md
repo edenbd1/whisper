@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="public/logo-full.svg" />
-    <img src="public/logo-full-dark.svg" alt="Whisper" height="60" />
-  </picture>
+  <img src="public/logo-full.svg" alt="Whisper" height="56" />
 </p>
 
 <p align="center">
