@@ -11,7 +11,7 @@ import ExploreView from "@/components/ExploreView";
 import CreateView from "@/components/CreateView";
 import RankingView from "@/components/RankingView";
 export type AppTab = "feed" | "explore" | "create" | "ranking" | "profile";
-const BUILD_VERSION = "v3-100k";
+const BUILD_VERSION = "v4-fix";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<AppTab>("feed");

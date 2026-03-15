@@ -29,10 +29,13 @@ export function useMarket() {
   return ctx;
 }
 
-function buildPools(bets: Bet[]): Record<string, AMMState> {
+function buildPools(bets: Bet[], existing?: Record<string, AMMState>): Record<string, AMMState> {
   const pools: Record<string, AMMState> = {};
   for (const bet of bets) {
-    pools[bet.id] = initializePool(bet.yesPercentage / 100);
+    // Keep existing pool state if available, otherwise start at 50/50.
+    // On-chain totalYes/totalNo are raw bet volumes, NOT market probabilities,
+    // so we never use them to seed the AMM.
+    pools[bet.id] = existing?.[bet.id] ?? initializePool(0.5);
   }
   return pools;
 }
@@ -65,12 +68,8 @@ export function MarketProvider({ children }: { children: ReactNode }) {
 
     function initPools(bets: Bet[]) {
       const stored = loadAMMStates();
-      // Use stored AMM states if keys match current market IDs
-      if (stored && bets.every((b) => b.id in stored)) {
-        setAmmStates(stored);
-        return;
-      }
-      setAmmStates(buildPools(bets));
+      // Merge: use stored pool states where available, 50/50 for new markets
+      setAmmStates(buildPools(bets, stored ?? undefined));
     }
 
     function initHistory(bets: Bet[]) {
@@ -79,10 +78,10 @@ export function MarketProvider({ children }: { children: ReactNode }) {
         setPriceHistory(stored);
         return;
       }
-      // Initialize with a single price point per market (actual probability)
+      // Initialize with 50/50 baseline for all markets
       const history: Record<string, number[]> = {};
       for (const bet of bets) {
-        history[bet.id] = [bet.yesPercentage / 100];
+        history[bet.id] = [0.5];
       }
       setPriceHistory(history);
     }
@@ -127,8 +126,8 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       const chainMarkets = await fetchMarketsFromChain();
       if (chainMarkets.length === 0) return;
       setMarkets(chainMarkets);
-      // Reinitialize AMM pools from on-chain probabilities
-      setAmmStates(buildPools(chainMarkets));
+      // Only add pools for NEW markets; keep existing AMM states intact
+      setAmmStates(prev => buildPools(chainMarkets, prev));
     } catch {
       // Keep current state on error
     }
