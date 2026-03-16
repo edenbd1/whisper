@@ -37,17 +37,17 @@ describe("AMM - initializePool", () => {
     expect(price.yes).toBeLessThan(1);
   });
 
-  it("maintains constant product k = 10,000,000,000", () => {
+  it("maintains constant product k = 16,000,000", () => {
     const pool = initializePool(0.7);
     const k = pool.yesShares * pool.noShares;
-    expect(k).toBeCloseTo(100000 * 100000, 0);
+    expect(k).toBeCloseTo(4000 * 4000, 0);
   });
 
   it("maintains k across different probabilities", () => {
     for (const p of [0.1, 0.25, 0.5, 0.75, 0.9]) {
       const pool = initializePool(p);
       const k = pool.yesShares * pool.noShares;
-      expect(k).toBeCloseTo(10_000_000_000, -2);
+      expect(k).toBeCloseTo(16_000_000, -1);
     }
   });
 
