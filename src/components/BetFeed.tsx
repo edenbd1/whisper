@@ -186,20 +186,28 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     });
   }, []);
 
-  // Forward wheel/touch from outer area → snap one card at a time (same as arrows)
+  // Forward wheel/touch from outer area → accumulate delta then snap one card
   useEffect(() => {
     const outer = outerRef.current;
     const container = containerRef.current;
     if (!outer || !container) return;
 
-    let wheelLocked = false;
+    let accum = 0;
+    let scrolling = false;
+    let resetTimer: ReturnType<typeof setTimeout>;
+
     const handleWheel = (e: WheelEvent) => {
-      if (container.contains(e.target as Node) || wheelLocked) return;
-      if (Math.abs(e.deltaY) < 10) return;
-      wheelLocked = true;
-      const dir = e.deltaY > 0 ? 1 : -1;
-      container.scrollBy({ top: dir * container.clientHeight, behavior: "smooth" });
-      setTimeout(() => { wheelLocked = false; }, 600);
+      if (container.contains(e.target as Node) || scrolling) return;
+      accum += e.deltaY;
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => { accum = 0; }, 200);
+      if (Math.abs(accum) > 50) {
+        scrolling = true;
+        accum = 0;
+        const dir = e.deltaY > 0 ? 1 : -1;
+        container.scrollBy({ top: dir * container.clientHeight, behavior: "smooth" });
+        setTimeout(() => { scrolling = false; }, 500);
+      }
     };
 
     let touchStartY = 0;
@@ -226,6 +234,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       outer.removeEventListener("wheel", handleWheel);
       outer.removeEventListener("touchstart", handleTouchStart);
       outer.removeEventListener("touchmove", handleTouchMove);
+      clearTimeout(resetTimer);
     };
   }, []);
 
