@@ -37,7 +37,7 @@ export default function Home() {
   };
 
   return (
-    <main className="h-[100dvh] w-full bg-black overflow-hidden flex">
+    <main className="h-[100dvh] w-full bg-[#181818] overflow-hidden flex">
       <DesktopNav activeTab={activeTab} onTabChange={setActiveTab} />
       <Header />
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
