@@ -85,6 +85,11 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       setTxHash(tx.hash);
       await tx.wait();
       executeTrade(betId, side, numAmount, tx.hash);
+
+      // Update stored balance after successful bet
+      const newBal = Math.max(0, storedBal - numAmount);
+      localStorage.setItem(balKey, newBal.toString());
+
       setTxState("success");
       onConfirm();
       refreshMarkets();

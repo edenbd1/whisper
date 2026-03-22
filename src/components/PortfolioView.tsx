@@ -43,12 +43,12 @@ export default function PortfolioView() {
     // Try decrypting on-chain balance if onboarded
     if (isOnboarded && decryptBalance) {
       decryptBalance().then((bal) => {
-        if (bal !== null && bal > 0) {
+        if (bal !== null) {
           setWalletBalance(bal);
           setStoredBalance(address, bal);
           return;
         }
-        // Fallback to stored
+        // Fallback to stored only if decryption returned null (failed)
         setWalletBalance(getStoredBalance(address));
       }).catch(() => {
         setWalletBalance(getStoredBalance(address));
