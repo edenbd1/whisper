@@ -200,8 +200,46 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     );
   }
 
+  // Forward wheel events from outer area to the feed container
+  const outerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const outer = outerRef.current;
+    const container = containerRef.current;
+    if (!outer || !container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!container.contains(e.target as Node)) {
+        container.scrollBy({ top: e.deltaY });
+      }
+    };
+
+    // Forward touch gestures from outer area to feed scroll
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      if (!container.contains(e.target as Node)) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!container.contains(e.target as Node)) {
+        const dy = touchStartY - e.touches[0].clientY;
+        touchStartY = e.touches[0].clientY;
+        container.scrollBy({ top: dy });
+      }
+    };
+
+    outer.addEventListener("wheel", handleWheel, { passive: true });
+    outer.addEventListener("touchstart", handleTouchStart, { passive: true });
+    outer.addEventListener("touchmove", handleTouchMove, { passive: true });
+    return () => {
+      outer.removeEventListener("wheel", handleWheel);
+      outer.removeEventListener("touchstart", handleTouchStart);
+      outer.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
+
   return (
-    <div className="flex items-center justify-center h-full gap-6">
+    <div ref={outerRef} className="flex items-center justify-center h-full gap-6">
       {/* Card column */}
       <div className="relative h-full w-full lg:w-[min(420px,calc(100vh*9/16))] lg:h-[calc(100vh-48px)] lg:my-6">
         <div
