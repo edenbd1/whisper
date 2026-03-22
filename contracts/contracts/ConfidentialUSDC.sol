@@ -14,7 +14,6 @@ contract ConfidentialUSDC is PrivateERC20 {
     uint64 private _totalSupplyValue;
 
     uint64 public constant FAUCET_AMOUNT = 1000 * 1e6; // 1000 cUSDC (6 decimals)
-    mapping(address => bool) public hasClaimed;
 
     event Mint(address indexed to, uint64 amount);
     event FaucetClaim(address indexed claimer);
@@ -41,12 +40,9 @@ contract ConfidentialUSDC is PrivateERC20 {
     }
 
     function faucet() external {
-        require(!hasClaimed[msg.sender], "Already claimed");
-
         gtBool success = _mint(msg.sender, MpcCore.setPublic64(FAUCET_AMOUNT));
         require(MpcCore.decrypt(success), "Mint failed");
 
-        hasClaimed[msg.sender] = true;
         _totalSupplyValue += FAUCET_AMOUNT;
         emit FaucetClaim(msg.sender);
     }

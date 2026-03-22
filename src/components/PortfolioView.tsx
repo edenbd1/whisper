@@ -56,20 +56,7 @@ export default function PortfolioView() {
       return;
     }
 
-    const stored = getStoredBalance(address);
-    if (stored > 0) {
-      setWalletBalance(stored);
-    } else if (CONTRACT_ADDRESSES.token && signer) {
-      import("@coti-io/coti-ethers").then(({ Contract }) => {
-        const token = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
-        token.hasClaimed(address).then((claimed: boolean) => {
-          if (claimed) {
-            setWalletBalance(1000);
-            setStoredBalance(address, 1000);
-          }
-        }).catch(() => {});
-      });
-    }
+    setWalletBalance(getStoredBalance(address));
   }, [address, signer, isOnboarded, decryptBalance]);
 
   const claimFaucet = useCallback(async () => {
@@ -87,14 +74,6 @@ export default function PortfolioView() {
       const { Contract } = await import("@coti-io/coti-ethers");
       const token = new Contract(CONTRACT_ADDRESSES.token, CUSDC_ABI, signer);
 
-      // Check if already claimed before sending tx
-      const alreadyClaimed = await token.hasClaimed(address);
-      if (alreadyClaimed) {
-        setFaucetError("Already claimed. Faucet is one-time per wallet.");
-        setFaucetState("error");
-        return;
-      }
-
       const tx = await token.faucet({ gasLimit: 1_000_000 });
       await tx.wait();
       const newBal = walletBalance + 1000;
@@ -103,11 +82,7 @@ export default function PortfolioView() {
       setFaucetState("success");
     } catch (err: any) {
       const msg = err?.reason || err?.message || "Transaction failed";
-      if (msg.includes("Already claimed") || msg.includes("revert")) {
-        setFaucetError("Already claimed. Faucet is one-time per wallet.");
-      } else {
-        setFaucetError(msg.length > 100 ? msg.slice(0, 100) + "..." : msg);
-      }
+      setFaucetError(msg.length > 100 ? msg.slice(0, 100) + "..." : msg);
       setFaucetState("error");
     }
   }, [signer, address, walletBalance]);
@@ -203,8 +178,7 @@ export default function PortfolioView() {
         </div>
 
         {/* Faucet */}
-        {walletBalance === 0 && (
-          <div className="mb-4">
+        <div className="mb-4">
             {faucetState === "error" ? (
               <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/[0.04] border border-red-500/10">
                 <span className="text-xs text-red-400">{faucetError}</span>
@@ -235,7 +209,6 @@ export default function PortfolioView() {
               </button>
             )}
           </div>
-        )}
 
         {/* Positions list */}
         {loading ? (

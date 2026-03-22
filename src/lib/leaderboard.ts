@@ -1,5 +1,5 @@
 const RPC = "https://testnet.coti.io/rpc";
-const MARKET = "0x34a1AC33E686E61d114912c8C25095426CDC7F93";
+const MARKET = "0x6D46E1b5791a7F564d538229EA5e9b64D49B00D4";
 
 // keccak256("BetPlaced(uint256,address,bool)")
 const BET_PLACED_TOPIC = "0x33c65b946c0ea6ac285a37d6cc603f46002718bc959723973487890e29a3bce3";

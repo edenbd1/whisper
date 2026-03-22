@@ -75,13 +75,6 @@ export const CUSDC_ABI = [
     type: "function",
   },
   {
-    inputs: [{ name: "", type: "address" }],
-    name: "hasClaimed",
-    outputs: [{ name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [{ name: "account", type: "address" }],
     name: "setAccountEncryptionAddress",
     outputs: [],

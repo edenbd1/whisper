@@ -1,7 +1,7 @@
 import { Bet } from "@/types";
 
 const RPC = "https://testnet.coti.io/rpc";
-const MARKET = "0x34a1AC33E686E61d114912c8C25095426CDC7F93";
+const MARKET = "0x6D46E1b5791a7F564d538229EA5e9b64D49B00D4";
 
 // marketCount() selector
 const MARKET_COUNT_SEL = "0xec979082";
