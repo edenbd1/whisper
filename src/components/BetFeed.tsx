@@ -194,16 +194,16 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       className="bet-card"
     >
       {/* Full-page snap section — card + actions centered */}
-      <div className="h-full w-full flex items-center justify-center">
+      <div className="h-full w-full flex items-center justify-center lg:pl-[72px]">
         {/* Card + side actions wrapper */}
-        <div className="relative flex items-end gap-3 lg:gap-4">
-          {/* The card itself — Instagram Reels proportions */}
-          <div className="relative w-[100vw] h-[100dvh] lg:w-[470px] lg:h-[calc(100vh-48px)] lg:max-h-[860px] lg:rounded-xl overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]">
+        <div className="relative flex items-end gap-3">
+          {/* The card — IG Reels proportions */}
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[420px] lg:h-[calc(100vh-32px)] lg:max-h-[920px] lg:rounded-[12px] overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
 
-          {/* Side actions — desktop only, right of card, aligned to bottom */}
-          <div className="hidden lg:block pb-4">
+          {/* Side actions — desktop only, aligned to bottom of card */}
+          <div className="hidden lg:block pb-2">
             <SideActions bet={bet} isActive={isActive} instant={isInstant} />
           </div>
         </div>
