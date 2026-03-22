@@ -5,16 +5,17 @@ import { flushSync } from "react-dom";
 import { motion } from "framer-motion";
 import { useMarket } from "@/context/MarketContext";
 import BetCard from "./BetCard";
+import SideActions from "./SideActions";
 
 function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 btn-press glass text-white/50 hover:text-white hover:bg-white/[0.08]"
+      className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 btn-press bg-white/[0.06] backdrop-blur-sm text-white/50 hover:text-white hover:bg-white/[0.12]"
     >
       <svg
-        width="16"
-        height="16"
+        width="18"
+        height="18"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -195,16 +196,15 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       {/* Full-page snap section — card + actions centered */}
       <div className="h-full w-full flex items-center justify-center">
         {/* Card + side actions wrapper */}
-        <div className="relative flex items-center gap-4">
-          {/* The card itself */}
-          <div className="relative w-[100vw] h-[100dvh] lg:w-[min(420px,calc(100vh*9/16))] lg:h-[calc(100vh-64px)] lg:rounded-2xl overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]">
+        <div className="relative flex items-end gap-3 lg:gap-4">
+          {/* The card itself — Instagram Reels proportions */}
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[470px] lg:h-[calc(100vh-48px)] lg:max-h-[860px] lg:rounded-xl overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
 
-          {/* Nav arrows — desktop only, right of card */}
-          <div className="hidden lg:flex flex-col items-center gap-1.5">
-            <NavArrow direction="up" onClick={() => scrollByOne("up")} />
-            <NavArrow direction="down" onClick={() => scrollByOne("down")} />
+          {/* Side actions — desktop only, right of card, aligned to bottom */}
+          <div className="hidden lg:block pb-4">
+            <SideActions bet={bet} isActive={isActive} instant={isInstant} />
           </div>
         </div>
       </div>
@@ -240,6 +240,12 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
             className="w-1 rounded-full bg-white"
           />
         ))}
+      </div>
+
+      {/* Nav arrows — desktop only, far right, vertically centered */}
+      <div className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20">
+        <NavArrow direction="up" onClick={() => scrollByOne("up")} />
+        <NavArrow direction="down" onClick={() => scrollByOne("down")} />
       </div>
 
       {/* Counter - desktop */}

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import BetFeed from "@/components/BetFeed";
 import BottomNav from "@/components/BottomNav";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
+import DesktopNav from "@/components/DesktopNav";
 import PortfolioView from "@/components/PortfolioView";
 import ExploreView from "@/components/ExploreView";
 import CreateView from "@/components/CreateView";
@@ -38,11 +38,9 @@ export default function Home() {
 
   return (
     <main className="h-[100dvh] w-full bg-black overflow-hidden flex">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <DesktopNav activeTab={activeTab} onTabChange={setActiveTab} />
       <Header />
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
-      {/* Spacer to reserve space for the fixed sidebar */}
-      <div className="hidden lg:block flex-shrink-0 w-[68px] xl:w-[220px]" />
       <div className="flex-1 h-full min-w-0">
         <AnimatePresence mode="wait">
           <motion.div
