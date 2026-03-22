@@ -186,29 +186,36 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     });
   }, []);
 
-  // Forward wheel/touch events from outer area to the feed container
+  // Forward wheel/touch from outer area → snap one card at a time (same as arrows)
   useEffect(() => {
     const outer = outerRef.current;
     const container = containerRef.current;
     if (!outer || !container) return;
 
+    let wheelLocked = false;
     const handleWheel = (e: WheelEvent) => {
-      if (!container.contains(e.target as Node)) {
-        container.scrollBy({ top: e.deltaY });
-      }
+      if (container.contains(e.target as Node) || wheelLocked) return;
+      if (Math.abs(e.deltaY) < 10) return;
+      wheelLocked = true;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      container.scrollBy({ top: dir * container.clientHeight, behavior: "smooth" });
+      setTimeout(() => { wheelLocked = false; }, 600);
     };
 
     let touchStartY = 0;
+    let touchHandled = false;
     const handleTouchStart = (e: TouchEvent) => {
-      if (!container.contains(e.target as Node)) {
-        touchStartY = e.touches[0].clientY;
-      }
+      if (container.contains(e.target as Node)) return;
+      touchStartY = e.touches[0].clientY;
+      touchHandled = false;
     };
     const handleTouchMove = (e: TouchEvent) => {
-      if (!container.contains(e.target as Node)) {
-        const dy = touchStartY - e.touches[0].clientY;
-        touchStartY = e.touches[0].clientY;
-        container.scrollBy({ top: dy });
+      if (container.contains(e.target as Node) || touchHandled) return;
+      const dy = touchStartY - e.touches[0].clientY;
+      if (Math.abs(dy) > 40) {
+        touchHandled = true;
+        const dir = dy > 0 ? 1 : -1;
+        container.scrollBy({ top: dir * container.clientHeight, behavior: "smooth" });
       }
     };
 
