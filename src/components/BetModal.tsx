@@ -27,7 +27,7 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
   const [txStep, setTxStep] = useState("");
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
-  const { isConnected, signer, connect } = useWallet();
+  const { isConnected, signer, connect, address } = useWallet();
   const { previewTrade, executeTrade, getMarketPrice, refreshMarkets } = useMarket();
 
   const isYes = side === "yes";
@@ -49,6 +49,15 @@ export default function BetModal({ isOpen, onClose, side, question, marketId, on
       executeTrade(betId, side, numAmount);
       onConfirm();
       setTxState("success");
+      return;
+    }
+
+    // Check stored balance before sending tx to avoid costly reverts
+    const balKey = `cusdc-${CONTRACT_ADDRESSES.token.slice(0, 8)}-${address?.toLowerCase()}`;
+    const storedBal = parseFloat(localStorage.getItem(balKey) || "0");
+    if (storedBal > 0 && numAmount > storedBal) {
+      setError(`Insufficient balance. You have ${storedBal.toLocaleString()} cUSDC.`);
+      setTxState("error");
       return;
     }
 
