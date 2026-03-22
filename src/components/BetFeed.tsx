@@ -33,6 +33,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
   const [activeIndex, setActiveIndex] = useState(startIndex);
   const [instant, setInstant] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const isRelocating = useRef(false);
   const len = markets.length;
@@ -185,23 +186,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     });
   }, []);
 
-  if (loading || markets.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center space-y-4">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-8 h-8 border-2 border-white/10 border-t-[#005EF8] rounded-full mx-auto"
-          />
-          <p className="text-white/20 text-sm font-medium">Loading markets from COTI...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Forward wheel events from outer area to the feed container
-  const outerRef = useRef<HTMLDivElement>(null);
+  // Forward wheel/touch events from outer area to the feed container
   useEffect(() => {
     const outer = outerRef.current;
     const container = containerRef.current;
@@ -213,7 +198,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       }
     };
 
-    // Forward touch gestures from outer area to feed scroll
     let touchStartY = 0;
     const handleTouchStart = (e: TouchEvent) => {
       if (!container.contains(e.target as Node)) {
@@ -237,6 +221,21 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       outer.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
+
+  if (loading || markets.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center space-y-4">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="w-8 h-8 border-2 border-white/10 border-t-[#005EF8] rounded-full mx-auto"
+          />
+          <p className="text-white/20 text-sm font-medium">Loading markets from COTI...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={outerRef} className="flex items-center justify-center h-full gap-6">
