@@ -1,9 +1,8 @@
 export const COTI_TESTNET_CHAIN_ID = 7082400;
 
-// These will be updated after deployment
 export const CONTRACT_ADDRESSES = {
-  token: (process.env.NEXT_PUBLIC_TOKEN_ADDRESS || "").trim(),
-  market: (process.env.NEXT_PUBLIC_MARKET_ADDRESS || "").trim(),
+  token: "0xB49173f0bd6548C82AABB67D7B615015e25bb807",
+  market: "0x6D46E1b5791a7F564d538229EA5e9b64D49B00D4",
 };
 
 export const CUSDC_ABI = [
