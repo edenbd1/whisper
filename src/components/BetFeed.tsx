@@ -54,23 +54,18 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     if (!container) return;
 
     isRelocating.current = true;
-
-    // 1. Disable scroll-snap to prevent browser re-snapping
     container.style.scrollSnapType = "none";
 
-    // 2. Flush state synchronously: destination card renders as active with instant transitions
     flushSync(() => {
       setInstant(true);
       setActiveIndex(realIndex);
     });
 
-    // 3. Jump to the real card
     const realNode = itemRefs.current.get(`real-${realIndex}`);
     if (realNode) {
       container.scrollTop = realNode.offsetTop;
     }
 
-    // 4. Re-enable snap after browser processes the scroll position
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         container.style.scrollSnapType = "";
@@ -80,17 +75,15 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     });
   }, []);
 
-  // Determine which card index is snapped based on scroll position
   const getSnappedIndex = useCallback(() => {
     const container = containerRef.current;
     if (!container) return -1;
     const cardHeight = container.clientHeight;
     if (cardHeight === 0) return -1;
-    // DOM order: clone-start(0), real-0(1), real-1(2), ..., real-N-1(N), clone-end(N+1)
     return Math.round(container.scrollTop / cardHeight);
   }, []);
 
-  // Intersection observer for real cards only (activeIndex tracking during scroll)
+  // Intersection observer for activeIndex tracking
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -109,7 +102,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       { threshold: 0.5, root: container }
     );
 
-    // Only observe real cards, NOT clones
     itemRefs.current.forEach((node, key) => {
       if (key.startsWith("real-")) observer.observe(node);
     });
@@ -117,7 +109,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     return () => observer.disconnect();
   }, [len]);
 
-  // Clone teleport: only triggers AFTER scroll has fully stopped
+  // Clone teleport after scroll stops
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -127,22 +119,15 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     const checkAndTeleport = () => {
       if (isRelocating.current) return;
       const snapped = getSnappedIndex();
-      if (snapped === 0) {
-        // Landed on clone-start → teleport to real last card
-        teleportTo(len - 1);
-      } else if (snapped === len + 1) {
-        // Landed on clone-end → teleport to real first card
-        teleportTo(0);
-      }
+      if (snapped === 0) teleportTo(len - 1);
+      else if (snapped === len + 1) teleportTo(0);
     };
 
-    // scrollend fires after all scrolling (including snap) completes
     const handleScrollEnd = () => {
       clearTimeout(debounceTimer);
       checkAndTeleport();
     };
 
-    // Debounced scroll as fallback for browsers without scrollend
     const handleScroll = () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(checkAndTeleport, 200);
@@ -200,72 +185,68 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     );
   }
 
-  return (
-    <div className="flex items-center justify-center h-full gap-6">
-      {/* Card column */}
-      <div className="relative h-full w-full lg:w-[min(420px,calc(100vh*9/16))] lg:h-[calc(100vh-48px)] lg:my-6">
-        <div
-          ref={containerRef}
-          className="feed-container relative h-full lg:rounded-2xl lg:overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]"
-        >
-          {/* Clone of last card (for upward wrap) */}
-          <div
-            data-feed-key="clone-start"
-            ref={(node) => setItemRef("clone-start", node)}
-            className="bet-card"
-          >
-            <BetCard bet={markets[len - 1]} isActive={true} instant />
+  const renderPage = (bet: typeof markets[0], index: number, key: string, isActive: boolean, isInstant?: boolean) => (
+    <div
+      key={key}
+      data-feed-key={key}
+      ref={(node) => setItemRef(key, node)}
+      className="bet-card"
+    >
+      {/* Full-page snap section — card + actions centered */}
+      <div className="h-full w-full flex items-center justify-center">
+        {/* Card + side actions wrapper */}
+        <div className="relative flex items-center gap-4">
+          {/* The card itself */}
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[min(420px,calc(100vh*9/16))] lg:h-[calc(100vh-64px)] lg:rounded-2xl overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]">
+            <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
 
-          {/* Real cards */}
-          {markets.map((bet, index) => (
-            <div
-              key={bet.id}
-              data-feed-key={`real-${index}`}
-              ref={(node) => setItemRef(`real-${index}`, node)}
-              className="bet-card"
-            >
-              <BetCard bet={bet} isActive={index === activeIndex} instant={instant && index === activeIndex} />
-            </div>
-          ))}
-
-          {/* Clone of first card (for downward wrap) */}
-          <div
-            data-feed-key="clone-end"
-            ref={(node) => setItemRef("clone-end", node)}
-            className="bet-card"
-          >
-            <BetCard bet={markets[0]} isActive={true} instant />
-          </div>
-        </div>
-
-        {/* Scroll indicator dots - mobile */}
-        <div className="lg:hidden absolute right-2.5 top-1/2 -translate-y-1/2 flex flex-col gap-1 z-20">
-          {markets.map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{
-                height: i === activeIndex ? 16 : 4,
-                opacity: i === activeIndex ? 0.7 : 0.15,
-              }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="w-1 rounded-full bg-white"
-            />
-          ))}
-        </div>
-
-        {/* Counter - desktop */}
-        <div className="hidden lg:block absolute bottom-3 left-1/2 -translate-x-1/2 z-20">
-          <div className="glass px-3 py-1 rounded-full text-[11px] text-white/40 font-medium tabular-nums">
-            {activeIndex + 1} / {markets.length}
+          {/* Nav arrows — desktop only, right of card */}
+          <div className="hidden lg:flex flex-col items-center gap-1.5">
+            <NavArrow direction="up" onClick={() => scrollByOne("up")} />
+            <NavArrow direction="down" onClick={() => scrollByOne("down")} />
           </div>
         </div>
       </div>
+    </div>
+  );
 
-      {/* Nav arrows (desktop only) */}
-      <div className="hidden lg:flex flex-col items-center justify-end gap-1.5 pb-10 h-full">
-        <NavArrow direction="up" onClick={() => scrollByOne("up")} />
-        <NavArrow direction="down" onClick={() => scrollByOne("down")} />
+  return (
+    <div
+      ref={containerRef}
+      className="feed-container h-full"
+    >
+      {/* Clone of last card */}
+      {renderPage(markets[len - 1], len - 1, "clone-start", true, true)}
+
+      {/* Real cards */}
+      {markets.map((bet, index) =>
+        renderPage(bet, index, `real-${index}`, index === activeIndex, instant && index === activeIndex)
+      )}
+
+      {/* Clone of first card */}
+      {renderPage(markets[0], 0, "clone-end", true, true)}
+
+      {/* Scroll indicator dots - mobile */}
+      <div className="lg:hidden fixed right-2.5 top-1/2 -translate-y-1/2 flex flex-col gap-1 z-20">
+        {markets.map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{
+              height: i === activeIndex ? 16 : 4,
+              opacity: i === activeIndex ? 0.7 : 0.15,
+            }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="w-1 rounded-full bg-white"
+          />
+        ))}
+      </div>
+
+      {/* Counter - desktop */}
+      <div className="hidden lg:block fixed bottom-6 left-1/2 -translate-x-1/2 z-20">
+        <div className="glass px-3 py-1 rounded-full text-[11px] text-white/40 font-medium tabular-nums">
+          {activeIndex + 1} / {markets.length}
+        </div>
       </div>
     </div>
   );
