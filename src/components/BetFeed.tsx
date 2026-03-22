@@ -33,7 +33,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
   const [activeIndex, setActiveIndex] = useState(startIndex);
   const [instant, setInstant] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const outerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const isRelocating = useRef(false);
   const len = markets.length;
@@ -186,58 +185,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     });
   }, []);
 
-  // Forward wheel/touch from outer area → accumulate delta then snap one card
-  useEffect(() => {
-    const outer = outerRef.current;
-    const container = containerRef.current;
-    if (!outer || !container) return;
-
-    let accum = 0;
-    let scrolling = false;
-    let resetTimer: ReturnType<typeof setTimeout>;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (container.contains(e.target as Node) || scrolling) return;
-      accum += e.deltaY;
-      clearTimeout(resetTimer);
-      resetTimer = setTimeout(() => { accum = 0; }, 200);
-      if (Math.abs(accum) > 50) {
-        scrolling = true;
-        accum = 0;
-        const dir = e.deltaY > 0 ? 1 : -1;
-        container.scrollBy({ top: dir * container.clientHeight, behavior: "smooth" });
-        setTimeout(() => { scrolling = false; }, 500);
-      }
-    };
-
-    let touchStartY = 0;
-    let touchHandled = false;
-    const handleTouchStart = (e: TouchEvent) => {
-      if (container.contains(e.target as Node)) return;
-      touchStartY = e.touches[0].clientY;
-      touchHandled = false;
-    };
-    const handleTouchMove = (e: TouchEvent) => {
-      if (container.contains(e.target as Node) || touchHandled) return;
-      const dy = touchStartY - e.touches[0].clientY;
-      if (Math.abs(dy) > 40) {
-        touchHandled = true;
-        const dir = dy > 0 ? 1 : -1;
-        container.scrollBy({ top: dir * container.clientHeight, behavior: "smooth" });
-      }
-    };
-
-    outer.addEventListener("wheel", handleWheel, { passive: true });
-    outer.addEventListener("touchstart", handleTouchStart, { passive: true });
-    outer.addEventListener("touchmove", handleTouchMove, { passive: true });
-    return () => {
-      outer.removeEventListener("wheel", handleWheel);
-      outer.removeEventListener("touchstart", handleTouchStart);
-      outer.removeEventListener("touchmove", handleTouchMove);
-      clearTimeout(resetTimer);
-    };
-  }, []);
-
   if (loading || markets.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -254,7 +201,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
   }
 
   return (
-    <div ref={outerRef} className="flex items-center justify-center h-full gap-6">
+    <div className="flex items-center justify-center h-full gap-6">
       {/* Card column */}
       <div className="relative h-full w-full lg:w-[min(420px,calc(100vh*9/16))] lg:h-[calc(100vh-48px)] lg:my-6">
         <div
