@@ -53,14 +53,6 @@ html, body {
   position: relative;
 }
 
-/* Desktop: cards stack with gap, previous card peeks at top only */
-@media (min-width: 1024px) {
-  .bet-card {
-    height: auto;
-    scroll-snap-align: start;
-    padding-top: 8vh;
-  }
-}
 
 /* Glassmorphism */
 .glass {

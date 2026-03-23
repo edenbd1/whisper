@@ -195,7 +195,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       key={key}
       data-feed-key={key}
       ref={(node) => setItemRef(key, node)}
-      className="bet-card"
+      className="bet-card lg:!h-auto lg:!snap-start lg:pt-[8vh]"
     >
       {/* Mobile: full viewport | Desktop: centered card with side actions */}
       <div className="h-full w-full flex items-center justify-center lg:h-auto lg:pl-[48px]">
