@@ -64,14 +64,14 @@ function NavIcon({ id, isActive }: { id: AppTab; isActive: boolean }) {
 
 export default function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
   return (
-    <div className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[72px] flex-col items-center py-5 z-50">
-      {/* Logo at top */}
-      <button onClick={() => onTabChange("feed")} aria-label="Home" className="group mb-10">
+    <div className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[48px] flex-col items-center z-50">
+      {/* Logo at top — exact IG position */}
+      <button onClick={() => onTabChange("feed")} aria-label="Home" className="group mt-[25px] mb-10">
         <WhisperIcon size={28} className="text-white group-hover:text-[#005EF8] transition-colors duration-200" />
       </button>
 
       {/* Nav icons — centered vertically */}
-      <nav className="flex-1 flex flex-col items-center justify-center gap-7">
+      <nav className="flex-1 flex flex-col items-center justify-center gap-6">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
@@ -80,7 +80,7 @@ export default function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) 
               onClick={() => onTabChange(item.id)}
               aria-label={item.label}
               aria-current={isActive ? "page" : undefined}
-              className={`p-2.5 rounded-lg transition-all duration-200 hover:bg-white/[0.06] ${
+              className={`p-2 rounded-lg transition-all duration-200 hover:bg-white/[0.06] ${
                 isActive ? "text-white" : "text-white/60 hover:text-white"
               }`}
             >
@@ -93,7 +93,7 @@ export default function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) 
       {/* Menu icon at bottom */}
       <button
         aria-label="Menu"
-        className="p-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
+        className="p-2 mb-5 rounded-lg text-white/50 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <line x1="4" y1="6" x2="20" y2="6" />
