@@ -242,6 +242,16 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         ))}
       </div>
 
+      {/* Top header — desktop only, like IG "For you / Following" */}
+      <div className={`hidden lg:flex fixed top-0 left-[48px] right-0 h-[8vh] items-center justify-center z-30 transition-opacity duration-300 ${
+        activeIndex === 0 ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}>
+        <div className="flex items-center gap-6 text-sm font-semibold">
+          <button className="text-white border-b-2 border-white pb-1">Trending</button>
+          <button className="text-white/40 hover:text-white/60 pb-1">Latest</button>
+        </div>
+      </div>
+
       {/* Nav arrows — desktop only, far right, vertically centered */}
       <div className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20">
         <NavArrow direction="up" onClick={() => scrollByOne("up")} />
