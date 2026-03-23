@@ -11,7 +11,7 @@ function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: (
   return (
     <button
       onClick={onClick}
-      className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 btn-press bg-white/[0.06] backdrop-blur-sm text-white/50 hover:text-white hover:bg-white/[0.12]"
+      className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 btn-press bg-white/[0.08] text-white/40 hover:text-white/70 hover:bg-white/[0.12]"
     >
       <svg
         width="18"
@@ -198,7 +198,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         {/* Card + side actions wrapper */}
         <div className="relative flex items-end gap-3">
           {/* The card — IG Reels proportions */}
-          <div className="relative w-[100vw] h-[100dvh] lg:w-[420px] lg:h-[calc(100vh-16px)] lg:rounded-[10px] overflow-hidden bg-black">
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[420px] lg:h-[calc(100vh-40px)] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
 
