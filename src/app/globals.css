@@ -53,12 +53,12 @@ html, body {
   position: relative;
 }
 
-/* Desktop: cards stack with gap, not full viewport height */
+/* Desktop: cards stack with gap, previous card peeks at top only */
 @media (min-width: 1024px) {
   .bet-card {
     height: auto;
-    scroll-snap-align: center;
-    padding: 6px 0;
+    scroll-snap-align: start;
+    padding-top: 8vh;
   }
 }
 
