@@ -198,7 +198,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         {/* Card + side actions wrapper */}
         <div className="relative flex items-end gap-3">
           {/* The card — IG Reels proportions */}
-          <div className="relative w-[100vw] h-[100dvh] lg:w-[420px] lg:h-[calc(100vh-40px)] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.06]">
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[475px] lg:h-[calc(100vh-24px)] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.12]">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
 
