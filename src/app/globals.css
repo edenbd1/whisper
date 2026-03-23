@@ -53,6 +53,15 @@ html, body {
   position: relative;
 }
 
+/* Desktop: cards stack with gap, not full viewport height */
+@media (min-width: 1024px) {
+  .bet-card {
+    height: auto;
+    scroll-snap-align: center;
+    padding: 6px 0;
+  }
+}
+
 /* Glassmorphism */
 .glass {
   background: rgba(255, 255, 255, 0.04);

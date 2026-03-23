@@ -79,7 +79,9 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
   const getSnappedIndex = useCallback(() => {
     const container = containerRef.current;
     if (!container) return -1;
-    const cardHeight = container.clientHeight;
+    // Use first real card's height for calculation (works for both mobile full-height and desktop auto-height)
+    const firstCard = itemRefs.current.get("real-0");
+    const cardHeight = firstCard?.offsetHeight || container.clientHeight;
     if (cardHeight === 0) return -1;
     return Math.round(container.scrollTop / cardHeight);
   }, []);
@@ -165,8 +167,10 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
   const scrollByOne = useCallback((direction: "up" | "down") => {
     const container = containerRef.current;
     if (!container) return;
+    const firstCard = itemRefs.current.get("real-0");
+    const scrollAmount = firstCard?.offsetHeight || container.clientHeight;
     container.scrollBy({
-      top: direction === "down" ? container.clientHeight : -container.clientHeight,
+      top: direction === "down" ? scrollAmount : -scrollAmount,
       behavior: "smooth",
     });
   }, []);
@@ -193,16 +197,12 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       ref={(node) => setItemRef(key, node)}
       className="bet-card"
     >
-      {/* Full-page snap section — card + actions centered */}
-      <div className="h-full w-full flex items-center justify-center lg:pl-[48px]">
-        {/* Card + side actions wrapper */}
+      {/* Mobile: full viewport | Desktop: centered card with side actions */}
+      <div className="h-full w-full flex items-center justify-center lg:h-auto lg:pl-[48px]">
         <div className="relative flex items-end gap-3">
-          {/* The card — IG Reels proportions */}
           <div className="relative w-[100vw] h-[100dvh] lg:w-[27vw] lg:h-[83vh] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.08] lg:shadow-[0_0_40px_rgba(255,255,255,0.03)]">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
-
-          {/* Side actions — desktop only, aligned to bottom of card */}
           <div className="hidden lg:block pb-2">
             <SideActions bet={bet} isActive={isActive} instant={isInstant} />
           </div>
