@@ -198,9 +198,9 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       className="bet-card h-full"
     >
       {/* Mobile: full viewport | Desktop: centered card with side actions */}
-      <div className="h-full w-full flex items-center justify-center lg:items-start lg:pl-[48px]">
+      <div className="h-full w-full flex items-center justify-center lg:pl-[48px]">
         <div className="relative flex items-end gap-3">
-          <div className="relative w-[100vw] h-[100dvh] lg:w-[27vw] lg:h-[calc(100vh-8vh)] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.08] lg:shadow-[0_0_40px_rgba(255,255,255,0.03)]">
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[27vw] lg:h-[83vh] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.08] lg:shadow-[0_0_40px_rgba(255,255,255,0.03)]">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
           <div className="hidden lg:block pb-2">
@@ -240,16 +240,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
             className="w-1 rounded-full bg-white"
           />
         ))}
-      </div>
-
-      {/* Top header — desktop only, like IG "For you / Following" */}
-      <div className={`hidden lg:flex fixed top-0 left-[48px] right-0 h-[8vh] items-center justify-center z-30 transition-opacity duration-300 ${
-        activeIndex === 0 ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}>
-        <div className="flex items-center gap-6 text-sm font-semibold">
-          <button className="text-white border-b-2 border-white pb-1">Trending</button>
-          <button className="text-white/40 hover:text-white/60 pb-1">Latest</button>
-        </div>
       </div>
 
       {/* Nav arrows — desktop only, far right, vertically centered */}

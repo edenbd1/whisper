@@ -53,12 +53,6 @@ html, body {
   position: relative;
 }
 
-@media (min-width: 1024px) {
-  .feed-container {
-    scroll-padding-top: 8vh;
-  }
-}
-
 
 /* Glassmorphism */
 .glass {
