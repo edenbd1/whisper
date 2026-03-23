@@ -248,12 +248,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         <NavArrow direction="down" onClick={() => scrollByOne("down")} />
       </div>
 
-      {/* Counter - desktop */}
-      <div className="hidden lg:block fixed bottom-6 left-1/2 -translate-x-1/2 z-20">
-        <div className="glass px-3 py-1 rounded-full text-[11px] text-white/40 font-medium tabular-nums">
-          {activeIndex + 1} / {markets.length}
-        </div>
-      </div>
     </div>
   );
 }
