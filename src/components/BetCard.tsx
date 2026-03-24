@@ -79,15 +79,6 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
           className="absolute top-14 lg:top-4 left-0 right-0 flex justify-center z-20"
         >
           <div className="flex items-center gap-4">
-            {bet.isLive && (
-              <span className="glass px-3 py-1.5 rounded-full text-[11px] font-bold text-red-400 flex items-center gap-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="pulse-live absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400" />
-                </span>
-                LIVE
-              </span>
-            )}
             <span className="glass px-4 py-1.5 rounded-full text-[12px] font-semibold text-white/80">
               {bet.category}
             </span>
