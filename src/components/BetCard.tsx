@@ -49,21 +49,33 @@ export default function BetCard({ bet, isActive, instant }: BetCardProps) {
   return (
     <>
       <div ref={cardRef} className="relative w-full h-full overflow-hidden bg-black">
-        {/* Background image */}
+        {/* Background video or image */}
         <motion.div
           className="absolute inset-0"
           initial={{ scale: 1.1, opacity: 0 }}
           animate={isActive ? { scale: 1.02, opacity: 1 } : { scale: 1.1, opacity: 0.6 }}
           transition={t(1.2)}
         >
-          <Image
-            src={bet.image}
-            alt={bet.question}
-            fill
-            sizes="100vw"
-            priority={true}
-            className="object-cover"
-          />
+          {bet.video ? (
+            <video
+              src={bet.video}
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster={bet.image}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <Image
+              src={bet.image}
+              alt={bet.question}
+              fill
+              sizes="100vw"
+              priority={true}
+              className="object-cover"
+            />
+          )}
         </motion.div>
 
         {/* Overlays */}

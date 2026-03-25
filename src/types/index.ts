@@ -3,6 +3,7 @@ export interface Bet {
   question: string;
   category: string;
   image: string;
+  video?: string;
   yesPercentage: number;
   poolSize: number;
   participants: number;
