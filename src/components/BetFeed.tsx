@@ -248,7 +248,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
           <span className="text-white font-bold pb-[13px] border-b-[1px] border-white" style={{ marginRight: 12 }}>For you</span>
           <span className="text-white/40 font-normal pb-[13px]">Following</span>
         </div>
-        <div className="h-px bg-white/10" style={{ marginLeft: "16vw", marginRight: "20vw" }} />
+        <div className="h-px bg-white/10" style={{ marginLeft: "16vw", marginRight: "7vw" }} />
       </div>
 
       {/* Nav arrows — desktop only, far right, vertically centered */}
