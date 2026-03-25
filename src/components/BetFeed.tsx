@@ -198,9 +198,9 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       className="bet-card h-full"
     >
       {/* Mobile: full viewport | Desktop: centered card with side actions */}
-      <div className="h-full w-full flex items-center justify-center lg:pl-[48px]">
-        <div className="relative flex items-end gap-3 lg:translate-y-[5.5vh]">
-          <div className="relative w-[100vw] h-[100dvh] lg:w-[29.7vw] lg:h-[85.2vh] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.08] lg:shadow-[0_0_40px_rgba(255,255,255,0.03)]">
+      <div className="h-full w-full flex items-center justify-center lg:pl-[240px]">
+        <div className="relative flex items-end gap-3 lg:translate-y-[2vh]">
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[29.7vw] lg:h-[90vh] lg:rounded-sm overflow-hidden bg-black">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
           <div className="hidden lg:block pb-2">
@@ -242,14 +242,6 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         ))}
       </div>
 
-      {/* Top header — desktop only, like IG "For you / Following" */}
-      <div className="hidden lg:block fixed top-0 left-[48px] right-0 z-30 bg-[#0c1013]">
-        <div className="flex items-start text-[16px]" style={{ paddingLeft: "16vw", paddingTop: 35 }}>
-          <span className="text-white font-bold" style={{ marginRight: 12 }}>For you</span>
-          <span className="text-white font-normal">Following</span>
-        </div>
-        <div className="h-px bg-white/10" style={{ marginLeft: "16vw", marginRight: "7vw", marginTop: 10 }} />
-      </div>
 
       {/* Nav arrows — desktop only, far right, vertically centered */}
       <div className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20">
