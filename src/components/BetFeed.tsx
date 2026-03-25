@@ -244,11 +244,10 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
 
       {/* Top header — desktop only, like IG "For you / Following" */}
       <div className="hidden lg:block fixed top-0 left-[48px] right-0 z-30">
-        <div className="flex items-center justify-center gap-8 py-3 text-sm font-semibold">
-          <span className="text-white border-b-[2px] border-white pb-2">For you</span>
-          <span className="text-white/40 pb-2">Following</span>
+        <div className="flex items-end h-[52px] text-[16px] border-b border-white/10" style={{ paddingLeft: "16vw" }}>
+          <span className="text-white font-bold pb-[11px] border-b-[1px] border-white" style={{ marginRight: 12 }}>For you</span>
+          <span className="text-white/40 font-normal pb-[11px]">Following</span>
         </div>
-        <div className="h-px bg-white/10" />
       </div>
 
       {/* Nav arrows — desktop only, far right, vertically centered */}
