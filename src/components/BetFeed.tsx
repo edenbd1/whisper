@@ -245,13 +245,13 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
 
 
       {/* Nav arrows — desktop only */}
-      <div className="hidden lg:flex fixed top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20" style={{ right: 'calc(320px + 3vw)' }}>
+      <div className="hidden lg:flex fixed top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20" style={{ right: 'calc(25vw + 3vw)' }}>
         <NavArrow direction="up" onClick={() => scrollByOne("up")} />
         <NavArrow direction="down" onClick={() => scrollByOne("down")} />
       </div>
 
-      {/* Comments panel — desktop only, fixed right */}
-      <div className="hidden lg:block fixed top-0 right-0 bottom-0 w-[320px] z-20">
+      {/* Comments panel — desktop only, fixed right (25vw matches TikTok) */}
+      <div className="hidden lg:block fixed top-0 right-0 bottom-0 z-20" style={{ width: '25vw', minWidth: 280 }}>
         <Comments marketId={markets[activeIndex]?.id || ""} />
       </div>
 
