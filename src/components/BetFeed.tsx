@@ -199,9 +199,9 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       className="bet-card h-full"
     >
       {/* Mobile: full viewport | Desktop: centered card with side actions */}
-      <div className="h-full w-full flex items-center justify-center lg:items-start lg:justify-start" style={{ paddingLeft: 489, paddingTop: 16 }}>
+      <div className="h-full w-full flex items-center justify-center lg:items-start lg:justify-start" style={{ paddingLeft: '25vw', paddingTop: 16 }}>
         <div className="relative flex items-end gap-3">
-          <div className="relative w-[100vw] h-[100dvh] lg:w-[35.3vw] lg:h-[96.7vh] lg:rounded-2xl overflow-hidden bg-black">
+          <div className="relative w-[100vw] h-[100dvh] lg:w-[30vw] lg:h-[97vh] lg:rounded-xl overflow-hidden bg-black">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
           <div className="hidden lg:block pb-2">
@@ -245,7 +245,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
 
 
       {/* Nav arrows — desktop only */}
-      <div className="hidden lg:flex fixed top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20" style={{ right: 340 }}>
+      <div className="hidden lg:flex fixed top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20" style={{ right: 'calc(320px + 3vw)' }}>
         <NavArrow direction="up" onClick={() => scrollByOne("up")} />
         <NavArrow direction="down" onClick={() => scrollByOne("down")} />
       </div>

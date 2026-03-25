@@ -38,13 +38,13 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   return (
     <div className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[240px] flex-col z-50 bg-black border-r border-white/[0.06]">
       {/* Logo */}
-      <div className="px-6 pt-5 pb-5">
+      <div className="px-5 pt-5 pb-4">
         <WhisperLogoFull height={28} />
       </div>
 
       {/* Search */}
-      <div className="px-3 pb-5">
-        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/[0.06] border border-white/[0.06]">
+      <div className="px-3 pb-3">
+        <div className="flex items-center gap-2.5 px-3 py-2 rounded-full bg-white/[0.06] border border-white/[0.06]">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-white/30 flex-shrink-0">
             {iconPaths.search.split(" M").map((d, i) => (
               <path key={i} d={i === 0 ? d : `M${d}`} />
@@ -54,20 +54,20 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 flex flex-col gap-1 px-3">
+      {/* Nav — not flex-1, stays at top like TikTok */}
+      <nav className="flex flex-col px-2">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className="group relative flex items-center gap-3.5 px-4 py-3 rounded-lg transition-colors duration-150 hover:bg-white/[0.04]"
+              className="group relative flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-150 hover:bg-white/[0.04]"
             >
               {isActive && (
                 <motion.div
                   layoutId="sidebar-active"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#FE2C55]"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-[#FE2C55]"
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -88,7 +88,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                   <path key={i} d={i === 0 ? d : `M${d}`} />
                 ))}
               </svg>
-              <span className={`text-[18px] transition-colors duration-150 ${
+              <span className={`text-[17px] transition-colors duration-150 ${
                 isActive ? "font-bold text-white" : "font-medium text-white/50 group-hover:text-white/80"
               }`}>
                 {item.label}
@@ -98,29 +98,16 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         })}
 
         {/* More */}
-        <button className="group flex items-center gap-3.5 px-4 py-3 rounded-lg hover:bg-white/[0.04] transition-colors duration-150">
+        <button className="group flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-white/[0.04] transition-colors duration-150">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-white/50 group-hover:text-white/80 transition-colors">
             <circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" />
           </svg>
-          <span className="text-[18px] font-medium text-white/50 group-hover:text-white/80 transition-colors">More</span>
+          <span className="text-[17px] font-medium text-white/50 group-hover:text-white/80 transition-colors">More</span>
         </button>
       </nav>
 
-      {/* Separator */}
-      <div className="mx-5 my-2">
-        <div className="h-px bg-white/[0.06]" />
-      </div>
-
-      {/* Network badge */}
-      <div className="mx-3 mb-2">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-lg">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FE2C55] shadow-[0_0_6px_rgba(254,44,85,0.5)]" />
-          <span className="text-[12px] font-medium text-white/25 tracking-wide">COTI Testnet</span>
-        </div>
-      </div>
-
-      {/* Wallet */}
-      <div className="px-3 pb-5">
+      {/* Wallet / Log in — right after nav, like TikTok */}
+      <div className="px-3 pt-4">
         {isConnected && address ? (
           <div className="space-y-2">
             {!isOnboarded && (
@@ -152,19 +139,28 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           <button
             onClick={connect}
             disabled={isLoading}
-            className="w-full py-3 rounded-lg text-[15px] font-bold text-white bg-[#FE2C55] hover:bg-[#FE2C55]/90 transition-colors"
+            className="w-full py-3 rounded-full text-[15px] font-bold text-white bg-[#FE2C55] hover:bg-[#FE2C55]/90 transition-colors"
           >
             {isLoading ? "..." : "Log in"}
           </button>
         )}
       </div>
 
-      {/* Footer */}
-      <div className="px-6 pb-4 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-white/15">
-        <span>Whisper</span>
-        <span>Terms</span>
-        <span>Privacy</span>
-        <span>© 2026</span>
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Footer — at bottom like TikTok */}
+      <div className="px-5 pb-4">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FE2C55] shadow-[0_0_6px_rgba(254,44,85,0.5)]" />
+          <span className="text-[11px] font-medium text-white/20 tracking-wide">COTI Testnet</span>
+        </div>
+        <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-white/15">
+          <span>Wispr</span>
+          <span>Terms</span>
+          <span>Privacy</span>
+          <span>© 2026</span>
+        </div>
       </div>
     </div>
   );
