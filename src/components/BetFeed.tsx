@@ -242,6 +242,15 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
         ))}
       </div>
 
+      {/* Top header — desktop only, like IG "For you / Following" */}
+      <div className="hidden lg:block fixed top-0 left-[48px] right-0 z-30">
+        <div className="flex items-center justify-center gap-8 py-3 text-sm font-semibold">
+          <span className="text-white border-b-[2px] border-white pb-2">For you</span>
+          <span className="text-white/40 pb-2">Following</span>
+        </div>
+        <div className="h-px bg-white/10" />
+      </div>
+
       {/* Nav arrows — desktop only, far right, vertically centered */}
       <div className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20">
         <NavArrow direction="up" onClick={() => scrollByOne("up")} />
