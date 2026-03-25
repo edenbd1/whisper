@@ -199,7 +199,7 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
     >
       {/* Mobile: full viewport | Desktop: centered card with side actions */}
       <div className="h-full w-full flex items-center justify-center lg:pl-[48px]">
-        <div className="relative flex items-end gap-3 lg:translate-y-[3vh]">
+        <div className="relative flex items-end gap-3 lg:translate-y-[5.5vh]">
           <div className="relative w-[100vw] h-[100dvh] lg:w-[29.7vw] lg:h-[85.2vh] lg:rounded-lg overflow-hidden bg-black lg:ring-1 lg:ring-white/[0.08] lg:shadow-[0_0_40px_rgba(255,255,255,0.03)]">
             <BetCard bet={bet} isActive={isActive} instant={isInstant} />
           </div>
