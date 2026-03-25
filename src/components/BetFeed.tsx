@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useMarket } from "@/context/MarketContext";
 import BetCard from "./BetCard";
 import SideActions from "./SideActions";
+import Comments from "./Comments";
 
 function NavArrow({ direction, onClick }: { direction: "up" | "down"; onClick: () => void }) {
   return (
@@ -243,10 +244,15 @@ export default function BetFeed({ startIndex = 0 }: { startIndex?: number }) {
       </div>
 
 
-      {/* Nav arrows — desktop only, far right, vertically centered */}
-      <div className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20">
+      {/* Nav arrows — desktop only */}
+      <div className="hidden lg:flex fixed top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-20" style={{ right: 340 }}>
         <NavArrow direction="up" onClick={() => scrollByOne("up")} />
         <NavArrow direction="down" onClick={() => scrollByOne("down")} />
+      </div>
+
+      {/* Comments panel — desktop only, fixed right */}
+      <div className="hidden lg:block fixed top-0 right-0 bottom-0 w-[320px] z-20">
+        <Comments marketId={markets[activeIndex]?.id || ""} />
       </div>
 
     </div>
