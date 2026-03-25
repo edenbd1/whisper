@@ -10,8 +10,8 @@ import type { AppTab } from "@/app/page";
 type NavItem = { id: AppTab; label: string; icon: string };
 
 const navItems: NavItem[] = [
-  { id: "feed", label: "Home", icon: "home" },
-  { id: "explore", label: "Explore", icon: "search" },
+  { id: "feed", label: "Home", icon: "search" },
+  { id: "explore", label: "Explore", icon: "home" },
   { id: "create", label: "Create", icon: "plus" },
   { id: "ranking", label: "Ranking", icon: "trophy" },
   { id: "profile", label: "Profile", icon: "user" },
