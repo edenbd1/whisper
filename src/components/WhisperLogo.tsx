@@ -28,15 +28,15 @@ export function WhisperWordmark({ className }: { className?: string }) {
 
 /**
  * Full logo: icon + "Whisper" as a single inline SVG.
- * Uses the exact same viewBox and coordinates as public/logo-full.svg.
+ * Same geometric icon + Poppins Bold wordmark as public/logo-full.svg, in white.
  */
 export function WhisperLogoFull({ height = 32, className }: { height?: number; className?: string }) {
-  const width = (190 / 44) * height;
+  const width = (236 / 44) * height;
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 190 44"
+      viewBox="0 0 236 44"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -46,7 +46,7 @@ export function WhisperLogoFull({ height = 32, className }: { height?: number; c
         <polygon points="50,10 50,46 0,80 0,46" />
         <polygon points="100,10 100,46 50,80 50,46" />
       </g>
-      <text x="56" y="34" fontFamily="var(--font-poppins), Poppins, sans-serif" fontSize="34" fontWeight="700" letterSpacing="-0.3" fill="white">Wispr</text>
+      <text x="56" y="34" fontFamily="var(--font-poppins), Poppins, sans-serif" fontSize="34" fontWeight="700" letterSpacing="-0.3" fill="white">Whisper</text>
     </svg>
   );
 }

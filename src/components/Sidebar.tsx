@@ -156,7 +156,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           <span className="text-[11px] font-medium text-white/20 tracking-wide">COTI Testnet</span>
         </div>
         <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-white/15">
-          <span>Wispr</span>
+          <span>Whisper</span>
           <span>Terms</span>
           <span>Privacy</span>
           <span>© 2026</span>
