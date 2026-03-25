@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { shortenAddress } from "@/lib/coti";
-import { WhisperLogoFull } from "./WhisperLogo";
 import type { AppTab } from "@/app/page";
 
 type NavItem = { id: AppTab; label: string; icon: string };
@@ -37,9 +36,9 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
   return (
     <div className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[240px] flex-col z-50 bg-black border-r border-white/[0.06]">
-      {/* Logo */}
+      {/* Logo — full SVG image with paths (font-independent) */}
       <div className="px-5 pt-5 pb-4">
-        <WhisperLogoFull height={28} />
+        <img src="/logo-full.svg" alt="Whisper" height={28} style={{ height: 28 }} />
       </div>
 
       {/* Search */}
