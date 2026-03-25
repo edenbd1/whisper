@@ -38,12 +38,12 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   return (
     <div className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[240px] flex-col z-50 bg-black border-r border-white/[0.06]">
       {/* Logo */}
-      <div className="px-6 pt-5 pb-6">
+      <div className="px-6 pt-5 pb-5">
         <WhisperLogoFull height={28} />
       </div>
 
       {/* Search */}
-      <div className="px-3 pb-4">
+      <div className="px-3 pb-5">
         <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/[0.06] border border-white/[0.06]">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-white/30 flex-shrink-0">
             {iconPaths.search.split(" M").map((d, i) => (
@@ -55,7 +55,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 flex flex-col gap-0.5 px-3">
+      <nav className="flex-1 flex flex-col gap-1 px-3">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
@@ -72,8 +72,8 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 />
               )}
               <svg
-                width="22"
-                height="22"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill={isActive ? "currentColor" : "none"}
                 stroke="currentColor"
@@ -88,7 +88,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                   <path key={i} d={i === 0 ? d : `M${d}`} />
                 ))}
               </svg>
-              <span className={`text-[16px] transition-colors duration-150 ${
+              <span className={`text-[18px] transition-colors duration-150 ${
                 isActive ? "font-bold text-white" : "font-medium text-white/50 group-hover:text-white/80"
               }`}>
                 {item.label}
@@ -102,7 +102,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-white/50 group-hover:text-white/80 transition-colors">
             <circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" />
           </svg>
-          <span className="text-[16px] font-medium text-white/50 group-hover:text-white/80 transition-colors">More</span>
+          <span className="text-[18px] font-medium text-white/50 group-hover:text-white/80 transition-colors">More</span>
         </button>
       </nav>
 
