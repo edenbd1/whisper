@@ -1,7 +1,7 @@
 import { Bet } from "@/types";
 
 const RPC = "https://testnet.coti.io/rpc";
-const MARKET = "0x6D46E1b5791a7F564d538229EA5e9b64D49B00D4";
+const MARKET = "0xD6Cf8bd3991443b94Bcb1520DCb475e767cF5252";
 
 // marketCount() selector
 const MARKET_COUNT_SEL = "0xec979082";
@@ -48,7 +48,7 @@ const MARKET_VIDEOS: Record<number, string> = {
   3: "https://videos.pexels.com/video-files/3129671/3129671-hd_1920_1080_30fps.mp4", // AI – digital network nodes
   4: "https://videos.pexels.com/video-files/1409899/1409899-hd_1920_1080_25fps.mp4", // Sports – ocean waves aerial
   5: "https://videos.pexels.com/video-files/4763824/4763824-hd_1920_1080_24fps.mp4", // Business – colorful liquid
-  6: "https://videos.pexels.com/video-files/3194277/3194277-hd_1920_1080_30fps.mp4", // Meme coin – galaxy nebula
+  6: "https://videos.pexels.com/video-files/3194277/3194277-hd_1920_1080_30fps.mp4", // Jesus – galaxy nebula
   7: "https://videos.pexels.com/video-files/1851190/1851190-hd_1920_1080_25fps.mp4", // Aliens – earth from space
 };
 
