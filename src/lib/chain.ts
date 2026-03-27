@@ -40,16 +40,16 @@ function decodeUint(raw: string, slotIndex: number): number {
   return parseInt(raw.slice(slotIndex * 64, slotIndex * 64 + 64), 16);
 }
 
-// Colorful background videos for each market (Mixkit portrait 720p + Pexels HD)
+// Themed background videos for each market (Pexels HD + Mixkit)
 const MARKET_VIDEOS: Record<number, string> = {
-  0: "https://assets.mixkit.co/videos/1169/1169-720.mp4",                            // Bitcoin – golden bokeh lights
-  1: "https://assets.mixkit.co/videos/1164/1164-720.mp4",                            // Geopolitics – turquoise ocean
+  0: "https://videos.pexels.com/video-files/7579969/7579969-hd_1920_1080_25fps.mp4", // Bitcoin – crypto letter tiles
+  1: "https://videos.pexels.com/video-files/856356/856356-hd_1920_1080_25fps.mp4",   // Geopolitics – rotating Earth globe
   2: "https://assets.mixkit.co/videos/4900/4900-720.mp4",                            // ETH – bright green abstract
-  3: "https://videos.pexels.com/video-files/3129671/3129671-hd_1920_1080_30fps.mp4", // AI – teal digital network
-  4: "https://assets.mixkit.co/videos/1168/1168-720.mp4",                            // Sports – vibrant pink flowers
-  5: "https://assets.mixkit.co/videos/1165/1165-720.mp4",                            // Business – ocean golden hour
-  6: "https://videos.pexels.com/video-files/3214448/3214448-sd_640_360_25fps.mp4",   // Meme – glacier teal water
-  7: "https://assets.mixkit.co/videos/1170/1170-720.mp4",                            // Aliens – warm sunset palms
+  3: "https://videos.pexels.com/video-files/3129671/3129671-hd_1920_1080_30fps.mp4", // AI – digital network nodes
+  4: "https://videos.pexels.com/video-files/1409899/1409899-hd_1920_1080_25fps.mp4", // Sports – ocean waves aerial
+  5: "https://videos.pexels.com/video-files/4763824/4763824-hd_1920_1080_24fps.mp4", // Business – colorful liquid
+  6: "https://videos.pexels.com/video-files/3194277/3194277-hd_1920_1080_30fps.mp4", // Meme coin – galaxy nebula
+  7: "https://videos.pexels.com/video-files/1851190/1851190-hd_1920_1080_25fps.mp4", // Aliens – earth from space
 };
 
 export async function fetchMarketsFromChain(): Promise<Bet[]> {
