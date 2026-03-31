@@ -42,10 +42,10 @@ function decodeUint(raw: string, slotIndex: number): number {
 
 // Themed background videos for each market (Pexels HD, matching each bet)
 const MARKET_VIDEOS: Record<number, string> = {
-  0: "https://videos.pexels.com/video-files/7579969/7579969-hd_1920_1080_25fps.mp4", // Bitcoin – crypto coins & tiles
+  0: "https://videos.pexels.com/video-files/7947436/7947436-hd_1920_1080_30fps.mp4", // Bitcoin – financial chart closeup
   1: "https://videos.pexels.com/video-files/856356/856356-hd_1920_1080_25fps.mp4",   // Iran war – rotating Earth globe
-  2: "https://videos.pexels.com/video-files/7579971/7579971-hd_1920_1080_25fps.mp4", // ETH – crypto overhead colorful
-  3: "https://videos.pexels.com/video-files/3129671/3129671-hd_1920_1080_30fps.mp4", // AI – digital network nodes
+  2: "https://videos.pexels.com/video-files/8370544/8370544-hd_1920_1080_30fps.mp4", // ETH – gold crypto coins closeup
+  3: "https://videos.pexels.com/video-files/6963744/6963744-hd_1920_1080_25fps.mp4", // AI – code terminal hacker screen
   4: "https://videos.pexels.com/video-files/18080395/18080395-hd_1080_1920_24fps.mp4", // France WC – football players
   5: "https://videos.pexels.com/video-files/19147672/19147672-hd_1080_1920_30fps.mp4", // Tesla – Tesla car driving
   6: "https://videos.pexels.com/video-files/2499611/2499611-hd_1080_1920_30fps.mp4", // Jesus – cross at sunset
