@@ -40,15 +40,15 @@ function decodeUint(raw: string, slotIndex: number): number {
   return parseInt(raw.slice(slotIndex * 64, slotIndex * 64 + 64), 16);
 }
 
-// Themed background videos for each market (Pexels HD + Mixkit)
+// Themed background videos for each market (Pexels HD, matching each bet)
 const MARKET_VIDEOS: Record<number, string> = {
-  0: "https://videos.pexels.com/video-files/7579969/7579969-hd_1920_1080_25fps.mp4", // Bitcoin – crypto letter tiles
-  1: "https://videos.pexels.com/video-files/856356/856356-hd_1920_1080_25fps.mp4",   // Geopolitics – rotating Earth globe
-  2: "https://assets.mixkit.co/videos/4900/4900-720.mp4",                            // ETH – bright green abstract
+  0: "https://videos.pexels.com/video-files/7579969/7579969-hd_1920_1080_25fps.mp4", // Bitcoin – crypto coins & tiles
+  1: "https://videos.pexels.com/video-files/856356/856356-hd_1920_1080_25fps.mp4",   // Iran war – rotating Earth globe
+  2: "https://videos.pexels.com/video-files/7579971/7579971-hd_1920_1080_25fps.mp4", // ETH – crypto overhead colorful
   3: "https://videos.pexels.com/video-files/3129671/3129671-hd_1920_1080_30fps.mp4", // AI – digital network nodes
-  4: "https://videos.pexels.com/video-files/1409899/1409899-hd_1920_1080_25fps.mp4", // Sports – ocean waves aerial
-  5: "https://videos.pexels.com/video-files/4763824/4763824-hd_1920_1080_24fps.mp4", // Business – colorful liquid
-  6: "https://videos.pexels.com/video-files/3194277/3194277-hd_1920_1080_30fps.mp4", // Jesus – galaxy nebula
+  4: "https://videos.pexels.com/video-files/18080395/18080395-hd_1080_1920_24fps.mp4", // France WC – football players
+  5: "https://videos.pexels.com/video-files/19147672/19147672-hd_1080_1920_30fps.mp4", // Tesla – Tesla car driving
+  6: "https://videos.pexels.com/video-files/2499611/2499611-hd_1080_1920_30fps.mp4", // Jesus – cross at sunset
   7: "https://videos.pexels.com/video-files/1851190/1851190-hd_1920_1080_25fps.mp4", // Aliens – earth from space
 };
 
