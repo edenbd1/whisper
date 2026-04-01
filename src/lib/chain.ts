@@ -40,16 +40,16 @@ function decodeUint(raw: string, slotIndex: number): number {
   return parseInt(raw.slice(slotIndex * 64, slotIndex * 64 + 64), 16);
 }
 
-// Themed background videos for each market (Pexels HD, matching each bet)
+// Themed background videos for each market (local files + Pexels CDN)
 const MARKET_VIDEOS: Record<number, string> = {
-  0: "https://videos.pexels.com/video-files/7947436/7947436-hd_1920_1080_30fps.mp4", // Bitcoin – financial chart closeup
-  1: "https://videos.pexels.com/video-files/856356/856356-hd_1920_1080_25fps.mp4",   // Iran war – rotating Earth globe
-  2: "https://videos.pexels.com/video-files/8370544/8370544-hd_1920_1080_30fps.mp4", // ETH – gold crypto coins closeup
-  3: "https://videos.pexels.com/video-files/6963744/6963744-hd_1920_1080_25fps.mp4", // AI – code terminal hacker screen
-  4: "https://videos.pexels.com/video-files/18080395/18080395-hd_1080_1920_24fps.mp4", // France WC – football players
-  5: "https://videos.pexels.com/video-files/19147672/19147672-hd_1080_1920_30fps.mp4", // Tesla – Tesla car driving
-  6: "https://videos.pexels.com/video-files/2499611/2499611-hd_1080_1920_30fps.mp4", // Jesus – cross at sunset
-  7: "https://videos.pexels.com/video-files/1851190/1851190-hd_1920_1080_25fps.mp4", // Aliens – earth from space
+  0: "/videos/0-bitcoin.mp4",   // Bitcoin spinning 3D coin
+  1: "/videos/1-war.mp4",       // Fire explosion
+  2: "/videos/2-ethereum.mp4",  // Crypto coin rotating
+  3: "https://videos.pexels.com/video-files/6963744/6963744-hd_1920_1080_25fps.mp4", // AI – code terminal
+  4: "https://videos.pexels.com/video-files/18080395/18080395-hd_1080_1920_24fps.mp4", // France WC – football
+  5: "https://videos.pexels.com/video-files/19147672/19147672-hd_1080_1920_30fps.mp4", // Tesla driving
+  6: "/videos/6-jesus.mp4",     // Jesus Christ crucifix
+  7: "/videos/7-alien.mp4",     // Earth from space
 };
 
 export async function fetchMarketsFromChain(): Promise<Bet[]> {
