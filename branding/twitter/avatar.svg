@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="200" cy="200" r="200"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#circleClip)">
+    <!-- Pure black, like the X logo on black -->
+    <rect width="400" height="400" fill="#000000"/>
+
+    <!-- Whisper W logo, centered, pure white -->
+    <g transform="translate(110, 130) scale(1.8)" fill="#ffffff" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" style="paint-order: stroke">
+      <polygon points="1,0 20,18 0,30"/>
+      <polygon points="50,10 50,46 0,80 0,46"/>
+      <polygon points="100,10 100,46 50,80 50,46"/>
+    </g>
+  </g>
+</svg>

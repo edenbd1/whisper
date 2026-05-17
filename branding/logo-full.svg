@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 100" width="470" height="100">
+  <!-- W mark, left -->
+  <g transform="translate(8, 10)" fill="#ffffff" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" style="paint-order: stroke">
+    <polygon points="1,0 20,18 0,30"/>
+    <polygon points="50,10 50,46 0,80 0,46"/>
+    <polygon points="100,10 100,46 50,80 50,46"/>
+  </g>
+  <!-- Whisper wordmark, vertically centered against the W -->
+  <text x="135" y="73"
+        font-family="Helvetica Neue, Helvetica, Arial"
+        font-size="62" font-weight="800" letter-spacing="-1.6"
+        fill="#ffffff">Whisper</text>
+</svg>

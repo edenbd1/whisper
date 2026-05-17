@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+  <defs>
+    <!-- Near-black backdrop with a whisper of depth so the orb sits in space, not on a flat wall -->
+    <radialGradient id="bg" cx="50%" cy="50%" r="78%">
+      <stop offset="0%"   stop-color="#0d0d0d"/>
+      <stop offset="55%"  stop-color="#040404"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+
+    <!-- The orb itself: monochrome, dark graphite fading to ink. No tint. -->
+    <radialGradient id="orb" cx="58%" cy="25%" r="78%">
+      <stop offset="0%"   stop-color="#2a2a2a"/>
+      <stop offset="55%"  stop-color="#101010"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </radialGradient>
+
+    <!-- Pure white rim, top-bright bottom-glint -->
+    <linearGradient id="rim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="15%"  stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="50%"  stop-color="#ffffff" stop-opacity="0.03"/>
+      <stop offset="82%"  stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+
+    <!-- Headline gradient: bone white at the bottom, slightly cooler at top, so the type has weight -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#b8b8b8"/>
+      <stop offset="55%"  stop-color="#ebebeb"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+
+    <filter id="bloomRim" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <filter id="bloomRimSoft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1500" height="500" fill="url(#bg)"/>
+
+  <!-- Outer dashed ring (very faint) -->
+  <circle cx="750" cy="250" r="880" fill="none"
+          stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"
+          stroke-dasharray="3 6"/>
+
+  <!-- Faint middle ring -->
+  <circle cx="750" cy="250" r="670" fill="none"
+          stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+
+  <!-- Orb body -->
+  <circle cx="750" cy="250" r="485" fill="url(#orb)"/>
+
+  <!-- Soft outer bloom on rim -->
+  <circle cx="750" cy="250" r="485" fill="none"
+          stroke="url(#rim)" stroke-width="14" filter="url(#bloomRimSoft)" opacity="0.6"/>
+
+  <!-- Bright bloomed rim -->
+  <circle cx="750" cy="250" r="485" fill="none"
+          stroke="url(#rim)" stroke-width="5" filter="url(#bloomRim)"/>
+
+  <!-- Crisp rim edge -->
+  <circle cx="750" cy="250" r="485" fill="none"
+          stroke="url(#rim)" stroke-width="1.4"/>
+
+  <!-- Top center: W logo mark + bold "Whisper" wordmark, sized as a tasteful brand mark, not a hero -->
+  <g transform="translate(750, 85)">
+    <!-- Icon: Whisper W (three stacked polygons) ~44px tall -->
+    <g transform="translate(-128, -24) scale(0.55)" fill="#ffffff" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" style="paint-order: stroke">
+      <polygon points="1,0 20,18 0,30"/>
+      <polygon points="50,10 50,46 0,80 0,46"/>
+      <polygon points="100,10 100,46 50,80 50,46"/>
+    </g>
+    <!-- Wordmark, bold, capital W -->
+    <text x="-58" y="13"
+          font-family="Helvetica Neue, Helvetica, Arial"
+          font-size="44" font-weight="800" letter-spacing="-1.2"
+          fill="#ffffff" text-anchor="start">Whisper</text>
+  </g>
+
+  <!-- Main centered headline (mirrors "The Lending Network / for Real World Assets") -->
+  <g text-anchor="middle"
+     font-family="Helvetica Neue, Helvetica, Arial"
+     font-weight="700" letter-spacing="-1.8">
+    <text x="750" y="248" font-size="74" fill="url(#textGrad)">Confidential Markets,</text>
+    <text x="750" y="332" font-size="74" fill="url(#textGrad)">Loud Convictions.</text>
+  </g>
+
+  <!-- Footer tag, wide letter-spacing -->
+  <text x="750" y="462" text-anchor="middle"
+        font-family="Helvetica Neue, Helvetica, Arial"
+        font-size="19" font-weight="500" letter-spacing="5"
+        fill="#ffffff" opacity="0.55">LIVE ON COTI TESTNET</text>
+</svg>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Whisper — Logo Preview</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #0a0a0a;
+      color: #f5f5f5;
+      padding: 48px 64px;
+      line-height: 1.4;
+    }
+    header { margin-bottom: 48px; }
+    h1 { font-weight: 800; font-size: 32px; letter-spacing: -1px; }
+    .sub { color: #888; margin-top: 6px; font-size: 14px; }
+
+    .section { margin-bottom: 64px; }
+    .section-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #888;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #222;
+      padding-bottom: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .panel {
+      border: 1px solid #222;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .panel .label {
+      padding: 14px 20px;
+      font-size: 12px;
+      color: #888;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #222;
+    }
+    .panel .stage {
+      padding: 56px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+    }
+    .stage.dark { background: #000; }
+    .stage.light { background: #ffffff; }
+
+    /* When showing white logo on white, swap to black via CSS filter for visibility */
+    .stage.light img { filter: invert(1); }
+
+    .sizes {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .size-block { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .size-block .px { font-size: 11px; color: #555; letter-spacing: 1px; }
+
+    .filename {
+      display: inline-block;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 12px;
+      color: #5da8ff;
+      background: #0a1a2e;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      color: #000;
+      border: none;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.2px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+    .dl-btn:hover { background: #e8e8e8; }
+    .dl-btn:active { transform: scale(0.97); }
+    .dl-btn[disabled] { opacity: 0.5; cursor: progress; }
+    .dl-btn .ic { font-size: 16px; }
+
+    .dl-btn--floating {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 100;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .dl-footer {
+      text-align: center;
+      padding: 48px 0 16px;
+      border-top: 1px solid #222;
+      margin-top: 24px;
+    }
+    .dl-footer .hint { display: block; margin-top: 12px; font-size: 12px; color: #555; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .compare .stage { min-height: 180px; }
+  </style>
+</head>
+<body>
+  <button class="dl-btn dl-btn--floating" data-dl><span class="ic">⬇</span><span class="lbl">Download all</span></button>
+
+  <header>
+    <h1>Whisper — Logo Preview</h1>
+    <div class="sub">Check that both SVGs look right: <span class="filename">logo-mark.svg</span> &amp; <span class="filename">logo-full.svg</span></div>
+  </header>
+
+  <section class="section">
+    <div class="section-title">Logo Mark (short) — <span class="filename">logo-mark.svg</span></div>
+    <div class="panel">
+      <div class="label">On black · multiple sizes</div>
+      <div class="stage dark">
+        <div class="sizes">
+          <div class="size-block">
+            <img src="logo-mark.svg" alt="" style="height:32px" />
+            <div class="px">32 PX</div>
+          </div>
+          <div class="size-block">
+            <img src="logo-mark.svg" alt="" style="height:64px" />
+            <div class="px">64 PX</div>
+          </div>
+          <div class="size-block">
+            <img src="logo-mark.svg" alt="" style="height:128px" />
+            <div class="px">128 PX</div>
+          </div>
+          <div class="size-block">
+            <img src="logo-mark.svg" alt="" style="height:200px" />
+            <div class="px">200 PX</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">Logo Full (wide) — <span class="filename">logo-full.svg</span></div>
+    <div class="panel">
+      <div class="label">On black · multiple sizes</div>
+      <div class="stage dark">
+        <div class="sizes">
+          <div class="size-block">
+            <img src="logo-full.svg" alt="" style="height:28px" />
+            <div class="px">H 28 PX</div>
+          </div>
+          <div class="size-block">
+            <img src="logo-full.svg" alt="" style="height:56px" />
+            <div class="px">H 56 PX</div>
+          </div>
+          <div class="size-block">
+            <img src="logo-full.svg" alt="" style="height:96px" />
+            <div class="px">H 96 PX</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">Dark vs Light backgrounds</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="label">Mark — dark / light</div>
+        <div class="compare">
+          <div class="stage dark"><img src="logo-mark.svg" style="height:96px" /></div>
+          <div class="stage light"><img src="logo-mark.svg" style="height:96px" /></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="label">Full — dark / light</div>
+        <div class="compare">
+          <div class="stage dark"><img src="logo-full.svg" style="height:60px" /></div>
+          <div class="stage light"><img src="logo-full.svg" style="height:60px" /></div>
+        </div>
+      </div>
+    </div>
+    <div class="sub" style="margin-top:16px;font-size:12px;">
+      Note: the SVGs are white. On the light panels above I apply a <code>filter: invert(1)</code> in CSS to simulate the black version — for actual black-fill files, I can generate <code>logo-mark-black.svg</code> / <code>logo-full-black.svg</code>.
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">Brand assets — Twitter</div>
+    <div class="grid">
+      <div class="panel">
+        <div class="label">avatar.png</div>
+        <div class="stage dark"><img src="twitter/avatar.png" style="width:180px;height:180px;border-radius:50%" /></div>
+      </div>
+      <div class="panel">
+        <div class="label">banner.png</div>
+        <div class="stage dark"><img src="twitter/banner.png" style="width:100%;height:auto;border-radius:8px" /></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="dl-footer">
+    <button class="dl-btn" data-dl><span class="ic">⬇</span><span class="lbl">Download all (.zip)</span></button>
+    <span class="hint">Includes: banner.svg, avatar.svg, avatar.png, logo-mark.svg, logo-full.svg</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    const FILES = [
+      { url: "twitter/banner.svg",  name: "banner.svg" },
+      { url: "twitter/avatar.png",  name: "avatar.png" },
+      { url: "twitter/avatar.svg",  name: "avatar.svg" },
+      { url: "logo-mark.svg",       name: "logo-mark.svg" },
+      { url: "logo-full.svg",       name: "logo-full.svg" },
+    ];
+
+    async function downloadAll() {
+      const buttons = document.querySelectorAll("[data-dl]");
+      buttons.forEach(b => { b.disabled = true; b.querySelector(".lbl").textContent = "Preparing…"; });
+
+      try {
+        const zip = new JSZip();
+        await Promise.all(FILES.map(async f => {
+          const res = await fetch(f.url);
+          if (!res.ok) throw new Error(`${f.url} → ${res.status}`);
+          const blob = await res.blob();
+          zip.file(f.name, blob);
+        }));
+
+        const out = await zip.generateAsync({ type: "blob" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(out);
+        a.download = "whisper-branding.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      } catch (err) {
+        alert("Zip error: " + err.message);
+      } finally {
+        buttons.forEach(b => {
+          b.disabled = false;
+          if (b.classList.contains("dl-btn--floating")) {
+            b.querySelector(".lbl").textContent = "Download all";
+          } else {
+            b.querySelector(".lbl").textContent = "Download all (.zip)";
+          }
+        });
+      }
+    }
+
+    document.querySelectorAll("[data-dl]").forEach(b => b.addEventListener("click", downloadAll));
+  </script>
+</body>
+</html>
