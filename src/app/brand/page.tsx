@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -22,6 +22,29 @@ const ASSETS = [
 
 export default function BrandPage() {
   const [busy, setBusy] = useState(false);
+
+  // Global CSS sets body { overflow: hidden; height: 100% } for the swipe feed.
+  // Restore normal page scrolling while on this route, then put it back on unmount.
+  useEffect(() => {
+    const body = document.body;
+    const html = document.documentElement;
+    const prev = {
+      bodyOverflow: body.style.overflow,
+      bodyHeight: body.style.height,
+      htmlOverflow: html.style.overflow,
+      htmlHeight: html.style.height,
+    };
+    body.style.overflow = "auto";
+    body.style.height = "auto";
+    html.style.overflow = "auto";
+    html.style.height = "auto";
+    return () => {
+      body.style.overflow = prev.bodyOverflow;
+      body.style.height = prev.bodyHeight;
+      html.style.overflow = prev.htmlOverflow;
+      html.style.height = prev.htmlHeight;
+    };
+  }, []);
 
   const downloadAll = useCallback(async () => {
     if (busy) return;
