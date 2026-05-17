@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 declare global {
   interface Window {
@@ -14,7 +14,6 @@ declare global {
 
 const ASSETS = [
   { url: "/branding/banner.svg", name: "banner.svg" },
-  { url: "/branding/avatar.png", name: "avatar.png" },
   { url: "/branding/avatar.svg", name: "avatar.svg" },
   { url: "/branding/logo-mark.svg", name: "logo-mark.svg" },
   { url: "/branding/logo-full.svg", name: "logo-full.svg" },
@@ -22,29 +21,6 @@ const ASSETS = [
 
 export default function BrandPage() {
   const [busy, setBusy] = useState(false);
-
-  // Global CSS sets body { overflow: hidden; height: 100% } for the swipe feed.
-  // Restore normal page scrolling while on this route, then put it back on unmount.
-  useEffect(() => {
-    const body = document.body;
-    const html = document.documentElement;
-    const prev = {
-      bodyOverflow: body.style.overflow,
-      bodyHeight: body.style.height,
-      htmlOverflow: html.style.overflow,
-      htmlHeight: html.style.height,
-    };
-    body.style.overflow = "auto";
-    body.style.height = "auto";
-    html.style.overflow = "auto";
-    html.style.height = "auto";
-    return () => {
-      body.style.overflow = prev.bodyOverflow;
-      body.style.height = prev.bodyHeight;
-      html.style.overflow = prev.htmlOverflow;
-      html.style.height = prev.htmlHeight;
-    };
-  }, []);
 
   const downloadAll = useCallback(async () => {
     if (busy) return;
@@ -218,19 +194,40 @@ export default function BrandPage() {
           <span>{busy ? "Preparing…" : "Download all (.zip)"}</span>
         </button>
         <span className="hint">
-          Includes: banner.svg, avatar.svg, avatar.png, logo-mark.svg,
-          logo-full.svg
+          Includes: banner.svg, avatar.svg, logo-mark.svg, logo-full.svg
         </span>
       </footer>
 
       <style>{`
+        /* Global CSS pins html/body to height:100% overflow:hidden for the swipe feed.
+           Make .brand-root its own scroll container so we don't fight that. */
         .brand-root {
+          position: fixed;
+          inset: 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
+          overscroll-behavior: contain;
+          /* Re-enable a visible scrollbar (global CSS hides it for the feed) */
+          scrollbar-width: thin;
+          scrollbar-color: #333 transparent;
+
           background: #0a0a0a;
           color: #f5f5f5;
           padding: 48px 64px;
           line-height: 1.4;
-          min-height: 100vh;
           font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        .brand-root::-webkit-scrollbar {
+          display: block;
+          width: 10px;
+        }
+        .brand-root::-webkit-scrollbar-thumb {
+          background: #333;
+          border-radius: 5px;
+        }
+        .brand-root::-webkit-scrollbar-track {
+          background: transparent;
         }
         .brand-root header { margin-bottom: 48px; }
         .brand-root h1 { font-weight: 800; font-size: 32px; letter-spacing: -1px; }
